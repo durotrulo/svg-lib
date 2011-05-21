@@ -50,11 +50,12 @@ class VisualPaginator extends BaseControl
 	/** @var Paginator */
 	private $paginator;
 
-//	/** @persistent */
-//	public $page = 1;
+	/** @persistent */
+	public $page = 1;
 //	public $page;
-	private $page;
+//	private $page;
 
+	
 	/** @var bool render itemsPerPage as select? */
 	private $itemsPerPageAsSelect = false;
 	
@@ -83,6 +84,12 @@ class VisualPaginator extends BaseControl
 		return $this->paginator;
 	}
 
+	
+	public function getPage()
+	{
+		return $this->page;
+	}
+	
 
 	/**
 	 * @param bool
