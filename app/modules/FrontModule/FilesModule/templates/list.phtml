@@ -1,0 +1,114 @@
+{**
+ * @param DibiRow array $items
+ * @param int $itemsCount
+ * @param FilesModel $filesModel
+ * @param string $thumbSize [one of FilesModel::sizes]
+ *
+ *
+ *
+ **}
+
+ {capture $head}
+<script src="{$basePath}/modules/colorbox/jquery.colorbox.js"></script>
+ <script>
+ // @see http://colorpowered.com/colorbox/
+ $(function() {
+	$("a[rel='images']").livequery( function () {
+	 	var fileDetailModal = $('#file-detail-modal');
+//	 	var linkReloadItemList = {link reloadItemList!};
+		$(this).colorbox({
+			inline: true, 
+			href: "#file-detail-modal",
+			onLoad: function() {
+				var el = $(this);
+				var item = el.parent('.item');
+				fileDetailModal.find('img').attr('src', el.attr('href'));
+				fileDetailModal.find('a.download-link').attr('href', item.find('a.download-link').attr('href'));
+				fileDetailModal.find('.downloads').text(item.find('.top-right').text());
+				fileDetailModal.find('.add2lightbox').html(item.find('.add2lightbox').html());
+			},
+			// reload itemlist to have up-to-date info (files could have been added 2 lightbox or downloaded)
+			onCleanup: function() {
+				$.get(linkReloadItemList);
+			}
+		}, function () { 
+			// callback
+		})
+	});
+});
+ </script>
+ <link rel="stylesheet" href="{$basePath}/modules/colorbox/colorbox.css">
+ {/capture}
+ 
+{block title}Files{/block}
+
+
+{block #options}
+	<span class="bold resultsCount">{$itemsCount} results found</span>
+	<span class="orderby">
+		<span class="bold">Display</span>
+		<a href="{link this orderby=>FilesModel::ORDER_BY_NAME}" {attr class('ajax', true) class('active', $presenter->orderby === FilesModel::ORDER_BY_NAME)}>Alphabetically</a>
+		<a href="{link this orderby=>FilesModel::ORDER_BY_SIZE}" {attr class('ajax', true) class('active', $presenter->orderby === FilesModel::ORDER_BY_SIZE)}>By Size</a>
+		<a href="{link this orderby=>FilesModel::ORDER_BY_DATE}" {attr class('ajax', true) class('active', $presenter->orderby === FilesModel::ORDER_BY_DATE)}>By Date</a>
+	</span>
+	
+	<span class="sorting">
+		<a href="{link this sorting=>dibi::ASC}" {attr class('ajax', true) class('active', $presenter->sorting === dibi::ASC)}>asc</a>
+		<a href="{link this sorting=>dibi::DESC}" {attr class('ajax', true) class('active', $presenter->sorting === dibi::DESC)}>desc</a>
+	</span>
+	
+	<span>
+		<span class="bold">Complexity</span>
+		{control complexityForm}
+	</span>
+	
+	<span class="thumbsizeControl">
+		{foreach FilesModel::getSizes() as $size}
+			<a href="#"{attr class($size, true) class('active', $thumbSize === $size)} title="{$size}"></a>
+		{/foreach}
+		<span class="bold">Thumbnail Size</span>
+	</span>
+{/block}
+
+
+@{block #content}
+{snippet itemList}
+
+{* generate up-to-date link with every snippet redraw *}
+<script>
+	 	var linkReloadItemList = {link reloadItemList!};
+</script>
+
+	{if $itemsCount > 0}
+	
+		<div class="itemList thumbSize-{$thumbSize}">
+			<div class="item" n:foreach="$items as $item">
+			{*include '@thumb.phtml' 'item' => $item, 'thumbSize' => $thumbSize*}
+				<span class="top-right show-on-hover">{$item->downloads} downloads</span>
+				<a href="{$basePath}/{$filesModel->getPreviewPath($item->projects_id, 'large', $item->filename, true)}" rel="images">
+					<img src="{$basePath}/{$filesModel->getPreviewPath($item->projects_id, $thumbSize, $item->filename, true)}">
+				</a>
+				<a href="{link download! $item->id}" title="Download" class="download-link show-on-hover"></a>
+				{? $presenter->prepareAddFile2LightboxForm($item->id)}
+				<span class="ib add2lightbox show-on-hover">{control addFile2LightboxForm_$item->id}</span>
+
+			</div>
+			<div class="clear"></div>
+		</div>
+		{control itemPaginator false, step2}
+		<div class="clear"></div>
+		
+		<div class="invisible">
+			<div id="file-detail-modal">
+				<span class="downloads">__itemDownloads__ downloads</span>
+				<img src="">
+				<a href="{link download! __itemid__}" title="Download" class="download-link"></a>
+				<span class="ib add2lightbox"></span>
+			</div>
+		</div>
+		
+		
+	{else}
+		<div class="infoMsg">No results found</div>
+	{/if}
+{/snippet}

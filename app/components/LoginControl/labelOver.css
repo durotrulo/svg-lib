@@ -1,0 +1,39 @@
+/* LOGIN FORM LABEL POSITIONING */
+
+.loginFrm div {
+	float:left;
+	/*clear:left;*/
+	position:relative;
+	/*inline or block layout by setting width*/
+}
+
+label.over-apply  {
+	color:white;
+	cursor:text;
+	font-size:11px;
+	left:7px;
+	position:absolute;
+	top:7px;
+}
+/* LOGIN FORM LABEL POSITIONING END */
+
+
+/***********/
+/* LOGIN */
+/***********/
+	.loginFrm input {
+		width:130px;
+	}
+	
+	#frmloginForm-ok {
+		width:auto;
+		border:0;
+		padding:0 4px;
+	}
+	
+	.loginFrm input, .loginFrm label {
+		color:white;
+		font-size:11px;
+	}
+	
+	

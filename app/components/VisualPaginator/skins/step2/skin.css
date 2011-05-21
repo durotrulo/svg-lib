@@ -1,0 +1,36 @@
+/*
+	(c) 2009 David Grudl. All rights reserved.
+*/
+
+
+.paginator {
+	margin: 1em 0;
+    text-align: center;
+    width: 68%;
+	font-size: 90%;
+}
+
+.paginator a, .paginator span {
+	margin-right: 0.1em;
+	padding: 0.2em 0.5em;
+	color: #ccc;
+}
+
+.paginator a {
+	text-decoration: none;
+	color: #999999;
+}
+
+.paginator span.button {
+}
+
+.paginator .current {
+	color: #ccc;
+	font-weight: bold;
+}
+
+.paginator-filter form,
+.paginator-filter,
+.paginator {
+ 	display: inline-block;
+}

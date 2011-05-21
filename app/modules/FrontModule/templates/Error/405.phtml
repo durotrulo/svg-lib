@@ -1,0 +1,16 @@
+{var title => 'Prístup zamietnutý'}
+{* {var title => 'Method Not Allowed'} *}
+
+{block #errorContent}
+
+<h1>{$title}</h1>
+
+<p>Požadovaná metóda nie je pre túto URL povolená.</p>
+
+<p><small>chyba 405</small></p>
+
+{*
+<p>The requested method is not allowed for the URL.</p>
+
+<p><small>405 error</small></p>
+*}

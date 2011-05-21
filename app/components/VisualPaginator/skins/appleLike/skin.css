@@ -1,0 +1,20 @@
+/****************************************/
+/* APPLE LIKE PAGINATOR			   		*/
+/****************************************/
+
+.quick-nav span,
+.quick-nav a {
+	background:red;
+	width:10px;
+	height:10px;
+	display:inline-block;
+}
+
+.arrow-right,
+.arrow-left {
+	background: url(images/arrows.png) left top no-repeat;
+}
+
+.arrow-right {
+
+}

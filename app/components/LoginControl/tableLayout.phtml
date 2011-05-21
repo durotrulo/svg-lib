@@ -1,0 +1,43 @@
+{*
+ * @author Matus Matula
+ * @param string $count
+**}
+
+<div class="login-form">
+{snippet loginFrm_$count}
+	{form loginForm}
+
+	<!--DOROBIT podla errINPresenter-->
+	<p class="error" n:foreach="$formErrors as $error">{$error}</p>
+
+	<table>
+	<thead></thead>
+	<tbody>
+	
+		<tr>
+			<td>{label username}</td>
+			<td>{input username}</td>
+		</tr>
+		
+		<tr>
+			<td>{label password}</td>
+			<td>{input password}</td>
+		</tr>
+		
+		{ifset FormMacros::$form['remember']}
+		<tr>
+			<td>&nbsp;</td>
+			<td>{input remember} {label remember}</td>
+		</tr>
+		{/if}
+	
+		<tr>
+			<td>&nbsp;</td>
+			<td>{input ok}</td>
+		</tr>
+	
+	</tbody>
+	</table>
+	{/form}
+{/snippet}
+</div>

@@ -1,0 +1,111 @@
+.flash, .flashes .info, .success, .warning, .validation,
+.flash-msg-close-all {
+	/* TRANSPARENT BG CROSS BROWSER - http://robertnyman.com/2010/01/11/css-background-transparency-without-affecting-child-elements-through-rgba-and-filters/ */
+		/* Fallback for web browsers that doesn't support RGBa */
+		background: rgb(0, 0, 0);
+		
+		/* RGBa with 0.9 opacity */
+		background-color: rgba(0, 0, 0, 0.9);
+		
+		/* For IE 5.5 - 7*/
+		/*Math.floor(0.15 * 255).toString(16) == 26;*/
+		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#e5000000, endColorstr=#e5000000);
+		
+		/* For IE 8*/
+		-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#e5000000, endColorstr=#e5000000)";
+		 
+		/*needed for IE
+		.transparent {background-color:transparent;}
+		*/
+		
+		border: 1px solid;
+		-moz-border-radius-bottomleft: 10px;
+	    -moz-border-radius-bottomright: 10px;
+	    -moz-border-radius-topleft: 10px;
+	    -moz-border-radius-topright: 10px;
+		-khtml-border-radius: 10px;
+		-webkit-border-radius: 10px;
+		-webkit-border-bottom-left-radius: 10px;
+		-webkit-border-bottom-right-radius: 10px;
+		border-radius: 10px;
+}
+
+/************ info boxy ~ flash zpravy ******************/
+.flash, .flashes .info, .success, .warning, .flashes .error, .validation {
+    margin: -5px auto 10px; /*zaporny top margin aby sa schoval zaobleny border 1.hlasky .. ak ich je viac, chcem mat obly */
+    padding: 40px 55px 50px 105px;
+    background-repeat: no-repeat;
+    background-position: 30px 45%;
+    /*font-family:Arial, Helvetica, sans-serif;*/ 
+    font-size: 18px;
+
+	/*width:100%;*/
+	line-height:1.4em;
+	color:white;
+}
+
+.flashes .info {
+    background-image: url('../images/info-icon.png');
+    border-color:#3260b2;
+}
+.success {
+    background-image:url('../images/success-icon.png');
+    border-color:#438123;
+}
+.warning {
+    background-image: url('../images/warning-icon.png');
+    border-color:#ffb22a;
+}
+.flashes .error {
+    background-image: url('../images/error-icon.png');
+    border-color:#d80806;
+}
+
+.info .flash-msg-close {
+    background: url('../images/info-cross.png') left top no-repeat;
+}
+.success .flash-msg-close {
+    background:url('../images/success-cross.png') left top no-repeat;
+}
+.warning .flash-msg-close {
+    background: url('../images/warning-cross.png') left top no-repeat;
+}
+.error .flash-msg-close {
+    background: url('../images/error-cross.png') left top no-repeat;
+}
+
+.flash-msg-close:hover {
+	background-position:left -41px;
+}
+
+/**************************************************/
+/* zafixovanie sprav k hornemu okraju obrazovky	  */
+/**************************************************/
+
+	.flashes {
+		position:fixed;
+		top:0;
+		width:713px; /*todo: zistit, ako sa to da spravit automaticky na 100% rodicovskeho elementu, nie celeho HTML*/
+		z-index:999;
+		/*margin-left:95px;*/
+	}
+	
+	.flash {position:relative;}
+	.flash-msg-close {
+		width:30px;
+		height:30px;
+		position:absolute;
+		top:13px;
+		right:18px;
+		cursor:pointer;
+	}
+	.flash-msg-close-all {
+		width:105px;
+		cursor:pointer;
+		float:right;
+		
+		border-color: #d80806;
+	    margin: 0;
+	    padding: 15px 10px 15px 50px;
+	    
+	}

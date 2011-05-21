@@ -1,0 +1,209 @@
+a {outline: 0;}
+
+/* no outline for submit inputs */
+	/*for FireFox*/
+	input[type="submit"]::-moz-focus-inner, input[type="button"]::-moz-focus-inner
+	{   
+	    border : 0px;
+	} 
+	/*for IE8 */
+	input[type="submit"]:focus, input[type="button"]:focus
+	{     
+	    outline : none; 
+	}
+
+	
+/* nested options */
+	optgroup, option[disabled] {
+		color:black;
+		font-weight:bold;
+		font-style:italic;
+	}
+	
+	/* to prevent inheriting color from optgroup*/
+	option {
+		color:black;
+	}
+
+a.external {
+	background: url("../images/external-link-ltr-icon.png") no-repeat scroll right center transparent;
+	padding:0 13px 0 0;
+}
+label, input.button {
+	cursor:pointer;
+}	
+	
+a img {border:0;}	
+	
+.left {
+  float: left !important;
+}
+
+.right {
+  float: right !important;
+}
+
+.clear {
+	clear: both !important;
+	float:none !important;
+	line-height: 0.1px;
+	height:0.1px; /*needed to avoid margin collapsing*/
+}
+
+.clear_l {
+	clear: left !important;
+	line-height: 0.1px;
+}
+
+.clear_r {
+	clear: right !important;
+	line-height: 0.1px;
+}
+
+.center {
+	text-align: center;
+}
+
+.bold {
+	font-weight: bold;
+}
+
+.invisible {
+	display: none !important;
+}
+
+.visible {
+	display: block;
+}
+
+tr.visible {
+	display: table-row;
+}
+
+.hidden {
+	visibility: hidden;
+}
+
+.shown {
+	visibility: visible;
+}
+
+.pointer {
+	cursor: pointer;
+}
+
+hr {
+	background-color: gray;
+}
+
+small, .small {
+	font-size: 80%;
+}
+
+.width_100 {
+	width: 100%;
+}
+
+.align_l {
+	text-align:left !important;
+}
+
+.align_c {
+	text-align:center !important;
+}
+
+.align_r {
+	text-align:right !important;
+}
+
+.relative {position:relative;}
+.uppercase {text-transform:uppercase;}
+.no_padding {padding:0 !important;}
+
+em, i {font-style:italic;}
+strong, b {font-weight:bold;}
+
+table.grid {
+	border-collapse:collapse;
+}
+table.grid td, 
+table.grid th {
+	border:1px solid;
+}
+																						/************ Nette Specific CSS ******************/
+
+/*
+#ajax-spinner {
+	margin: 15px 0 0 15px;
+	padding: 13px;
+	background: white url('../images/spinner.gif') no-repeat 50% 50%;
+	font-size: 0;
+	z-index: 123456;
+	display: none;
+}
+*/
+#ajax-spinner {
+	position: fixed;
+	left: 45%;
+	top: 45%;
+	margin: -15px 0 0 -15px;
+	background: white url('../images/spinner.gif') no-repeat 50% 50%;
+	padding: 15px;
+	border: 2px solid #CCC;
+	z-index: 10000;
+	color: #ccc;
+	
+    -moz-border-radius-bottomleft: 5px;
+    -moz-border-radius-bottomright: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+	-khtml-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	-webkit-border-bottom-right-radius: 5px;
+	border-radius: 5px;
+}
+
+#ajax-spinner.spinnerText {
+	background-position: 10% 50%;
+	padding-left: 35px;
+}
+
+a[href="error:"] {
+	background: red;
+	color: white;
+}
+
+/* info[no records] a error[form errors] hlasky v obsahu */
+.infoMsg, .error {
+    border: 1px solid;
+    margin: 10px 5px;
+    padding: 15px 10px 15px 50px;
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    /*font-family:Arial, Helvetica, sans-serif;*/ 
+    font-size: 13px;
+    -moz-border-radius-bottomleft: 5px;
+    -moz-border-radius-bottomright: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+	-khtml-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	-webkit-border-bottom-right-radius: 5px;
+	border-radius: 5px;
+	opacity: 0.9;
+	border: none/*!important*/;
+}
+
+.error {
+    color: #D8000C;
+    background-color: #FFBABA;
+    background-image: url('../images/error.png');
+}
+
+.infoMsg {
+    color: #00529B;
+    background-color: #C6DBFF;
+    background-image: url('../images/info.png');
+}

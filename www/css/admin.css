@@ -1,0 +1,130 @@
+/*todo: nastylovat univerzalneho admina*/
+
+body {
+	width: 990px;
+	background-color: #ccccff;
+	margin: auto;
+	color:black;
+}
+
+div#container {
+	padding:10px;	
+	background-color: #fff;
+}
+
+#content {
+	clear: both;
+	text-align:left;
+	background:none;
+}
+
+#footer {
+	clear: both;
+}
+
+#admin {
+	overflow:hidden;
+}
+
+.heading {
+	font-size:20px;
+	margin-top:20px;
+}
+
+.description {
+	margin-bottom:20px;
+	padding-bottom:10px;
+	border-bottom:1px solid lightgray;
+}
+
+ul li {
+	margin: 2px;
+}
+
+ul, .admin-menu {
+	list-style: none;
+	list-style-type: none;
+	list-style-image: none;
+
+}
+
+.admin-menu li {
+	display: block;
+	float: left;
+}
+
+table table {
+	margin-left:30px;
+}
+
+td, th {
+	padding:3px 7px;
+	text-align: left;
+	vertical-align:top;
+}
+th {
+	text-align:left;
+	width:20%;
+}
+
+caption {font-style:italic;font-weight:bold;}
+
+table {width:98%;}
+
+span.cke_skin_kama {margin:10px 0;}
+
+input {width:auto;}
+input.text, textarea {
+	padding:0.4em;
+	width:95%;
+}
+
+label {
+	color: #111;
+}
+
+fieldset {
+	border: none;
+	margin: 0;
+	padding: 0;
+	border-top: 2px dotted #ccc;
+	margin-top: 10px;
+}
+
+div#sendBox {
+	margin: 0;
+	padding: 0;
+}
+
+form {
+	margin: 0;
+	padding: 0;
+}
+
+table {
+	margin: 0;
+}
+
+div.title {
+	font-size: 1.3em;
+	font-weight: bold;
+	text-align: right;
+	padding-top: 10px;
+	padding-bottom: 26px;
+}
+
+
+	/****************************************/
+	/* RICHTEXT IN GENERAL     			   	*/
+	/****************************************/
+
+.cke_skin_office2003 .cke_editor {
+	width:97% !important;
+}
+
+a {
+	color: inherit;
+	text-decoration: underline;
+}
+
+small {font-size:70%;}

@@ -1,0 +1,39 @@
+@{extends '../../../../AdminModule/templates/@layout.phtml'}
+@{block #content}
+
+<div class="heading">{$title}</div>
+<div class="description" n:ifset="$description">{$description}</div>
+<a href="{link add}">Add</a>
+
+@{include #content2}
+
+{snippet usersList}
+{if isset($users) and count($users) > 0}
+	<table>
+		<thead>
+			<tr>
+				<th>User Name</th>
+				<th>First Name</th>
+				<th>Last Name</th>
+				<th>User Level</th>
+				<th>Access</th>
+				<th>Edit</th>
+			</tr>
+		</thead>
+	
+		<tbody>
+			<tr n:foreach="$users AS $user">
+				<td>{$user->username}</td>
+				<td>{$user->firstname}</td>
+				<td>{$user->lastname}</td>
+				<td>{$user->publicRole}</td>
+				<td>access</td>
+				<td><a class="ajax" href="{link edit $user->id}">{_'edit'}</a></td>
+			</tr>
+		</tbody>
+	</table>
+{else}
+	<div class="infoMsg">No users in system yet.</div>
+{/if}
+{/snippet}
+

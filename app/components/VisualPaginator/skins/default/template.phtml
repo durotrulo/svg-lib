@@ -1,0 +1,67 @@
+{extends ../../@layout.phtml}
+
+{*
+ * @param Paginator $paginator
+ * @param array     $steps page numbers for pagination
+ * @param array     $itemsPerPage possible numbers of items to show
+ * @param string    $itemString name of paginated item [articles, videos, ...]
+ *}
+
+ {block #vpContent}
+	<div class="paginator-filter">
+	<span class="margin">{_'Zobraziť'} </span>
+	{foreach $itemsPerPage as $num}
+		{if $paginator->itemsPerPage == $num}
+			<span class="current">{$num}</span>
+		{else}
+	 		<a {attr class('ajax', $useAjax)} href="{link goto!, 'itemsPerPage' => $num, 'page' => 1, itemsPerPageChanged => 1}">{$num}</a>
+		{/if}
+		{if !$iterator->isLast()} | {/if}
+	{/foreach}
+	{$itemString}
+	</div>
+	
+	<div class="paginator">
+	
+		{if $paginator->isFirst()}
+			<span class="button">{_'prvá'}</span> |
+			<span class="button">{_'predošlá'}</span>
+		{else}
+			<a {attr class('ajax', $useAjax)} href="{link goto!, 'page' => $paginator->getFirstPage()}">{_'prvá'}</a> |
+			<a {attr class('ajax', $useAjax)} href="{link goto!, 'page' => $paginator->page - 1}">{_'predošlá'}</a>
+		{/if}
+	
+		{?/*foreach $steps as $step}
+		{if $step == $paginator->page}
+			<span class="current">{$step}</span>
+		{else}
+			<a href="{link this, 'page' => $step}">{$step}</a>
+		{/if}
+		{if $iterator->nextValue > $step + 1}<span>…</span>{/if}
+		{?/foreach*/}
+		
+		<span class="current">{_'stránka'} <span class="green">{$paginator->page}</span>/{$paginator->pageCount}</span>
+	
+		{if $paginator->isLast()}
+			<span class="button">{_'ďalšia'}</span> |
+			<span class="button">{_'posledná'}</span>
+		{else}
+			<a {attr class('ajax', $useAjax)} href="{link goto!, 'page' => $paginator->page + 1}">{_'ďalšia'}</a> |
+			<a {attr class('ajax', $useAjax)} href="{link goto!, 'page' => $paginator->getLastPage()}">{_'posledná'}</a>
+		{/if}
+	</div>
+
+	<div class="paginator-go-page">
+		{_'choď na stránku'} 
+		<form class="ajax" action="{link goto!}">
+		{? $currentPage = $control->getParam('page') ? $control->getParam('page') : '#';}
+<!--			<input class="border" type="text" name="{$control->getParamId('page')}" size="1" value="{$currentPage}" />-->
+			<input class="border" type="text" name="{$control->getParamId('page')}" size="1" value="#" />
+			<input type="hidden" name="{$control->getParamId('itemsPerPage')}" value="{$control->getParam('itemsPerPage')}" />
+			<input type="image" src="{$baseUri}img/go_page.png" alt="go" />
+		</form>
+		
+	</div>
+<div class="clear"></div>
+
+

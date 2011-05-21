@@ -1,0 +1,76 @@
+{**
+ * @param DibiRow array $items
+ * @param int $itemsCount
+ * @param ProjectsModel $projectsModel
+ * @param string renderMode [one of Projects_Front_DefaultPresenter::$_allowedRenderModes]
+ *
+ *
+ *
+ **}
+
+{block title}Projects{/block}
+
+
+{block #options}
+	<span class="bold resultsCount">{$itemsCount} results found</span>
+	<span class="orderby">
+		<span class="bold">Display</span>
+		<a href="{link this orderby=>ProjectsModel::ORDER_BY_NAME}" {attr class('ajax', true) class('active', $presenter->orderby === ProjectsModel::ORDER_BY_NAME)}>Alphabetically</a>
+		<a href="{link this orderby=>ProjectsModel::ORDER_BY_DATE}" {attr class('ajax', true) class('active', $presenter->orderby === ProjectsModel::ORDER_BY_DATE)}>By Date</a>
+	</span>
+	
+	<span class="sorting">
+		<a href="{link this sorting=>dibi::ASC}" {attr class('ajax', true) class('active', $presenter->sorting === dibi::ASC)}>asc</a>
+		<a href="{link this sorting=>dibi::DESC}" {attr class('ajax', true) class('active', $presenter->sorting === dibi::DESC)}>desc</a>
+	</span>
+	
+	<span class="completed">
+		<a href="{link this filter=>null}" {attr class('ajax', true) class('active', $presenter->filter === null)}>All</a> |
+		<a href="{link this filter=>ProjectsModel::FILTER_COMPLETED}" {attr class('ajax', true) class('active', $presenter->filter === ProjectsModel::FILTER_COMPLETED)}>Completed</a> |
+		<a href="{link this filter=>ProjectsModel::FILTER_IN_PROGRESS}" {attr class('ajax', true) class('active', $presenter->filter === ProjectsModel::FILTER_IN_PROGRESS)}>In Progress</a>
+	</span>
+	
+	<span class="renderMode">
+		<span class="bold">Show</span>
+		<a href="{link this renderMode=>$presenter::RENDER_MODE_THUMBNAILS}" {attr class('ajax', true) class('active', $renderMode === $presenter::RENDER_MODE_THUMBNAILS)}>Thumbnails</a>
+		<a href="{link this renderMode=>$presenter::RENDER_MODE_LIST}" {attr class('ajax', true) class('active', $renderMode === $presenter::RENDER_MODE_LIST)}>List</a>
+	</span>
+{/block}
+
+
+@{block #content}
+
+{snippet itemList}
+	{if $itemsCount > 0}
+	<div class="projects">
+		{if $renderMode === $presenter::RENDER_MODE_THUMBNAILS}
+		<div class="itemList">
+			<div class="item" n:foreach="$items as $project">
+				<span class="project-name">{$project->name}</span>
+				<img src="{$basePath}/{$projectsModel->getPreviewPath($project->id)}">
+				<div class="project-info">
+					{$project->vectorFilesCount} Vector Files |
+					{$project->bitmapFilesCount} Images
+				</div>
+			</div>
+			<div class="clear"></div>
+		</div>
+		{elseif $renderMode === $presenter::RENDER_MODE_LIST}
+			<table class="width_100 grid">
+				<tbody>
+					<tr n:foreach="$items as $project">
+						<td>{$project->name}</td>
+						<td>{= is_null($project->completed) ? 'In Progress' : TemplateHelpers::date($project->completed)}</td>
+						<td>{$project->vectorFilesCount} Vector Files</td>
+						<td>{$project->bitmapFilesCount} Images</td>
+					</tr>
+				</tbody>
+			</table>
+		{/if}
+	</div>		
+		{control itemPaginator false, step}
+		<div class="clear"></div>
+	{else}
+		<div class="infoMsg">No results found</div>
+	{/if}
+{/snippet}

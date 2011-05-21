@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<meta name="description" content="{$description}" n:ifset="$description">
+	<meta name="keywords" content="{$keywords}" n:ifset="$keywords">
+	<meta name="robots" content="{$robots}" n:ifset="$robots">
+	
+	<title>{block #title}{$title}{/block} | Maga Design Group</title>
+
+	<link rel="stylesheet" media="print" href="{$basePath}/css/print.css" type="text/css">
+	<link rel="shortcut icon" href="{$basePath}/favicon.ico" type="image/x-icon">
+
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+<!--	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>-->
+<!--	<script type="text/javascript" src="{$basePath}/js/jquery-1.4.4.js"></script>-->
+	
+	{control js 'jquery.livequery.js', 'jquery.nette.js', 'netteForms.js', 'jquery.placeholder.min.js', 'jquery.cookie.js', 'internal.js', 'common.js', 'js.js'}
+	{control css 'reset.css', 'general.css', 'screen.css'}
+
+	{*
+	 * Google Analytics
+	 * todo: define GA id
+	 * Debug::$productionMode je true na production, ak nie som z dev IP
+	 *}
+	{if Environment::isProduction() && Debug::$productionMode}
+	<script type="text/javascript">
+		var id = '';
+		if (id) {
+		  	var _gaq = _gaq || [];
+		  	_gaq.push(['_setAccount', id]);
+		  	_gaq.push(['_trackPageview']);
+		
+		  	(function() {
+		    	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    	ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  	})();
+		}
+	</script>
+	{/if}
+	
+	{* js a css from views *}
+	{ifset $head}{!$head}{/if}
+
+	<!--[if IE]>
+		<link rel="stylesheet" media="screen" href="{$basePath}/css/ie.css" type="text/css">
+	<![endif]-->	
+	
+	
+	
+	
+<!--	FILE UPLOAD-->
+
+	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/themes/base/jquery-ui.css" id="theme">
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js"></script>
+
+<!--	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>-->
+	{*
+*}
+	<link rel="stylesheet" href="{$basePath}/modules/file-upload/jquery.fileupload-ui.css">
+	<script src="{$basePath}/modules/file-upload/jquery.fileupload.js"></script>
+	<script src="{$basePath}/modules/file-upload/jquery.fileupload-ui.js"></script>
+	<script src="{$basePath}/modules/file-upload/jquery.fileupload-uix.js"></script>
+	
+<!--	http://benalman.com/projects/jquery-dotimeout-plugin/-->
+	<script src="{$basePath}/modules/file-upload/jquery.dotimeout.min.js"></script>
+	<script src="{$basePath}/modules/file-upload/inline.js"></script>
+	
+	
+<!--	FILE UPLOAD END-->
+
+<!--	TAG INPUT-->
+	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/modules/taginput/tagInput.css" type="text/css">
+	<script type="text/javascript" src="{$basePath}/modules/taginput/tagInput.js"></script>
+<!--	TAG INPUT END-->
+
+	{* FILE UPLOAD + TAG INPUT 
+	{control js '../modules/file-upload/jquery.fileupload.js', '../modules/file-upload/jquery.fileupload-ui.js', '../modules/file-upload/jquery.dotimeout.min.js', '../modules/file-upload/inline.js', '../modules/taginput/tagInput.js'}
+	{control css '../modules/file-upload/jquery.fileupload-ui.css', '../modules/taginput/tagInput.css'}
+	*}
+	
+	
+	<script>
+		var debug = !{= Environment::isProduction() && Debug::$productionMode};
+	</script>
+	
+</head>
+
+<body>
+<div class="all">
+	<div class="upmenu">
+		<span>Logged as {$user->identity->realname}</span>
+		<a href="{link :Front:Files:list}">Files</a> |
+		<a href="{link :Projects:Admin:Default:default}">Projects admin</a> |
+		<a href="{link :Users:Admin:Default:add}">Users admin</a>
+	</div>
+	<div class="extender">
+		<div id="header">
+		
+			<a href="#" title="Home" class="menu-icon home-icon"></a>
+			<a href="#" title="Settings" class="menu-icon settings-icon"></a>
+			<a href="#" title="Client Packages" class="menu-icon client-package-icon"></a>
+			<a href="#" title="Lightboxes" class="menu-icon lightbox-icon"></a>
+			<a href="{link :Front:Login:logout}" title="Logout" class="menu-icon logout-icon"></a>
+			<a href="#" title="Help" class="menu-icon help-icon"></a>
+			<a href="#" title="Upload File(s)" class="menu-icon upload-icon"></a>
+			
+		</div>
+		
+		<div id="container">
+		
+			{snippet flashes 'div class="flashes"'}
+				{foreach $flashes as $flash}<div class="flash {$flash->type}">{$flash->message}</div>{/foreach}
+			{/snippet}
+			
+			<div class="filters-pannel">
+				{snippet searchForm, 'div class="ib"'}
+					{control searchForm}
+					<a id="searchFormClearer" href="{link clearSearchForm!}" class="ajax" title="clear search"></a>
+				{/snippet}
+				
+				{snippet menu, 'div class="filter-menu ib"'}
+				<a href="{link :Front:Files:list filter=>null}" class="ajax{ifCurrent} active{/if}">All</a>
+				<a href="{link :Front:Files:list filter=>FilesModel::FILTER_BY_VECTOR}" class="ajax{ifCurrent} active{/if}">Vector</a>
+				<a href="{link :Front:Files:list filter=>FilesModel::FILTER_BY_BITMAP}" class="ajax{ifCurrent} active{/if}">Bitmap</a>
+				<a href="{link :Front:Files:list filter=>FilesModel::FILTER_BY_INSPIRATION}" class="ajax{ifCurrent} active{/if}">Inspiration</a>
+				<a href="{link :Projects:Front:Default:list filter=>null}" class="ajax{ifCurrent} active{/if}">Projects</a>
+				{/snippet}
+			</div>
+			
+			<div class="options-pannel">
+				<span class="toggler"><span>Show</span> Options</span>
+				<div class="options">
+				{snippet options}
+				{include #options}
+				{/snippet}
+				</div>
+			</div>
+			
+			<div id="content">
+<!--				<h1>Maga Design SVG Library</h1>-->
+				
+				{*control navigation*}
+
+				<!--FILE UPLOAD-->
+				<div class="fileUploadArea">
+					{form fileUploadForm}
+						{requiredPrefix null}
+						{*<!--<p class="error" n:foreach="$formErrors as $error">{$error}</p>-->*}
+						<div class="fileUpload-header">
+						<!--<span>Select file</span>-->
+							{input file}
+						</div>
+						<div class="invisible">
+						{label projects_id} {input projects_id}
+						{label tags} {input tags}
+						{label complexity_id} {input complexity_id}
+						</div>
+						{input save}
+					{/form}
+		
+					<table id="files">
+						<!--<tr><td class="filesInfo"></td></tr>-->
+					</table>
+					
+					<div class="fileUpload-footer">
+						<div class="filesInfo"></div>
+						<div class="action-buttons">
+							<a href="#" class="cancelUpload">X</a>
+							<button id="start_uploads" class="invisible">Upload files</button>
+						</div>
+						<div class="clear"></div>
+					</div>
+				</div> <!--end of fileUploadArea-->
+				<!--FILE UPLOAD END-->
+				
+				{*control internalNavigation*}
+	
+				@{include #content}
+			</div>
+		</div>
+		
+	</div><!--end of .extender-->
+	
+	<div id="footer">
+		{ifset $footerBgn}
+			<div class="{$footerBgn}"></div>
+			<div class="footerline"></div>
+		{/if}
+		<div class="text">
+			<a class="masked" href="{link :Front:Login:login}">©</a> Maga Design Group 2011 | All rights reserved
+		</div>
+	</div>
+</div><!--end of .all-->
+
+
+<!--	components scripts and styles MUST BE AFTER #content => after rendering all components -->
+{!$presenter->renderWebloaderFiles()}
+
+</body>
+</html>

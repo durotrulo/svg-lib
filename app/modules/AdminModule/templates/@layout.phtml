@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<title>{block #title}{$title}{/block} | Fabryka</title>
+
+<!--	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/screen.css" type="text/css">-->
+	<link rel="stylesheet" media="print" href="{$basePath}/css/print.css" type="text/css">
+	<link rel="shortcut icon" href="{$basePath}/favicon.ico" type="image/x-icon">
+
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+	<link rel="stylesheet" media="screen,projection,tv" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css">
+
+	{control js 'jquery.livequery.js', 'jquery.nette.js', 'netteForms.js', 'jquery.placeholder.min.js', 'common.js', 'js.js'}
+	{control css 'reset.css', 'general.css', 'screen.css', 'admin.css'}
+
+	
+	
+<!--    <link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/datagrid.css" type="text/css">-->
+<!--    <link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/ajax.css" type="text/css">-->
+<!--    <link rel="stylesheet" media="print" href="{$basePath}/css/print.css" type="text/css">-->
+
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+
+<!--    <script type="text/javascript" src="{$basePath}/js/ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="{$basePath}/js/datepickerForms.js"></script>
+    <script type="text/javascript" src="{$basePath}/js/datagrid.js"></script>
+-->   
+	{* js a css from views *}
+	{ifset $head}{!$head}{/if}
+	
+		
+  </head>
+
+  <body>
+    <div id="container">
+
+		{snippet flashes 'div class="flashes"'}
+			<noscript><div class="flash warning">{_'You have disabled javascript. Only basic functionality is ensured without it.'}</div></noscript>
+			{foreach $flashes as $flash}<div class="flash {$flash->type}">{$flash->message}</div>{/foreach}
+		{/snippet}
+
+		
+<!--			<div id="header">-->
+		<div>
+			<strong>Username:</strong> {$user->getIdentity()->data['username']}
+			<strong>Name:</strong> {$user->getIdentity()->data['realname']}
+			<a href="{link :Front:Homepage:}">Frontend</a>
+			<a n:if="$user->isLoggedIn()" href="{link :Front:Login:logout lang=>'en'}">Logout</a>
+			
+			<ul class="admin-menu">
+				<li n:foreach="$modules as $module"><a href="{link $module::DEFAULT_URI}">{$module::MENU_LABEL}</a></li>
+			</ul>
+		</div>
+		<div id="content">
+			<div id="admin">
+			@{include #content}
+			</div>
+		</div>
+		<div id="footer">
+		{block footer}{/block}
+		</div>
+
+    </div>
+
+    	
+
+<!--	components scripts and styles MUST BE AFTER #content => after rendering all components -->
+{!$presenter->renderWebloaderFiles()}
+
+	<script type="text/javascript">
+		/*$('textarea.wysiwyg').each(function(){
+			CKEDITOR.replace( $(this).attr('id'),{
+				toolbar :
+		        [
+				    ['Format', 'Bold', 'Italic', '-', 'NumberedList', 'BulletedList', '-', 'Link', 'Unlink', '-', 'About']
+		        ],
+		        format_tags: 'p;h2;h3;h4;div'
+			});
+		});*/
+	</script>
+  </body>
+</html>

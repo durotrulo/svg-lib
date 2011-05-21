@@ -1,0 +1,46 @@
+{extends ../../@layout.phtml}
+
+{*
+ * @param Paginator $paginator
+ * @param array     $steps page numbers for pagination
+ * @param array     $itemsPerPage possible numbers of items to show
+ * @param string    $itemString name of paginated item [articles, videos, ...]
+ *}
+{block #vpContent}
+	<div class="paginator-filter">
+	<span class="margin">{_'Zobraziť'} </span>
+	{foreach $itemsPerPage as $num}
+		{if $paginator->itemsPerPage == $num}
+			<span class="current">{$num}</span>
+		{else}
+	 		<a {attr class('ajax', $useAjax)} href="{link goto!, 'itemsPerPage' => $num, 'page' => 1, itemsPerPageChanged => 1}">{$num}</a>
+		{/if}
+		{if !$iterator->isLast()} | {/if}
+	{/foreach}
+	{$itemString}
+	</div>
+	
+	<div class="paginator">
+	
+		{if $paginator->isFirst()}
+			<span class="button">{_'predošlá'}</span>
+		{else}
+			<a {attr class('ajax', $useAjax) class('arrow-left', true)} href="{link goto!, 'page' => $paginator->page - 1}">{_'predošlá'}</a>
+		{/if}
+	
+		<div class="quick-nav" n:inner-foreach="range(1, $paginator->pageCount) as $page">
+			{if $page == $paginator->page}
+				<span class="current" title="{$page}">~</span>
+			{else}
+				<a {if $useAjax}class="ajax"{/if} href="{link goto!, 'page' => $page}" title="{$page}">&#167;</a>
+			{/if}
+		</div>
+		
+		{if $paginator->isLast()}
+		<span class="button">{_'ďalšia'}</span>
+		{else}
+			<a {attr class('ajax', $useAjax) class('arrow-right', true)} href="{link goto!, 'page' => $paginator->page + 1}">{_'ďalšia'}</a>
+		{/if}
+	</div>
+
+	<div class="clear"></div>

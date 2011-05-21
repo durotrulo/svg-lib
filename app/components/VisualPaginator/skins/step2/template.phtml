@@ -1,0 +1,59 @@
+{extends ../../@layout.phtml}
+
+{*
+ * @param Paginator $paginator
+ * @param array     $steps page numbers for pagination
+ * @param array     $itemsPerPage possible numbers of items to show
+ * @param string    $itemString name of paginated item [articles, videos, ...]
+ *}
+
+ {block #vpContent}
+	<div class="paginator-filter">
+		<span class="margin">{_'Zobraziť'} </span>
+	{if $control->itemsPerPageAsSelect}
+		<form class="ajax" action="{link goto!}">
+			<select class="sumbitOnChange" name="{$control->getParamId('itemsPerPage')}" n:inner-foreach="$itemsPerPage as $num" >
+				<option value="{$num}" {if $paginator->itemsPerPage === $num}selected="selected"{/if}>{$num}</option>
+			</select>
+			<input type="hidden" name="{$control->getParamId('page')}" value="1" />
+			<input type="hidden" name="{$control->getParamId('itemsPerPageChanged')}" value="1" />
+			<input type="image" src="{$baseUri}img/go_page.png" alt="go" class="noJS" />
+		</form>
+	{else}
+		{foreach $itemsPerPage as $num}
+			{if $paginator->itemsPerPage === $num}
+				<span class="current">{$num}</span>
+			{else}
+		 		<a {attr class('ajax', $useAjax)} href="{link goto!, 'itemsPerPage' => $num, 'page' => 1, itemsPerPageChanged => 1}">{$num}</a>
+			{/if}
+			{if !$iterator->isLast()} | {/if}
+		{/foreach}
+	{/if}
+		{$itemString}
+	</div>
+
+	<div class="paginator">
+	
+		{if $paginator->isFirst()}
+			<span class="button">&laquo; {_'predošlá'}</span>
+		{else}
+			<a {attr class('ajax', $useAjax)} href="{link goto!, 'page' => $paginator->page - 1}">&laquo; {_'predošlá'}</a>
+		{/if}
+	
+		{foreach $steps as $step}
+		{if $step == $paginator->page}
+			<span class="current">{$step}</span>
+		{else}
+			<a {attr class('ajax', $useAjax)} href="{link goto!, 'page' => $step}">{$step}</a>
+		{/if}
+		{if $iterator->nextValue > $step + 1}<span>…</span>{/if}
+		{/foreach}
+		
+		{if $paginator->isLast()}
+			<span class="button">{_'ďalšia'} &raquo;</span>
+		{else}
+			<a {attr class('ajax', $useAjax)} href="{link goto!, 'page' => $paginator->page + 1}">{_'ďalšia'} &raquo;</a>
+		{/if}
+	</div>
+
+	<div class="clear"></div>

@@ -1,0 +1,21 @@
+<?php
+/* vrati nalinkovane .js a .css subory potrebne pre richtext editaciu s CKeditor + CKfinder ak treba .. testuje ich existenciu */
+$relativePath = '/js/ckeditor/';
+$path = WWW_DIR . $relativePath;
+$js_files = array('ckeditor.js', 'adapters/jquery.js', 'default_config.js',);
+if ($useFileBrowser) {
+	$js_files[] = 'ckfinder/ckfinder.js';
+}
+
+foreach ($js_files as $file) {
+	if (!file_exists($path . $file)) {
+		throw new Exception("Copy ckeditor to '$path' first! File '$file' missing.");
+	}
+}
+?>
+
+{foreach $js_files as $file}
+<script type="text/javascript" src="{$basePath}{$relativePath}{$file}"></script>
+{/foreach}
+
+<link type="text/css" rel="stylesheet" href="{$basePath}/js/ckeditor/mycontents.css">

@@ -1,0 +1,95 @@
+.file_upload {
+  position: relative;
+  overflow: hidden;
+  direction: ltr;
+  cursor: pointer;
+  text-align: center;
+  color: #333;
+  font-weight: bold;
+
+  /*
+  border: 1px solid limegreen;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  */
+  width: 309px;
+  height: 31px;
+  line-height: 30px;
+  background: transparent url(upload-button-big-notext.png) no-repeat;
+  
+}
+
+.upload-button {
+	color:#CBDFC8;
+	font-size:14px;
+}
+
+.file_upload_small {
+  height: 30px;
+  line-height: 30px;
+  font-size: auto;
+/*
+  background: palegreen;
+  width: 200px;
+  border: 1px solid limegreen;
+  */
+}
+
+.file_upload_large {
+  width: 100%;
+  	/*width: 80%;*/
+  height: 150px;
+  	height: 100px;
+  line-height: 150px;
+  font-size: 20px;
+  background: palegreen;
+  border: 1px solid limegreen;
+  color:#666;
+}
+
+.file_upload_highlight {
+  background: lawngreen;
+  color:black;
+}
+
+.file_upload_highlight .upload-button,
+.file_upload_large .upload-button {
+	color: #666;
+}
+
+.file_upload input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  border: 300px solid transparent;
+  opacity: 0;
+  -ms-filter: 'alpha(opacity=0)';
+  filter: alpha(opacity=0);
+  -o-transform: translate(-300px, -300px) scale(10);
+  -moz-transform: translate(-800px, 0) scale(10);
+  cursor: pointer;
+}
+
+.file_upload iframe, .file_upload button, .file_upload input.button {
+  display: none;
+}
+
+.file_upload_preview img {
+  width: 150px;
+  height:113px;
+}
+
+.file_upload_progress .ui-progressbar-value {
+  background: url(pbar-ani.gif);
+}
+
+.file_upload_progress div {
+  width: 150px;
+  height: 15px;
+}
+
+.file_upload_cancel button {
+  cursor: pointer;
+}

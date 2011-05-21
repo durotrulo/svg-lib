@@ -1,0 +1,40 @@
+@{var layout MODULES_DIR . '/AdminModule/templates/@layout.phtml'}
+@{extends $layout}
+@{block #content}
+
+<div class="heading">{$title}</div>
+<div class="description" n:ifset="$description">{$description}</div>
+<a href="{link add}">Add</a>
+
+@{include #content2}	
+	
+{snippet projectsList}
+{if isset($projects) and count($projects) > 0}
+	<table>
+		<thead>
+			<tr>
+				<th>Project Name</th>
+				<th>Completed</th>
+				<th>Client/Internal</th>
+				<th>Project Manager</th>
+				<th>Edit</th>
+				<th>Delete</th>
+			</tr>
+		</thead>
+	
+		<tbody>
+			<tr n:foreach="$projects AS $project">
+				<td>{$project->name}</td>
+				<td>{$project->completed}</td>
+				<td>{$project->type}</td>
+				<td>{$project->manager}</td>
+				<td><a class="ajax" href="{link edit $project->id}">{_'edit'}</a></td>
+				<td><a class="confirm ajax" href="{link delete! $project->id}">{_'delete'}</a></td>
+			</tr>
+		</tbody>
+	</table>
+{else}
+	<div class="infoMsg">No project in system yet.</div>
+{/if}
+{/snippet}
+
