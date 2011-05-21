@@ -31,6 +31,8 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 	{
 		parent::startup();
 
+		$this->config = Environment::getConfig('projects');
+
 		if (!is_null($this->renderMode) and !in_array($this->renderMode, $this->_allowedRenderModes)) {
 			throw new InvalidStateException('Parameter renderMode must be one of ' . join(',', $this->_allowedRenderModes) . ".'$this->renderMode' given.");
 		}
@@ -68,9 +70,9 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 		$this->template->itemsCount = $itemsCount = $this->items->count();
 		
 		$vp = $this['itemPaginator'];
-		$vp->selectItemsPerPage = array(1,8, 16, 24, 32, 40, 48, 56, 64);
+		$vp->selectItemsPerPage = array(1, 8, 16, 24, 32, 40, 48, 56, 64);
 		$vp->itemsPerPageAsSelect = true;
- 		$vp->setDefaultItemsPerPage($this->itemsPerPage);
+ 		$vp->setDefaultItemsPerPage($this->config->defaultItemsPerPage);
         $vp->paginator->itemCount = $itemsCount;
         $vp->itemString = 'per page';
 		$this->template->items = $this->items

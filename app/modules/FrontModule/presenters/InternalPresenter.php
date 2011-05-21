@@ -11,8 +11,8 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 	/** @persistent */
 	public $sorting = dibi::DESC;
 	
-	/** @persistent @var int */
-	public $itemsPerPage = 16;
+//	/** @persistent @var int */
+//	public $itemsPerPage = 16;
 	
 	/** @persistent @var string search query */
 	public $q;
@@ -132,9 +132,9 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 		BaseModel::validateSorting($this->sorting, dibi::DESC);
 		
 		// set itemsPerPage by paginator to have correct links
-		if (!empty($this['itemPaginator']->itemsPerPage)) {
-			$this->itemsPerPage = $this['itemPaginator']->itemsPerPage;
-		}
+//		if (!empty($this['itemPaginator']->itemsPerPage)) {
+//			$this->itemsPerPage = $this['itemPaginator']->itemsPerPage;
+//		}
 		
 		MyTagInput::register();
 	}

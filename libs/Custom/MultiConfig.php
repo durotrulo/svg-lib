@@ -25,7 +25,7 @@ class MultiConfig extends Object
 		Environment::setVariable('tempDir', VAR_DIR . '/cache');
 		$output = Environment::expand("%tempDir%/config[$envName]-generated.ini");
 		
-		if (!file_exists($output)) {
+		if (!file_exists($output) or !Environment::isProduction()) {
 			// najviac casu zabera load, tak az tu, ked ho je treba
 			$appConfig = Environment::loadConfig($baseConfigFile);
 			$configs = array(Config::fromFile($baseConfigFile, $envName)->toArray());

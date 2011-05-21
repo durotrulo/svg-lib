@@ -22,6 +22,8 @@ class Front_FilesPresenter extends Front_InternalPresenter
 	{
 		parent::startup();
 
+		$this->config = Environment::getConfig('files');
+
 		// if filtering by inspiration complexity -> show it in select box complexity
 //		if ($this->filter === FilesModel::COMPLEXITY_INSPIRATION_ID) {
 //			$this->complexity = $this->filter;
@@ -54,11 +56,10 @@ class Front_FilesPresenter extends Front_InternalPresenter
 		$this->template->filesModel = $this->filesModel;
 		
 		$this->template->itemsCount = $itemsCount = $this->items->count();
-		
 		$vp = $this['itemPaginator'];
 		$vp->selectItemsPerPage = array(1,8, 16, 24, 32, 40, 48, 56, 64);
 		$vp->itemsPerPageAsSelect = true;
- 		$vp->setDefaultItemsPerPage($this->itemsPerPage);
+ 		$vp->setDefaultItemsPerPage($this->config->defaultItemsPerPage);
         $vp->paginator->itemCount = $itemsCount;
         $vp->itemString = 'per page';
 		$this->template->items = $this->items
