@@ -77,6 +77,8 @@ $(function () {
         uploadTable: $('#files'),
 //	        downloadTable: $('#files'),
         buildUploadRow: function (files, index) {
+        	fileUploads.add(files[index]);
+          	
            	return $('<tr class="fileUpload-item">' +
                 '<td class="file_upload_preview"><span class="filename">' + files[index].name + '</span> <span>' + formatFileSize(files[index].size) + '</span><br></td>' +
                 '<td class="file_upload_progress"><div></div></td>' +
@@ -106,6 +108,7 @@ $(function () {
         	// submit only if form passed Nette validation
         	$('#frmitemForm-save').click(function (e) {
 	            if (Nette.validateForm(handler.uploadForm.context)) {
+                    $.Nette.showSpinner();
 	            	callBack();
 	            }
 	            
@@ -128,34 +131,36 @@ $(function () {
 	    
 	    initUpload: function (event, files, index, xhr, handler, callBack) {
 		    // max. number of files constraints
-	    	if (index >= this.maxFilesCount || fileUploads.count >= this.maxFilesCount) {
+	    	var files2upload = $('tr', this.uploadTable).length;
+	    	if (index >= this.maxFilesCount || files2upload >= this.maxFilesCount) {
 		    	$.error('You can upload max. ' + this.maxFilesCount + ' file(s).');
 	    		return false;
 	    	}
-
-	    	fileUploads.add(files[index]);
+	    	
           	$(dropZoneSel).hide();
 	    	
 		    // original initUpload copied from fileUploadUI	
-	    	handler.initUploadRow(event, files, index, xhr, handler, function () {
-                if (typeof handler.beforeSend === 'function') {
-                    handler.beforeSend(event, files, index, xhr, handler, function () {
-                        $.Nette.showSpinner();
-                    	handler.initUploadProgress(xhr, handler);
+	    	handler.initUploadRow(event, files, index, xhr, handler);
+            handler.addNode(
+                handler.uploadTable,
+                handler.uploadRow,
+                function () {
+                    if (typeof handler.beforeSend === 'function') {
+                        handler.beforeSend(event, files, index, xhr, handler, callBack);
+                    } else {
                         callBack();
-                    });
-                } else {
-                    handler.initUploadProgress(xhr, handler);
-                    callBack();
+                    }
                 }
-            });
+            );
 		},
 		
 		// make sure server response is processed by Nette.success
 		onComplete: function (event, files, index, xhr, handler) {
         	fileUploads.remove(files[index]);
- 	       	$.Nette.hideSpinner();
-			
+			handler.removeNode(handler.uploadRow);
+
+			$.Nette.hideSpinner();
+
             if (fileUploads.count === 0) {
             }
             

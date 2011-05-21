@@ -8,7 +8,8 @@
  */
 jQuery.extend({
 	Nette: {
-		AJAX_PROCESSING_TEXT: 'Spracúvam..',
+//		AJAX_PROCESSING_TEXT: 'Spracúvam..',
+		AJAX_PROCESSING_TEXT: 'Processing..',
 		
 		AJAX_SUCCESS_EVENT: 'onSuccess',
 		AJAX_ERROR_EVENT: 'onError',

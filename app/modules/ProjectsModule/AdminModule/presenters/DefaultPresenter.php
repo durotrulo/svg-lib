@@ -151,7 +151,8 @@ class Projects_Admin_DefaultPresenter extends Admin_BasePresenter
 				$id = (int) $this->getParam('id');
 				$values = $form->getValues();
 
-				if ($id > 0) {
+				// 0 = GENERAL
+				if ($id >= 0) {
 					$this->model->update($id, $values);
 					$this->flashMessage('Project updated.', self::FLASH_MESSAGE_SUCCESS);
 				} else {

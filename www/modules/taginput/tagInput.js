@@ -180,8 +180,8 @@ function initTagInput()
 		var $control = $('<span class="tag-control-container" for="' + $(this).attr('id')  + '"></span>');
 		$(this).parent().append($control);
 		$(this).appendTo($control);
-		$control.prepend('<span class="tag-value"></span>');
-		$control.append('<input type="text" class="tag-control-helper">');
+//		$control.prepend('<span class="tag-value"></span>');
+		$control.append('<input type="text" class="tag-control-helper"><span class="tag-value"></span>');
 		
 		if ($(this).attr('data-tag-suggest')) {
 			$control.append('<div class="tag-suggest"><ul></ul></div>');

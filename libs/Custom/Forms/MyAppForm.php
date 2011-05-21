@@ -65,6 +65,7 @@ class MyAppForm extends AppForm {
 				<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/jquery-ui.min.js"></script>
 				<script src="' . $basePath . '/modules/file-upload/jquery.fileupload.js"></script>
 				<script src="' . $basePath . '/modules/file-upload/jquery.fileupload-ui.js"></script>
+				<script src="' . $basePath . '/modules/file-upload/jquery.fileupload-uix.js"></script>
 				<script src="' . $basePath . '/modules/file-upload/admin-inline.js"></script>
 				
 			<!--	FILE UPLOAD END-->

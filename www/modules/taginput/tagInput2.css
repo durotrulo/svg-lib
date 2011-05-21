@@ -12,7 +12,7 @@
     text-align:left;
     
     position:relative;
-    
+    overflow:hidden;
 	/*
 	background: #FFF; 
 	padding: 3px; 
@@ -29,25 +29,47 @@
 }
 
 /*.tag-control-container.focus {border: 1px solid activeborder; outline: 2px auto -webkit-focus-ring-color;}*/
-.tag-control-container input.tag-control-helper {border: 0; display: inline; margin: 0; padding: 0; width:100%;}
+.tag-control-container input.tag-control-helper {
+	/*position:absolute;
+		top:43%;
+		*/
+	border: 0; display: inline; margin: 0; padding: 0; width:100%;
+ 	font-size: 100%;
+}
 .tag-control-container input.tag-control-helper:focus {outline: none;}
+.tag-control-container .tag-value {
+/*	position: absolute;
+    	margin-top: 30%;
+    	*/
+}
+
 .tag-control-container .tag-value span {
-	/*background-color: #DEE7F8;*/
-	background-color: #fff;
-	 -moz-border-radius: 9px; border-radius: 9px; margin: 0 0.5em 0 0; padding: 0 10px 0 10px; 
-	 /*border: 1px #A4BDED solid;*/
-	 color:#999;
-	 border: 1px #ccc solid;
-	 line-height: 170%; word-wrap: none; white-space: nowrap;}
+	color: #fff;
+	background-color:#5d7d58;
+	-moz-border-radius: 9px;
+	border-radius: 9px;
+	border: 1px #ccc solid;
+	margin: 0 0.5em 0 0;
+	padding: 0 15px 0 5px;
+	line-height: 170%;
+	word-wrap: none;
+	white-space: nowrap;
+}
 .tag-control-container .tag-value span:hover {
-	/*background-color: #BBCEF1;*/
 	background-color: #666; 
-	/*border-color: #6D95E0; */
 	border-color: #5D7D58;
 	color:#ccc; 
-	cursor: default; padding: 0 15px 0 5px;}
+	cursor: default; 
+}
 .tag-control-container .tag-value span.focus {background-color: #598AEC; border-color: #598AEC; color: #FFF;}
-.tag-control-container .tag-value span .delete {display: none; margin-left: 4px; margin-right: -13px;}
+.tag-control-container .tag-value span .delete {
+	display: inline;
+	margin-left: 4px;
+	margin-right: -13px;
+	/*background-color:#fff;*/
+	color:#5d7d58;
+	color:white;
+}
 .tag-control-container .tag-value span:hover .delete {display: inline;}
 .tag-control-container .tag-value span:hover .delete:hover {cursor: pointer;}
 

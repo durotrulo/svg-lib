@@ -88,8 +88,22 @@
 .file_upload_progress div {
   width: 150px;
   height: 15px;
+  display:none; /* hide progress bar by default - shown after user clicks 'upload' */
 }
 
 .file_upload_cancel button {
   cursor: pointer;
+}
+
+
+
+.fileUpload-item td {
+	vertical-align:top;
+}
+
+.file_upload_project_id, 
+.file_upload_tags, 
+.file_upload_complexity_id,
+.file_upload_progress {
+	padding-top:6% !important;
 }

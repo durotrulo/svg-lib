@@ -87,9 +87,9 @@ $(function () {
                 '<td class="file_upload_preview"> <span class="file_upload_cancel"><button class="ui-state-default ui-corner-all" title="Cancel">' +
 	                '<span class="ui-icon ui-icon-cancel">Cancel<\/span>' +
 	                '<\/button>&nbsp;&nbsp;&nbsp;</span> <span class="filename">' + files[index].name + '</span> <span>' + formatFileSize(files[index].size) + '</span><br><\/td>' +
-                '<td class="file_upload_project_id">' + getCloneHtml(origProjectsIdSelector) + '<\/td>' +
-                '<td class="file_upload_tags">' + getCloneHtml(origTagsSelector) + '<\/td>' +
-                '<td class="file_upload_complexity_id">' + getCloneHtml(origComplexityIdSelector) + '<\/td>' +
+                '<td class="file_upload_project_id">Project:<br>' + getCloneHtml(origProjectsIdSelector) + '<\/td>' +
+                '<td class="file_upload_tags">Tags:<br>' + getCloneHtml(origTagsSelector) + '<\/td>' +
+                '<td class="file_upload_complexity_id">Complexity:<br>' + getCloneHtml(origComplexityIdSelector) + '<\/td>' +
                 '<td class="file_upload_progress"><div><\/div><\/td>' +
                 '<td class="file_upload_start invisible">' +
                 '<button class="ui-state-default ui-corner-all" title="Start Upload">' +
@@ -114,6 +114,9 @@ $(function () {
 		            	$(tagsValSelector, handler.uploadForm).html(handler.uploadRow.find(tagsValSelector).html());
 				  		
 				  		if (Nette.validateForm(handler.uploadForm.context)) {
+				  			// show progress bar
+				  			$('.file_upload_progress div', handler.uploadRow).show();
+				  			
 	            			callBack();
 	            			// wait so callBack() get fired (upload() send ajax request)
 				  			setTimeout(function() {
@@ -143,7 +146,7 @@ $(function () {
         },
 	    
 	    initUpload: function (event, files, index, xhr, handler, callBack) {
-		    // na obmedzenie max. poctu suborov
+		    // max. number of files constraints
 	    	var files2upload = $('tr', this.uploadTable).length;
 	    	if (index >= this.maxFilesCount || files2upload >= this.maxFilesCount) {
 		    	$.error('You can upload max. ' + this.maxFilesCount + ' file(s).');
