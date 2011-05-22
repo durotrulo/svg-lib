@@ -1,0 +1,99 @@
+rss: http://www.fabryka.sk/projects/jokesy/www/front/rss/
+api: http://www.fabryka.sk/projects/jokesy/www/api/jokes/get/?limit=2&offset=5&filterBy={"byId":[654,655,656]}
+
+RESPONSE:
+items => [
+  656 => [
+      "id" => "656"
+      "created" => "2010-09-15 13:16:26"
+      "data" => "cely vtip"
+      "rating" => "0"
+      "ratingCount" => "0"
+      "tags" => [
+         32 => "zeny"
+         37 => "manzelske"
+         139 => "Boh"
+      ]
+      "author" => [
+         "id" => "2"
+         "name" => "NOT IMPLEMENTED"
+      ]
+      "link" => "http://localhost/jokesy_2.0.0/php5.3/www/front/jokes/show/656/"
+      "preview" => "nahlad vtipu"
+   ],
+   655 => [
+      "id" => "655"
+      "created" => "2010-09-14 21:41:49"
+      "data" => "cely vtip"
+      "rating" => "0"
+      "ratingCount" => "0"
+      "tags" => [
+         44 => "skolske" 
+         48 => "otec a syn" 
+      ]
+      "author" => [
+         "id" => "1"
+         "name" => "NOT IMPLEMENTED"
+      ]
+      "link" => "http://localhost/jokesy_2.0.0/php5.3/www/front/jokes/show/655/"
+      "preview" => nahlad vtipu
+  ]
+]
+
+PARAMETRE:
+  const FILTER_BY_AUTHOR = 'byAuthor';
+	const FILTER_BY_TAG = 'byTag';
+	const FILTER_BY_ID = 'byId';
+	
+	/** 
+	 * @persistent
+	 * @var int
+	 */
+	public $limit = 20;
+	
+	/** 
+	 * @persistent
+	 * @var int
+	 */
+	public $offset = 0;
+
+	/** 
+	 * @persistent
+	 * @var string or array ['created', 'rating'] or associative array ['created'=>'desc', 'rating'=>'desc']
+	 */
+	public $orderBy = array( 'created' => dibi::DESC );
+	
+	/** 
+	 * @persistent
+	 * @var string
+	 */
+	public $format = 'json'; // ['json']
+	
+	/** 
+	 * @persistent
+	 * @var associated array [json-encoded] - podla coho sa filtruje, AND spojenie
+	 * @example 
+	 * [ 
+	 * 	byTag: [2,3,5],
+	 * 	byId: [20,23,45],
+ 	 *  byAuthor: [3,4]
+ 	 * ];
+	 */
+	public $filterBy;
+	
+	/** @var array povolene hodnoty parametrov */
+	private $allowed = array(
+		'filterBy' => array(self::FILTER_BY_ID, self::FILTER_BY_AUTHOR , self::FILTER_BY_TAG,),
+		'orderBy' => array('created', 'rating',),
+		'order' => array(dibi::ASC, dibi::DESC,),
+		'formats' => array('json',),
+		'maxLimit' => 100,
+	);
+	
+	/**
+	 * defaultne hodnoty premennych v pripade, ze sa snazi nastavit niekto nevalidnu hodnotu
+	 */
+	private $defaults = array(
+		'limit' => 20,
+		'offset' => 0,
+	);

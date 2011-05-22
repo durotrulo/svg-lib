@@ -44,7 +44,7 @@ class RichTextArea extends MyTextArea
 	        $config->set('HTML.Doctype', $this->docType);
         }
         
-        $config->set('HTML.Allowed', 'p,a[href],strong,em,b,i,ul,ol,li,h1,h2,h3,h4,h5,div[class],span[class],br,sup,table[border],tr,td,th,thead,tbody');
+        $config->set('HTML.Allowed', 'p,a[href],strong,em,b,i,ul,ol,li,h1,h2,h3,h4,h5,div[class],span[class],br,sup,table[border],tr,td,th,thead,tbody,img[src],img[style]');
 //        $config->set('HTML.Allowed', 'p,a[href],strong,em,ul,ol,li,h1,h2,div[class],span[class],br,sup');
 //        $config->set('HTML.Allowed', 'p,a[href],strong,em,ul,ol,li,h2,h3,h4,h5');
 
@@ -64,7 +64,7 @@ class RichTextArea extends MyTextArea
 //		 kedze CKEDITOR to escapuje a neviem ho prinutit aby to nerobil, tak to tu dam naspat, Purifier to nasledne aj tak spravne zescapuje 
 //        $value = html_entity_decode($value);
 //        var_dump($value);
-        
+//        var_dump($purifier->purify($value));die();
         $this->setValue($purifier->purify($value));
 	}
 

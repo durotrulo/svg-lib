@@ -4,7 +4,8 @@ $(function() {
 	var config = {
 		toolbar :
 	        [
-			    ['Source', 'Undo','Redo','-','Styles', 'Format', 'Bold', 'Italic', 'Underline', '-', 'NumberedList', 'BulletedList', '-', 'JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock', '-', 'Link', 'Unlink', '-', 'About']
+			    ['Source', 'Undo','Redo','-','Styles', 'Format', 'Bold', 'Italic', 'Underline', '-', 'NumberedList', 'BulletedList', '-', 'JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock', '-', 'Link', 'Unlink', '-', 'About'],
+			    ['Image']
 //				    '/', // newline
 	        ],
 	        format_tags: 'p;h1;h2;h3;h4;div',
