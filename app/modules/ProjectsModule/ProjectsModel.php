@@ -44,6 +44,20 @@ class ProjectsModel extends BaseModel
 	}
 	
 	
+	/**
+	 * find by id
+	 *
+	 * @param int $id
+	 * @return DibiRow
+	 */
+	public function find($id)
+	{
+		return $this->findAll()
+					->where('p.id = %i', $id)
+					->fetch();
+	}
+	
+	
 	public function getPreviewPath($id)
 	{
 		return file_exists(self::PATH . "/$id/main.jpg") ? $this->getRelativePath() . "/$id/main.jpg" : 'images/default-project.jpg';

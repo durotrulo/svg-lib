@@ -27,6 +27,9 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 	
 	private $defaultRenderMode = self::RENDER_MODE_LIST;
 	
+	private $project;
+	
+	
 	protected function startup()
 	{
 		parent::startup();
@@ -44,6 +47,16 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 		Environment::getHttpResponse()->setCookie(self::COOKIE_NAME_RENDER_MODE, $this->renderMode, Tools::YEAR);
 		
 		$this->model = $this->projectsModel;
+	}
+
+	
+	protected function beforeRender()
+	{
+		parent::beforeRender();
+
+		$this->template->projectsModel = $this->projectsModel;
+		$this->template->renderMode = $this->renderMode;
+
 	}
 	
 	
@@ -64,9 +77,6 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 	
 	public function renderList()
 	{
-		$this->template->projectsModel = $this->projectsModel;
-		$this->template->renderMode = $this->renderMode;
-
 		$this->template->itemsCount = $itemsCount = $this->items->count();
 		
 		$vp = $this['itemPaginator'];
@@ -86,6 +96,20 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 		} else {
 			$this->invalidateControl();
 		}
+	}
+	
+
+	public function actionDetail($id)
+	{
+		$this->project = $this->model->find($id);
+		if (!$this->project) {
+			throw new BadRequestException('Project does not exist');
+		}
+	}
+
+	public function renderDetail($id)
+	{
+		$this->template->project = $this->project;
 	}
 	
 }

@@ -8,37 +8,40 @@
  *
  **}
 
- {capture $head}
+{capture $head}
 <script src="{$basePath}/modules/colorbox/jquery.colorbox.js"></script>
- <script>
- // @see http://colorpowered.com/colorbox/
- $(function() {
-	$("a[rel='images']").livequery( function () {
-	 	var fileDetailModal = $('#file-detail-modal');
-//	 	var linkReloadItemList = {link reloadItemList!};
-		$(this).colorbox({
-			inline: true, 
-			href: "#file-detail-modal",
-			onLoad: function() {
-				var el = $(this);
-				var item = el.parent('.item');
-				fileDetailModal.find('img').attr('src', el.attr('href'));
-				fileDetailModal.find('a.download-link').attr('href', item.find('a.download-link').attr('href'));
-				fileDetailModal.find('.downloads').text(item.find('.top-right').text());
-				fileDetailModal.find('.add2lightbox').html(item.find('.add2lightbox').html());
-			},
-			// reload itemlist to have up-to-date info (files could have been added 2 lightbox or downloaded)
-			onCleanup: function() {
-				$.get(linkReloadItemList);
-			}
-		}, function () { 
-			// callback
-		})
+<script>
+	// generate up-to-date link with every snippet redraw
+ 	var linkReloadItemList = {link reloadItemList!};
+ 	
+ 	// @see http://colorpowered.com/colorbox/
+ 	$(function() {
+		$("a[rel='images']").livequery( function () {
+		 	var fileDetailModal = $('#file-detail-modal');
+	//	 	var linkReloadItemList = {link reloadItemList!};
+			$(this).colorbox({
+				inline: true, 
+				href: "#file-detail-modal",
+				onLoad: function() {
+					var el = $(this);
+					var item = el.parent('.item');
+					fileDetailModal.find('img').attr('src', el.attr('href'));
+					fileDetailModal.find('a.download-link').attr('href', item.find('a.download-link').attr('href'));
+					fileDetailModal.find('.downloads').text(item.find('.top-right').text());
+					fileDetailModal.find('.add2lightbox').html(item.find('.add2lightbox').html());
+				},
+				// reload itemlist to have up-to-date info (files could have been added 2 lightbox or downloaded)
+				onCleanup: function() {
+					$.get(linkReloadItemList);
+				}
+			}, function () { 
+				// callback
+			})
+		});
 	});
-});
- </script>
- <link rel="stylesheet" href="{$basePath}/modules/colorbox/colorbox.css">
- {/capture}
+</script>
+<link rel="stylesheet" href="{$basePath}/modules/colorbox/colorbox.css">
+{/capture}
  
 {block title}Files{/block}
 
@@ -73,11 +76,6 @@
 
 @{block #content}
 {snippet itemList}
-
-{* generate up-to-date link with every snippet redraw *}
-<script>
-	 	var linkReloadItemList = {link reloadItemList!};
-</script>
 
 	{if $itemsCount > 0}
 	

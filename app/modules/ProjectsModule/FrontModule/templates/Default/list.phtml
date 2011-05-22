@@ -8,7 +8,7 @@
  *
  **}
 
-{block title}Projects{/block}
+{block #title}Projects{/block}
 
 
 {block #options}
@@ -47,7 +47,9 @@
 		<div class="itemList">
 			<div class="item" n:foreach="$items as $project">
 				<span class="project-name">{$project->name}</span>
-				<img src="{$basePath}/{$projectsModel->getPreviewPath($project->id)}">
+				<a href="{link detail $project->id}">
+					<img src="{$basePath}/{$projectsModel->getPreviewPath($project->id)}">
+				</a>
 				<div class="project-info">
 					{$project->vectorFilesCount} Vector Files |
 					{$project->bitmapFilesCount} Images

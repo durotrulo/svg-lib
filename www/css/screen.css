@@ -395,6 +395,9 @@ input.text {
     padding: 0 15px;
 }
 
+	.projects .project-info {
+		float:left;
+	}
 
 	.projects .itemList .item {
 		border: 1px solid #ccc;
@@ -407,7 +410,7 @@ input.text {
 			display: block;
 		}
 
-		.projects .project-info {
+		.projects .item .project-info {
 			border-top:1px solid #ccc;
 			padding-left:20px;
 		}
