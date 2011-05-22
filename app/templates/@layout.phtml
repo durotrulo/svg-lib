@@ -16,7 +16,12 @@
 	<link rel="stylesheet" media="print" href="{$basePath}/css/print.css" type="text/css">
 	<link rel="shortcut icon" href="{$basePath}/favicon.ico" type="image/x-icon">
 
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+	{* http://blogs.sitepoint.com/whats-new-in-jquery-16/ *}
+	{* load jQuery from CDN or fallback to local copy *}
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script>
+	<script>window.jQuery || document.write("<script src='{!$basePath}/js/jquery-1.6.1.min.js'>\x3C/script>")</script>
+	
+<!--	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>-->
 <!--	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>-->
 <!--	<script type="text/javascript" src="{$basePath}/js/jquery-1.4.4.js"></script>-->
 	
