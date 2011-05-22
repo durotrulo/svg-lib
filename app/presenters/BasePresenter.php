@@ -139,7 +139,10 @@ abstract class BasePresenter extends Presenter
     	
         $appDir = Environment::getVariable('appDir');
         $path = '/modules/' . str_replace(':', 'Module/', $presenter);
-        $modulePresPath = $path . "Module/templates";
+//        $modulePresPath = $path . "Module/templates";
+		$cleanPres = substr($presenter, strrpos($presenter, ':')+1);
+        $modulePresPath = $path . "Module/templates/$cleanPres";
+        
         $pathP = substr_replace($path, '/templates', strrpos($path, '/'), 0);
         $path = substr_replace($path, '/templates', strrpos($path, '/'));
 //        dump($path);
@@ -160,7 +163,7 @@ abstract class BasePresenter extends Presenter
 
 //dump($path);
 //dump("$appDir$modulePresPath/$view.phtml");
-        
+       
         return array_merge($paths, array(
         	"$appDir$modulePresPath/$view.phtml",
         	"$appDir$pathP/$view.phtml",
@@ -224,7 +227,7 @@ abstract class BasePresenter extends Presenter
 		}
 		
 //		dump($path);
-//		dump($list);
+//		dump($list);die();
         return array_merge($paths, $list);
     }
 

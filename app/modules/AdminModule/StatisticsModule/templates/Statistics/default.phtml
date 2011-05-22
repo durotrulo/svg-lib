@@ -1,0 +1,45 @@
+{block #content}
+	
+<table>
+	<caption>Projects Internal</caption>
+	<thead>
+		<tr>
+			<th>Project Name</th>
+			<th>Past Month</th>
+			<th>Past 3 Month</th>
+			<th>Past Year</th>
+			<th>Total</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr n:foreach="$projectStats as $stat">
+			<td>{$stat->name}</td>
+			<td>{$stat->month}</td>
+			<td>{$stat->quartal}</td>
+			<td>{$stat->year}</td>
+			<td>{$stat->total}</td>
+		</tr>
+	</tbody>
+</table>
+	
+<table>
+	<caption>Client Packages</caption>
+	<thead>
+		<tr>
+			<th>Project Name</th>
+			<th>Past Month</th>
+			<th>Past 3 Month</th>
+			<th>Past Year</th>
+			<th>Total</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr n:foreach="$projectStats as $stat">
+			<td>{$stat->name}</td>
+			<td>{$stat->month}</td>
+			<td>{$stat->quartal}</td>
+			<td>{$stat->year}</td>
+			<td>{$stat->total}</td>
+		</tr>
+	</tbody>
+</table>
