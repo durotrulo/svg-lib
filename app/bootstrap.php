@@ -75,16 +75,16 @@ dibi::connect(Environment::getConfig("database"));
 $routes = array();
 
 /* MENU ITEMS */
-//$routes[] = new Route('<lang [a-z]{2}>/<id>/', array(
-//	'module' => 'Front',
-//	'presenter' => 'Page',
-//	'action' => 'default',
-//	'id' => array(
-//                Route::FILTER_IN => callback('MenuSeoModel::findIdByUri'),
-//                Route::FILTER_OUT => callback('MenuSeoModel::findUriById'),
-//        ),
-//	'lang' => NULL,
-//));
+Route::addStyle('id');
+Route::setStyleProperty('id', Route::FILTER_TABLE, array(
+        'help' => '1',
+));
+$routes[] = new Route('[<lang [a-z]{2}>/]<id>/', array(
+	'module' => 'RichText:Front',
+	'presenter' => 'Default',
+	'action' => 'detail',
+	'id' => null,
+));
 
 $application->addRoutes($routes);
 

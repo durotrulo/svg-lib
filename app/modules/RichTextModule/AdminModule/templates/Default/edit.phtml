@@ -1,0 +1,12 @@
+{capture $head}
+	{var $path APP_DIR . '/templates/include/richtext.phtml'}
+	{include $path, 'useFileBrowser' => $useFileBrowser}
+{/capture}
+
+@{block #content}
+<div class="heading">{$title}</div>
+<div class="description" n:ifset="$description">{$description}</div>
+
+<div class="richtext">
+{control itemForm}
+</div>

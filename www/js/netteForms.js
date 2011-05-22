@@ -2,13 +2,13 @@
  * Nette Framework - simple form validation.
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://Nette.org/license  Nette license
- * @link       http://Nette.org
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  */
 
-var Nette = Nette || { };
+var nette = nette || { };
 
-Nette.getValue = function(elem) {
+nette.getValue = function(elem) {
 	if (!elem) {
 		return null;
 
@@ -41,7 +41,7 @@ Nette.getValue = function(elem) {
 		return elem.checked;
 
 	} else if (elem.type === 'radio') {
-		return Nette.getValue(elem.form.elements[elem.name]);
+		return nette.getValue(elem.form.elements[elem.name]);
 
 	} else {
 		return elem.value.replace(/^\s+|\s+$/g, '');
@@ -49,8 +49,8 @@ Nette.getValue = function(elem) {
 };
 
 
-Nette.validateControl = function(elem, rules, onlyCheck) {
-	rules = rules || eval('[' + (elem.getAttribute('data-Nette-rules') || '') + ']');
+nette.validateControl = function(elem, rules, onlyCheck) {
+	rules = rules || eval('[' + (elem.getAttribute('data-nette-rules') || '') + ']');
 	for (var id in rules) {
 		if (isNaN(parseInt(id))) continue; /* added: mootools fix - pridavalo automaticky dalsie prvky */
 		var rule = rules[id], op = rule.op.match(/(~)?([^?]+)/);
@@ -59,18 +59,18 @@ Nette.validateControl = function(elem, rules, onlyCheck) {
 		rule.condition = !!rule.rules;
 		var el = rule.control ? elem.form.elements[rule.control] : elem;
 
-		var success = Nette.validateRule(el, rule.op, rule.arg);
+		var success = nette.validateRule(el, rule.op, rule.arg);
 		if (success === null) continue;
 		if (rule.neg) success = !success;
 
 		if (rule.condition && success) {
-			if (!Nette.validateControl(elem, rule.rules, onlyCheck)) {
+			if (!nette.validateControl(elem, rule.rules, onlyCheck)) {
 				return false;
 			}
 		} else if (!rule.condition && !success) {
 			if (el.disabled) continue;
 			if (!onlyCheck) {
-				Nette.addError(el, rule.msg.replace('%value', Nette.getValue(el)));
+				nette.addError(el, rule.msg.replace('%value', nette.getValue(el)));
 			}
 			return false;
 		}
@@ -79,9 +79,9 @@ Nette.validateControl = function(elem, rules, onlyCheck) {
 };
 
 
-Nette.validateForm = function(sender) {
+nette.validateForm = function(sender) {
 	var form = sender.form || sender;
-	if (form['Nette-submittedBy'] && form.elements[form['Nette-submittedBy']] && form.elements[form['Nette-submittedBy']].getAttribute('formnovalidate')) {
+	if (form['nette-submittedBy'] && form.elements[form['nette-submittedBy']] && form.elements[form['nette-submittedBy']].getAttribute('formnovalidate')) {
 		return true;
 	}
 	for (var i = 0; i < form.elements.length; i++) {
@@ -89,7 +89,7 @@ Nette.validateForm = function(sender) {
 		if (!(elem.nodeName.toLowerCase() in {input:1, select:1, textarea:1}) || (elem.type in {hidden:1, submit:1, image:1, reset: 1}) || elem.disabled || elem.readonly) {
 			continue;
 		}
-		if (!Nette.validateControl(elem)) {
+		if (!nette.validateControl(elem)) {
 			return false;
 		}
 	}
@@ -97,7 +97,7 @@ Nette.validateForm = function(sender) {
 };
 
 
-Nette.addError = function(elem, message) {
+nette.addError = function(elem, message) {
 	if (elem.focus) {
 		elem.focus();
 	}
@@ -107,11 +107,11 @@ Nette.addError = function(elem, message) {
 };
 
 
-Nette.validateRule = function(elem, op, arg) {
-	var val = Nette.getValue(elem);
+nette.validateRule = function(elem, op, arg) {
+	var val = nette.getValue(elem);
 
 	if (elem.getAttribute) {
-		if (val === elem.getAttribute('data-Nette-empty-value')) val = null;
+		if (val === elem.getAttribute('data-nette-empty-value')) val = null;
 	}
 
 	switch (op) {
@@ -119,12 +119,12 @@ Nette.validateRule = function(elem, op, arg) {
 		return val !== '' && val !== false && val !== null;
 
 	case ':valid':
-		return Nette.validateControl(elem, null, true);
+		return nette.validateControl(elem, null, true);
 
 	case ':equal':
 		arg = arg instanceof Array ? arg : [arg];
 		for (var i in arg) {
-			if (val == (arg[i].control ? Nette.getValue(elem.form.elements[arg[i].control]) : arg[i])) return true;
+			if (val == (arg[i].control ? nette.getValue(elem.form.elements[arg[i].control]) : arg[i])) return true;
 		}
 		return false;
 
@@ -163,23 +163,23 @@ Nette.validateRule = function(elem, op, arg) {
 		return (arg[0] === null || parseFloat(val) >= arg[0]) && (arg[1] === null || parseFloat(val) <= arg[1]);
 
 	case ':submitted':
-		return elem.form['Nette-submittedBy'] === elem.name;
+		return elem.form['nette-submittedBy'] === elem.name;
 	}
 	return null;
 };
 
 
-Nette.toggleForm = function(form) {
+nette.toggleForm = function(form) {
 	for (var i = 0; i < form.elements.length; i++) {
 		if (form.elements[i].nodeName.toLowerCase() in {input:1, select:1, textarea:1, button:1}) {
-			Nette.toggleControl(form.elements[i]);
+			nette.toggleControl(form.elements[i]);
 		}
 	}
 };
 
 
-Nette.toggleControl = function(elem, rules, firsttime) {
-	rules = rules || eval('[' + (elem.getAttribute('data-Nette-rules') || '') + ']');
+nette.toggleControl = function(elem, rules, firsttime) {
+	rules = rules || eval('[' + (elem.getAttribute('data-nette-rules') || '') + ']');
 	var has = false;
 	for (var id in rules) {
 		if (isNaN(parseInt(id))) continue; /* added: mootools fix - pridavalo automaticky dalsie prvky */
@@ -190,25 +190,25 @@ Nette.toggleControl = function(elem, rules, firsttime) {
 		if (!rule.condition) continue;
 
 		var el = rule.control ? elem.form.elements[rule.control] : elem;
-		var success = Nette.validateRule(el, rule.op, rule.arg);
+		var success = nette.validateRule(el, rule.op, rule.arg);
 		if (success === null) continue;
 		if (rule.neg) success = !success;
 
-		if (Nette.toggleControl(elem, rule.rules, firsttime) || rule.toggle) {
+		if (nette.toggleControl(elem, rule.rules, firsttime) || rule.toggle) {
 			has = true;
 			if (firsttime) {
 				if (!el.nodeName) { // radio
 					for (var i in el) {
-						el[i].onclick = function() { Nette.toggleForm(elem.form); };
+						el[i].onclick = function() { nette.toggleForm(elem.form); };
 					}
 				} else if (el.nodeName.toLowerCase() === 'select') {
-					el.onchange = function() { Nette.toggleForm(elem.form); };
+					el.onchange = function() { nette.toggleForm(elem.form); };
 				} else {
-					el.onclick = function() { Nette.toggleForm(elem.form); };
+					el.onclick = function() { nette.toggleForm(elem.form); };
 				}
 			}
 			for (var id in rule.toggle || []) {
-				Nette.toggle(id, success ? rule.toggle[id] : !rule.toggle[id]);
+				nette.toggle(id, success ? rule.toggle[id] : !rule.toggle[id]);
 			}
 		}
 	}
@@ -216,7 +216,7 @@ Nette.toggleControl = function(elem, rules, firsttime) {
 };
 
 
-Nette.toggle = function(id, visible) {
+nette.toggle = function(id, visible) {
 	var elem = document.getElementById(id);
 	if (elem) {
 		elem.style.display = visible ? "" : "none";
@@ -224,16 +224,16 @@ Nette.toggle = function(id, visible) {
 };
 
 
-Nette.initForm = function(form) {
+nette.initForm = function(form) {
 	/*added to allow inline onsubmit event on form*/
 	var origOnSubmit = form.onsubmit;
 	form.onsubmit = function() {
 		if (typeof origOnSubmit === 'function') {
-			if (!origOnSubmit()) {
+			if (origOnSubmit() === false) {
 				return false;
 			}
 		}
-		var isValid = Nette.validateForm(form);
+		var isValid = nette.validateForm(form);
 		// form je validny, zobrazime ze sa ide odoslat na buttone
 		if (isValid) {
 			// ak nie je ajax
@@ -245,17 +245,17 @@ Nette.initForm = function(form) {
 			}
 		}
 		return isValid;
-//		return Nette.validateForm(form);
+//		return nette.validateForm(form);
 	};
 
 	form.onclick = function(e) {
 		e = e || event;
 		var target = e.target || e.srcElement;
-		form['Nette-submittedBy'] = (target.type in {submit:1, image:1}) ? target.name : null;
+		form['nette-submittedBy'] = (target.type in {submit:1, image:1}) ? target.name : null;
 	};
 
 	for (var i = 0; i < form.elements.length; i++) {
-		Nette.toggleControl(form.elements[i], null, true);
+		nette.toggleControl(form.elements[i], null, true);
 	}
 
 	if (/MSIE/.exec(navigator.userAgent)) {
@@ -276,7 +276,7 @@ Nette.initForm = function(form) {
 
 (function(){
 	var init = function() {
-		for (var i = 0; i < document.forms.length; i++) Nette.initForm(document.forms[i]);
+		for (var i = 0; i < document.forms.length; i++) nette.initForm(document.forms[i]);
 	};
 	typeof jQuery === 'function' ? jQuery(init) : window.onload = init;
 })();

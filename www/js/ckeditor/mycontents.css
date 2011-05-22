@@ -1,0 +1,50 @@
+/****************************************/
+/* Styles for richtext sections	   		*/
+/****************************************/
+
+h1 {
+	color:#7c0000;
+	text-transform:uppercase;
+}
+
+h2 {
+	text-transform:uppercase;
+	margin:15px 0;	
+}
+
+.bold {
+	font-weight: bold;
+}
+
+.green, .green a {
+	color:#0cff00;
+}
+
+.gray {
+	color:#838383;
+}
+
+.darkgray {
+	color:#4e4e4e;
+}
+
+.red, a {
+	color:#b9110f;
+}
+
+.data ul, .cke_show_borders ul {
+	padding-left:20px;
+	margin:10px 0;
+	list-style-type:none;
+}
+
+.data p, .cke_show_borders p {
+	margin-top:0px;
+}
+
+.ref-heading {
+	color:#5c6c69;
+	/*font-weight:bold;*/
+	/*line-height:20px;*/
+	margin-top:5px;
+}

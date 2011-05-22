@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<meta name="description" content="{$description}" n:ifset="$description">
+	<meta name="keywords" content="{$keywords}" n:ifset="$keywords">
+	<meta name="robots" content="{$robots}" n:ifset="$robots">
+	
+	<title>{block #title}{$title}{/block} | Maga Design Group</title>
+
+	<link rel="stylesheet" media="print" href="{$basePath}/css/print.css" type="text/css">
+	<link rel="shortcut icon" href="{$basePath}/favicon.ico" type="image/x-icon">
+
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+	
+	{control js 'jquery.livequery.js', 'jquery.nette.js', 'netteForms.js', 'jquery.placeholder.min.js', 'common.js', 'js.js'}
+	{control css 'reset.css', 'general.css', 'screen.css'}
+
+	{*
+	 * Google Analytics
+	 * todo: define GA id
+	 * Debug::$productionMode je true na production, ak nie som z dev IP
+	 *}
+	{if Environment::isProduction() && Debug::$productionMode}
+	<script type="text/javascript">
+		var id = '';
+		if (id) {
+		  	var _gaq = _gaq || [];
+		  	_gaq.push(['_setAccount', id]);
+		  	_gaq.push(['_trackPageview']);
+		
+		  	(function() {
+		    	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    	ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  	})();
+		}
+	</script>
+	{/if}
+	
+	{* js a css from views *}
+	{ifset $head}{!$head}{/if}
+
+	<!--[if IE]>
+		<link rel="stylesheet" media="screen" href="{$basePath}/css/ie.css" type="text/css">
+	<![endif]-->	
+	
+</head>
+
+<body>
+<div class="all">
+	<div class="extender">
+	<div id="header">
+	{include #title}
+	</div>
+	<div id="container">
+	
+		<div class="flashes">
+		{snippet flashes}
+			{foreach $flashes as $flash}<div class="flash {$flash->type}">{$flash->message}</div>{/foreach}
+		{/snippet}
+		</div>	
+		
+		<div class="filters-pannel">
+			{snippet menu, 'div class="filter-menu ib"'}
+			<a href="{link :Front:Files:list filter=>null}" class="ajax{ifCurrent} active{/if}">All</a>
+			<a href="{link :Front:Files:list filter=>FilesModel::FILTER_BY_VECTOR}" class="ajax{ifCurrent} active{/if}">Vector</a>
+			<a href="{link :Front:Files:list filter=>FilesModel::FILTER_BY_BITMAP}" class="ajax{ifCurrent} active{/if}">Bitmap</a>
+			<a href="{link :Front:Files:list filter=>FilesModel::FILTER_BY_INSPIRATION}" class="ajax{ifCurrent} active{/if}">Inspiration</a>
+			<a href="{link :Projects:Front:Default:list filter=>null}" class="ajax{ifCurrent} active{/if}">Projects</a>
+			{/snippet}
+		</div>
+		
+		<div id="content">
+			@{include #content}
+		</div>
+	</div>
+	
+	</div>
+	
+	<div id="footer">
+		{ifset $footerBgn}
+			<div class="{$footerBgn}"></div>
+			<div class="footerline"></div>
+		{/if}
+		<div class="text">
+			<a class="masked" href="{link :Front:Login:login}">©</a> Maga Design Group 2011 | All rights reserved
+		</div>
+	</div>
+</div>
+
+<!--	components scripts and styles MUST BE AFTER #content => after rendering all components -->
+{!$presenter->renderWebloaderFiles()}
+
+</body>
+</html>

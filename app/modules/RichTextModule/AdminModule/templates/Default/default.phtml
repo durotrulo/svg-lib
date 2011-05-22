@@ -1,0 +1,27 @@
+@{block #content}
+
+<div class="menu-items">
+	<div class="heading">{$title}</div>
+	<div class="description" n:ifset="$description">{$description}</div>
+
+	{if isset($items) and count($items) > 0}
+	<table cellspacing="0">
+		<thead>
+            <tr>
+              <th>{_'Label'}</th>
+              <th>{_'Edit'}</th>
+            </tr>
+		</thead>
+		<tbody>
+		{foreach $items as $v}
+		<tr class="menu-item">
+			<td>{$v->label}</td> 
+			<td><a href="{link edit $v->id}">{_'edit'}</a></td>
+		</tr>
+		{/foreach}
+		</tbody>
+	</table>
+	{else}
+		<div class="infoMsg">{_'No records found.'}</div>
+	{/if}
+</div>
