@@ -19,7 +19,7 @@ class Users_Admin_DefaultPresenter extends Admin_BasePresenter
 		if ($this->getAction() === 'add' or 'edit') {
 			$form = $this['itemForm'];
 //			if ($form->isSubmitted()) {
-				$this->template->users = $this->model->findAll();
+				$this->template->users = $this->model->findAll(true, $this->userIdentity->user_levels_id);
 //			}
 		}
 	}
@@ -28,7 +28,7 @@ class Users_Admin_DefaultPresenter extends Admin_BasePresenter
 	
   	private function prepareRoles()
   	{
-  		return BaseModel::prepareSelect($this->model->findRoles(), 'User Role');
+  		return BaseModel::prepareSelect($this->model->findRoles($this->userIdentity->user_levels_id), 'User Role');
   	}
 
 	
@@ -53,6 +53,11 @@ class Users_Admin_DefaultPresenter extends Admin_BasePresenter
 			if (!$row) {
 				throw new BadRequestException(RECORD_NOT_FOUND);
 			}
+			
+			if ($row->user_levels_id >= $this->userIdentity->user_levels_id) {
+				throw new OperationNotAllowedException('You don\'t have rights to edit this user. Contact superadmin for granting higher permissions.');
+			}
+			
 			$form->setDefaults($row);
 			$this->invalidateControl('itemForm');
 		}

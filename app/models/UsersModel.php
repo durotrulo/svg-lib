@@ -82,18 +82,21 @@ class UsersModel extends BaseModel implements IAuthenticator
 	
 	
 	/**
-	 *
+	 * find all users
+	 *  (optionally limited to roles weaker than given $userLevelId)
+	 * 
 	 * @return DibiRow array
 	 */
-	public function findAll($fetch = true)
+	public function findAll($fetch = true, $userLevelId = 0)
 	{
 		$ret = dibi::select('u.*, ul.name AS role, ul.public_name AS publicRole')
 				->from(self::TABLE)
 					->as('u')
 				->leftJoin(self::USER_LEVELS_TABLE)
 					->as('ul')
-					->on('u.user_levels_id = ul.id');
-					
+					->on('u.user_levels_id = ul.id')
+				->where('ul.id > %i', $userLevelId); // limit to weaker roles only!
+
 		if ($fetch) {
 			$ret = $ret->fetchAll();
 		}
@@ -209,11 +212,18 @@ class UsersModel extends BaseModel implements IAuthenticator
 	}
 	
 	
+	/**
+	 * find user roles (optionally limited to roles weaker than given $userLevelId)
+	 *
+	 * @param int #ul.id
+	 * @return array
+	 */
 //	public static function findRoles()
-	public function findRoles()
+	public function findRoles($userLevelId = 0)
 	{
 		return dibi::select('id, public_name')
 					->from(self::USER_LEVELS_TABLE)
+					->where('id > %i', $userLevelId) // limit to weaker roles only!
 					->fetchPairs('id', 'public_name');
 	}
 }

@@ -33,7 +33,7 @@ abstract class Admin_BasePresenter extends BasePresenter
 //			dump($presenter_name);
 			
 			//	ak to nie je admin a ide do sekcie, kam nema pristup, tak ho vratim na login form
-			if (!$user->isInRole('admin')) {
+			if (!$user->isInRole(UsersModel::UL_ADMIN) and !$user->isInRole(UsersModel::UL_SUPERADMIN)) {
 				if (!isset($allowed_sections[$this->userIdentity->role])) {
 					throw new Exception("Unknown user role! '{$this->userIdentity->role}'");
 				}
