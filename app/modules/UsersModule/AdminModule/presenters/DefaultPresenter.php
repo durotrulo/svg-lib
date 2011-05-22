@@ -146,12 +146,11 @@ class Users_Admin_DefaultPresenter extends Admin_BasePresenter
 					$this->model->update($id, $values);
 					$this->flashMessage('User updated.', self::FLASH_MESSAGE_SUCCESS);
 				} else {
+					$values['approved'] = true;
 					$id = $this->model->insert($values);
 					
-//	      			$this->sendRegBasicEmail($values);
-//	      			$msg = 'Mail has been sent.';
-	      			
 					$this->flashMessage('User created.', self::FLASH_MESSAGE_SUCCESS);
+	      			$this->sendRegBasicEmail($values);
 				}
 			}
 	 	} catch (InvalidStateException $e) {
@@ -176,24 +175,22 @@ class Users_Admin_DefaultPresenter extends Admin_BasePresenter
 	  	
   	protected function sendRegBasicEmail($values)
   	{
-	    $mail = new Mail();
 	    $template = new Template(APP_DIR . "/templates/mails/basicRegMail.phtml");
 	    $template->registerFilter(new LatteFilter);
 		$template->setTranslator($this->getTranslator());
 	
-	    $template->activationLink = $this->link("//Registration:activate",
-     		array(
-     			'token' => $values['token'],
- 			)
-	    );
-	    $template->homepageLink = $this->link("//Homepage:");
-	
+	    $template->homepageLink = $this->link("//:Front:Files:list");
+	    $template->login = $values['username'];
+	    $template->password = $values['password'];
 	    $template->title = $this->translate('Registration');
+
+	    $mail = new Mail();
 	    $mail->addTo($values['email']);
-	    $mail->setFrom(Environment::getConfig("email")->from);
+	    $mail->setFrom(Environment::getConfig("contact")->registrationEmail);
 	    $mail->setSubject($template->title);
 	    $mail->setHTMLbody($template);
-	
 	    $mail->send();
+
+	    $this->flashMessage('E-mail has been sent to provided e-mail address.', self::FLASH_MESSAGE_SUCCESS);
   	}
 }
