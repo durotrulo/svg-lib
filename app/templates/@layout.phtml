@@ -20,6 +20,12 @@
 <!--	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>-->
 <!--	<script type="text/javascript" src="{$basePath}/js/jquery-1.4.4.js"></script>-->
 	
+
+<!--	History.js - should be before jquery.nette.js -->
+	<script>if ( typeof window.JSON === 'undefined' ) { document.write('<script src="{$basePath}/modules/history.js/json2.js"><\/script>'); }</script>
+	{control js '../modules/history.js/amplify.store.js', '../modules/history.js/history.adapter.jquery.js', '../modules/history.js/history.js', '../modules/history.js/history.html4.js'}
+<!--	History.js END-->
+
 	{control js 'jquery.livequery.js', 'jquery.nette.js', 'netteForms.js', 'jquery.placeholder.min.js', 'jquery.cookie.js', 'internal.js', 'common.js', 'js.js'}
 	{control css 'reset.css', 'general.css', 'screen.css'}
 
@@ -84,6 +90,9 @@
 	{control js '../modules/file-upload/jquery.fileupload.js', '../modules/file-upload/jquery.fileupload-ui.js', '../modules/file-upload/jquery.dotimeout.min.js', '../modules/file-upload/inline.js', '../modules/taginput/tagInput.js'}
 	{control css '../modules/file-upload/jquery.fileupload-ui.css', '../modules/taginput/tagInput.css'}
 	*}
+	
+	
+	
 	
 	
 	<script>

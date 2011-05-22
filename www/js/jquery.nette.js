@@ -303,11 +303,17 @@ jQuery.extend({
 			}
 		},
 		
-		error: function(payload, textStatus, XMLHttpRequest)
+		error: function(jqXHR, textStatus, errorThrown)
 		{
 			// custom callbacks
 			cbs = $.Nette.callbacks[$.Nette.AJAX_ERROR_EVENT];
-			$.Nette.fireAjaxCb(cbs, payload, textStatus, XMLHttpRequest);
+			$.Nette.fireAjaxCb(cbs, jqXHR, textStatus, errorThrown);
+			
+//			log(jqXHR);
+//			log(textStatus);
+//			log(errorThrown);
+//			document.location.href = url;
+//			return false;			
 		},
 		
 		// create animated spinner
@@ -379,33 +385,90 @@ $(function () {
 
 	$.Nette.createSpinner();
 	
+	/* History.js INIT */
+	    var History = window.History; // Note: We are using a capital H instead of a lower h
+	    if ( !History.enabled ) {
+	         // History.js is disabled for this browser.
+	         // This is because we can optionally choose to support HTML4 browsers or not.
+	        return false;
+	    }
+	
+	    // Bind to StateChange Event
+	    History.Adapter.bind(window, 'statechange', function() { // Note: We are using statechange instead of popstate
+	        
+	        // Prepare Variables
+			var
+				State = History.getState(),
+				url = State.url;
+				$body = $(document.body),
+				rootUrl = History.getRootUrl(),
+				relativeUrl = url.replace(rootUrl, '');
+				scrollOptions = {
+					duration: 800,
+					easing:'swing'
+				};
+	
+			$.Nette.spinner.css({
+				position: 'fixed',
+		//			position: 'absolute',
+				left: '45%',
+				top: 300
+			}).show();
+			
+			
+			$.post(url, function(data, textStatus, jqXHR){
+				// Complete the change
+				if ( $body.ScrollTo || false ) { 
+					$body.ScrollTo(scrollOptions); /* http://balupton.com/projects/jquery-scrollto */
+				} 
+			
+				// Inform Google Analytics of the change
+				if ( typeof window._gaq !== 'undefined' ) {
+					window._gaq.push(['_trackPageview', relativeUrl]);
+				}
+				
+				$.Nette.spinner.hide();
+				
+				// process retrieved data
+				$.Nette.success(data, textStatus, jqXHR);
+			});
+	        
+	    });
+	/* History.js INIT END */
+	
+	
 	// apply AJAX unobtrusive way
 	$('a.ajax').live('click', function(event) {
-		event.preventDefault();
-		if ($.active) return;
 
+		// Prepare
+		var
+			$this = $(this),
+			url = $this.attr('href'),
+			title = $this.attr('title')||null;
+
+		// Continue as normal for cmd clicks etc
+		if ( event.which == 2 || event.metaKey ) { return true; }
+
+		event.preventDefault();
+		if ($.active) return false;
+		
 		if ($(this).hasClass('confirm')) {
 			if (!confirm("Really?")) {
 				return false;
 			}
 		}
 		
+		if ($this.attr('rel') !== 'nohistory') {
+			History.pushState(null, title, url);
+		}
+		
 		$.Nette.showSpinner(event);
 		$.post(this.href, $.Nette.success);
-
+		
 	});
 	
 	
 	// odeslání na formulářích
-//    $('form.ajax').submit(function (e) {
-//    	$(this).ajaxSubmit(e);
-//    });
-//
-//    // odeslání pomocí tlačítek
-//    $('form.ajax :submit').click(function (e) {
-//    	$(this).ajaxSubmit(e);
-//    });
-    
     $("form.ajax").livequery("submit",function (e) {
         $(this).ajaxSubmit(e);
     });
