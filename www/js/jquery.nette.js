@@ -459,11 +459,12 @@ $(function () {
 		}
 		
 		if ($this.attr('rel') !== 'nohistory') {
+			// change state and request for new content
 			History.pushState(null, title, url);
+		} else {
+			$.Nette.showSpinner(event);
+			$.post(this.href, $.Nette.success);
 		}
-		
-		$.Nette.showSpinner(event);
-		$.post(this.href, $.Nette.success);
 		
 	});
 	

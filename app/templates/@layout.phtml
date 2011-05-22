@@ -1,3 +1,10 @@
+{**
+ *
+ * @param $user			Nette\Web\User
+ * @param $flashes 		stdClass
+ * @param $isHomepage 	bool
+ *
+ **}
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,6 +18,10 @@
 
 {*
 	<title>@{include #title} | Maga Design Group</title>
+	<title>
+		{block #title}{$title}{/block}
+		{if !isset($isHomepage) or !$isHomepage} | Maga Design Group{/if}
+	</title>
 *}
 	
 	<link rel="stylesheet" media="print" href="{$basePath}/css/print.css" type="text/css">
@@ -20,10 +31,6 @@
 	{* load jQuery from CDN or fallback to local copy *}
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script>
 	<script>window.jQuery || document.write("<script src='{!$basePath}/js/jquery-1.6.1.min.js'>\x3C/script>")</script>
-	
-<!--	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>-->
-<!--	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>-->
-<!--	<script type="text/javascript" src="{$basePath}/js/jquery-1.4.4.js"></script>-->
 	
 
 <!--	History.js - should be before jquery.nette.js -->
