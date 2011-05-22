@@ -316,7 +316,7 @@ abstract class BaseModel extends Object
 	}
 	
 	
-	protected function downloadFile($srcFile, $publicFilename = null)
+	protected function downloadFile($srcFile, $publicFilename = null, $deleteAfterDownload = false)
 	{
 		if (empty($publicFilename)) {
 			$publicFilename = basename($srcFile);
@@ -325,6 +325,13 @@ abstract class BaseModel extends Object
 		$filedownload = new FileDownload;
 		$filedownload->sourceFile = $srcFile;
 		$filedownload->transferFileName = $publicFilename;
+		
+		if ($deleteAfterDownload) {
+			$filedownload->onComplete[] = function(FileDownload $download, IDownloader $downloader) use($srcFile) {
+				unlink($srcFile);
+			};
+		}
+		
 		$filedownload->download();
 		exit(0);
 	}

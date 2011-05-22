@@ -55,7 +55,7 @@ class Front_FilesPresenter extends Front_InternalPresenter
 	{
 		$this->template->thumbSize = Environment::getHttpRequest()->getCookie(self::COOKIE_THUMBSIZE) ? Environment::getHttpRequest()->getCookie(self::COOKIE_THUMBSIZE) : FilesModel::SIZE_MEDIUM;
 
-		$this->template->filesModel = $this->filesModel;
+//		$this->template->filesModel = $this->filesModel;
 		
 		$this->template->itemsCount = $itemsCount = $this->items->count();
 		$vp = $this['itemPaginator'];

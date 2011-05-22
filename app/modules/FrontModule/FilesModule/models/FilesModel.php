@@ -151,6 +151,21 @@ class FilesModel extends BaseModel
 		return $this;
 	}
 		
+		
+	/**
+	 * filter items with given project
+	 *
+	 * @param DibiFluent
+	 * @param int
+	 * @return $this
+	 */
+	public function filterByProject(&$items, $projectId)
+	{
+		$items->where('projects_id = %i', $projectId);
+		
+		return $this;
+	}
+	
 	
 	/**
 	 * filters items with required tags

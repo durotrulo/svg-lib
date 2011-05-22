@@ -83,8 +83,8 @@
 			<div class="item" n:foreach="$items as $item">
 			{*include '@thumb.phtml' 'item' => $item, 'thumbSize' => $thumbSize*}
 				<span class="top-right show-on-hover">{$item->downloads} downloads</span>
-				<a href="{$basePath}/{$filesModel->getPreviewPath($item->projects_id, 'large', $item->filename, true)}" rel="images">
-					<img src="{$basePath}/{$filesModel->getPreviewPath($item->projects_id, $thumbSize, $item->filename, true)}">
+				<a href="{$basePath}/{$presenter->filesModel->getPreviewPath($item->projects_id, 'large', $item->filename, true)}" rel="images">
+					<img src="{$basePath}/{$presenter->filesModel->getPreviewPath($item->projects_id, $thumbSize, $item->filename, true)}">
 				</a>
 				<a href="{link download! $item->id}" title="Download" class="download-link show-on-hover"></a>
 				{? $presenter->prepareAddFile2LightboxForm($item->id)}

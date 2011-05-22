@@ -56,16 +56,36 @@
 				<h1>{$project->name}</h1>
 				<span>{= is_null($project->completed) ? 'In Progress' : TemplateHelpers::date($project->completed)}</span>
 				<span>RELATED PROJECTS?</span>
+				<a href="{link downloadAll! $project->id}">Download all files (zip)</a>
 			</div>
 			
 			<div class="clear"></div>
-			
+		</div>
+		
+		<div class="itemList thumbSize-{$thumbSize}">
 			<div>
 			FILES
+<!--				skopirovane zatial iba z files->list -->
+				<div class="item" n:foreach="$project->files as $item">
+					<span class="top-right show-on-hover">{$item->downloads} downloads</span>
+					<a href="{$basePath}/{$presenter->filesModel->getPreviewPath($item->projects_id, 'large', $item->filename, true)}" rel="images">
+						<img src="{$basePath}/{$presenter->filesModel->getPreviewPath($item->projects_id, $thumbSize, $item->filename, true)}">
+					</a>
+					<a href="{link download! $item->id}" title="Download" class="download-link show-on-hover"></a>
+					{*
+					{? $presenter->prepareAddFile2LightboxForm($item->id)}
+					<span class="ib add2lightbox show-on-hover">{control addFile2LightboxForm_$item->id}</span>
+					*}
+
+				</div>
+
+				<div class="clear"></div>
 			</div>
-			
 		</div>
-	</div>		
+
+		<div class="clear"></div>
+
+	</div>
 	{control itemPaginator false, step}
 	<div class="clear"></div>
 {/snippet}

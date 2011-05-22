@@ -2,6 +2,8 @@
 
 abstract class Front_InternalPresenter extends Front_BasePresenter
 {
+	const COOKIE_THUMBSIZE = 'thumbSize';
+
 	/** @persistent */
 	public $filter = null;
 	

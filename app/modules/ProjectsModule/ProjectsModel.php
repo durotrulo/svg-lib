@@ -39,7 +39,8 @@ class ProjectsModel extends BaseModel
 					->leftJoin(UsersModel::TABLE)
 						->as('u')
 						->on('p.manager_id = u.id')
-					->groupBy('p.id');
+					->groupBy('p.id')
+					->orderBy('completed DESC');
 //					->fetchAll();
 	}
 	
@@ -47,7 +48,7 @@ class ProjectsModel extends BaseModel
 	/**
 	 * find by id
 	 *
-	 * @param int $id
+	 * @param int project id
 	 * @return DibiRow
 	 */
 	public function find($id)
@@ -58,6 +59,82 @@ class ProjectsModel extends BaseModel
 	}
 	
 	
+	/**
+	 * get project name by id
+	 *
+	 * @param int project id
+	 * @return string
+	 */
+	private function getNameById($id)
+	{
+		return dibi::select('name')
+					->from(self::TABLE)
+					->where('id = %i', $id)
+					->fetchSingle();
+	}
+	
+	
+	/**
+	 * output whole project to be downloaded (and increment downloadCount for each file and log action 'project download')
+	 * @todo overit, ze user moze project stiahnut ?
+	 *
+	 * @param int project id
+	 * @return void
+	 */
+	public function download($id)
+	{
+		// create ZIP
+		$zipper = new ZipArchive();
+		$zipPath = PUBLIC_DATA_DIR . '/projects-zip/' . uniqid() . '.zip';
+		Basic::mkdir(dirname($zipPath));
+		if ($zipper->open($zipPath, ZIPARCHIVE::CREATE) !== true) {
+		    exit("cannot open <$zipPath>\n");
+		}
+
+		// get project's files
+		$filesModel = new FilesModel();
+		$files = $filesModel->findAll();
+		$filesModel->filterByProject($files, $id);
+
+		// add them to zip archive
+		$fileIds = array();
+		foreach ($files as $file) {
+			$path = $filesModel->getOriginalPath($file);
+			$zipper->addFile($path, basename($path));
+			
+			$fileIds[] = $file->id;
+		}
+		
+		$zipper->close();
+
+		// increment downloadCount for each file
+		dibi::update(self::FILES_TABLE, array(
+				'downloads%sql' => 'downloads + 1',
+			))
+			->where('id IN (%iN)', $fileIds)
+			->execute();
+		
+
+		// log project download
+		$this->logsModel->insert(
+			array(
+				'users_id' => $this->userId,
+				'projects_id' => $id,
+				'action' => LogsModel::ACTION_DOWNLOAD,
+			)
+		);
+		
+		$projectName = $this->getNameById($id);
+		parent::downloadFile($zipPath, $projectName . '.zip', true);
+	}
+	
+	
+	/**
+	 * get preview path for project's thumb image
+	 *
+	 * @param int project id
+	 * @return string
+	 */
 	public function getPreviewPath($id)
 	{
 		return file_exists(self::PATH . "/$id/main.jpg") ? $this->getRelativePath() . "/$id/main.jpg" : 'images/default-project.jpg';
