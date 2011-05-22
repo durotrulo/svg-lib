@@ -183,4 +183,11 @@ class Front_FilesPresenter extends Front_InternalPresenter
 
 		return $form;
 	}
+	
+	
+	public function handleGetTags($fileId)
+	{
+		$this->payload->tags = $this->model->getTags($fileId);
+		$this->terminate();
+	}
 }

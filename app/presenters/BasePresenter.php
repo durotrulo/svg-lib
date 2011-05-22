@@ -92,6 +92,8 @@ abstract class BasePresenter extends Presenter
 
 		$this->registerUser($tpl);
 
+		$tpl->model = $this->model;
+		
 		$tpl->httpHost = 'http://' . $_SERVER['HTTP_HOST'];
 		
 		return $tpl;

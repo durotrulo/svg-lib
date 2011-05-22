@@ -315,6 +315,31 @@ class FilesModel extends BaseModel
 	}
 	
 	
+	/**
+	 * get tags bound to file
+	 *
+	 * @param int
+	 * @return DibiRow array
+	 */
+	public function getTags($fileId)
+	{
+		return dibi::select('f2t.tags_id, t.name, ul.name AS userLevel')
+			->from(self::FILES_2_TAGS_TABLE)
+				->as('f2t')
+			->innerJoin(self::TAGS_TABLE)
+				->as('t')
+				->on('t.id = f2t.tags_id')
+			->leftJoin(self::USERS_TABLE)
+				->as('u')
+				->on('u.id = f2t.tagged_by')
+			->leftJoin(self::USER_LEVELS_TABLE)
+				->as('ul')
+				->on('ul.id = u.id')
+			->where('f2t.files_id = %i', $fileId)
+			->fetchAll();
+	}
+	
+	
 	public function add2lightbox($fileId, $lightboxId)
 	{
 		dibi::insert(self::FILES_2_LIGHTBOXES_TABLE, array(

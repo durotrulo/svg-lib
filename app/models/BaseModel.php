@@ -7,6 +7,8 @@
  */
 abstract class BaseModel extends Object
 {
+	const USERS_TABLE = 'users';
+	const USER_LEVELS_TABLE = 'user_levels';
 	const FILES_TABLE = 'files';
 	const FILES_2_TAGS_TABLE = 'files_2_tags';
 	const TAGS_TABLE = 'tags';

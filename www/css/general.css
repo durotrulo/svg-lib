@@ -130,6 +130,10 @@ table.grid td,
 table.grid th {
 	border:1px solid;
 }
+
+.spinner {
+	background: white url('../images/spinner.gif') no-repeat 50% 50%;
+}
 																						/************ Nette Specific CSS ******************/
 
 /*
