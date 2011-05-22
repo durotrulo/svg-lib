@@ -109,6 +109,11 @@ input.text {
 		cursor:pointer;
 	}
 	
+		.options-pannel span.toggler {
+			display: inline-block;
+		    width: 77px;
+		}
+		
 	.options-pannel div {
 		/*display:none;*/
 	}
@@ -143,7 +148,7 @@ input.text {
 			}
 			
 			.options-pannel .options .resultsCount {
-				margin:0 15px;
+				margin:0 10px 0 15px;
 				text-align: center;
     			width: 150px;
 			}
