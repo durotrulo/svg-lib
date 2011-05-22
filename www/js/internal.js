@@ -102,7 +102,8 @@ function setOptVisCookie(isVisible)
 		"optionsVisible", 
 		isVisible, 
 		{
-			expires: 365
+			expires: 365,
+			path: '/' // path must be specified to be compatible with server-side cookies
 		}
 	);
 }
@@ -119,8 +120,8 @@ function setThumbSize($size)
 		"thumbSize", 
 		$size, 
 		{
-			expires: 365
-//			path: '/', 
+			expires: 365,
+			path: '/' // path must be specified to be compatible with server-side cookies
 //			domain: 'jquery.shaddow.sk'
 		}); 
 	

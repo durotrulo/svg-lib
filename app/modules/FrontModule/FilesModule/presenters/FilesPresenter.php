@@ -2,6 +2,8 @@
 
 class Front_FilesPresenter extends Front_InternalPresenter
 {
+	const COOKIE_THUMBSIZE = 'thumbSize';
+	
 	/** @persistent */
 	public $complexity = FilesModel::COMPLEXITY_ALL_LEVELS_ID;
 	
@@ -51,7 +53,7 @@ class Front_FilesPresenter extends Front_InternalPresenter
 	
 	public function renderList()
 	{
-		$this->template->thumbSize = Environment::getHttpRequest()->getCookie('thumbSize') ? Environment::getHttpRequest()->getCookie('thumbSize') : FilesModel::SIZE_MEDIUM;
+		$this->template->thumbSize = Environment::getHttpRequest()->getCookie(self::COOKIE_THUMBSIZE) ? Environment::getHttpRequest()->getCookie(self::COOKIE_THUMBSIZE) : FilesModel::SIZE_MEDIUM;
 
 		$this->template->filesModel = $this->filesModel;
 		
@@ -182,5 +184,19 @@ class Front_FilesPresenter extends Front_InternalPresenter
 		};
 
 		return $form;
+	}
+	
+
+	/**
+	 * set thumb size for files - no js fallback
+	 */
+	public function handleSetThumbSize($size)
+	{
+		if (!in_array($size, $this->model->sizes)) {
+			throw new ArgumentOutOfRangeException('Parameter $size must be on of ' . join(',', $this->model->sizes) . '. Given: ' . $size);
+		}
+		
+		Environment::getHttpResponse()->setCookie(self::COOKIE_THUMBSIZE, $size, Tools::YEAR);
+		$this->refresh('this');
 	}
 }

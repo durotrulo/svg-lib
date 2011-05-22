@@ -64,7 +64,7 @@
 	
 	<span class="thumbsizeControl">
 		{foreach FilesModel::getSizes() as $size}
-			<a href="#"{attr class($size, true) class('active', $thumbSize === $size)} title="{$size}"></a>
+			<a href="{link setThumbSize! $size}"{attr class($size, true) class('active', $thumbSize === $size)} title="{$size}"></a>
 		{/foreach}
 		<span class="bold">Thumbnail Size</span>
 	</span>
