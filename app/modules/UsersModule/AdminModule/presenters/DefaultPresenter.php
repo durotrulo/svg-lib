@@ -54,7 +54,7 @@ class Users_Admin_DefaultPresenter extends Admin_BasePresenter
 				throw new BadRequestException(RECORD_NOT_FOUND);
 			}
 			
-			if ($row->user_levels_id >= $this->userIdentity->user_levels_id) {
+			if ($row->user_levels_id <= $this->userIdentity->user_levels_id) {
 				throw new OperationNotAllowedException('You don\'t have rights to edit this user. Contact superadmin for granting higher permissions.');
 			}
 			

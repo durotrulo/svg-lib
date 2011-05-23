@@ -96,7 +96,7 @@ class UsersModel extends BaseModel implements IAuthenticator
 				->leftJoin(self::USER_LEVELS_TABLE)
 					->as('ul')
 					->on('u.user_levels_id = ul.id')
-				->where('ul.id > %i', $userLevelId); // limit to weaker roles only!
+				->where('u.user_levels_id > %i', $userLevelId); // limit to weaker roles only!
 
 		if ($fetch) {
 			$ret = $ret->fetchAll();
@@ -133,9 +133,9 @@ class UsersModel extends BaseModel implements IAuthenticator
 	 *
 	 * @param int user id
 	 * @param array
-	 * @param bool
+	 * @param bool update identity of logged user?
 	 */
-	public function update($id, array $data, $updateIdentity = true)
+	public function update($id, array $data, $updateIdentity = false)
 	{
 		//	if we come from userEdit form
     	if (isset($data['password'])) {
@@ -150,10 +150,12 @@ class UsersModel extends BaseModel implements IAuthenticator
 		    		if (self::getHash($dbData->username, $data['currentPassword']) !== $dbData->password) {
 		    			throw new InvalidPasswordException('Zadali ste nesprávne stávajúce heslo.');
 		    		}
-		    		unset($data['currentPassword']);
 	    		}
 				$data['password'] = self::getHash($data['username'], $data['password']);
 	    	}
+
+    		unset($data['currentPassword']);
+	    	unset($data['password2']);
     	}
     	    	
 		parent::update($id, $data);

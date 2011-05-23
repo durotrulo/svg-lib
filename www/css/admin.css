@@ -105,6 +105,17 @@ table {
 	margin: 0;
 }
 
+	table.gray-colored {
+		margin:15px 0;
+	}
+		table.gray-colored th {
+			background-color:#cccccc;
+		}
+
+		table.gray-colored tr:nth-child(2n+1) td {
+			background-color:#edf3ef;
+		}
+
 div.title {
 	font-size: 1.3em;
 	font-weight: bold;
