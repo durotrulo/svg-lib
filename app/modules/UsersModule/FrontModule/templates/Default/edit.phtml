@@ -1,0 +1,19 @@
+{**
+ * @param DibiRow array $items
+ * @param int $itemsCount
+ * @param ProjectsModel $projectsModel
+ * @param string renderMode [one of Projects_Front_DefaultPresenter::$_allowedRenderModes]
+ *
+ *
+ *
+ **}
+
+{block #title}Settings{/block}
+
+{block #options}
+{/block}
+
+@{block #content}
+{snippet itemList}
+	{control credentialsForm}
+{/snippet}

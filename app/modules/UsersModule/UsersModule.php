@@ -9,11 +9,7 @@ class UsersModule extends BaseModule
 	public static function register()
 	{
 		Users_AdminModule::register();
-//		Stories_FrontModule::register();
-		
-//		parent::registerModule(__CLASS__);
-		// todo: vyriesit viac konfigov
-//		Environment::loadConfig(__DIR__ . '/config.ini');
+		Users_FrontModule::register();
 	}
 
 }

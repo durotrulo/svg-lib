@@ -624,6 +624,15 @@ input.text {
 	padding:0 10px;
 }
 
+.simple-layout .content-padding {
+	padding:20px;
+}
+	td, th {
+		padding:3px 7px;
+		text-align: left;
+		vertical-align:top;
+	}
+
 a.active {
 	background-color:lightgray;
 }

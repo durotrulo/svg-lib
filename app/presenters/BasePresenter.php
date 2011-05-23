@@ -14,6 +14,9 @@ abstract class BasePresenter extends Presenter
 	/** @var mixed User|NULL  */
 	protected $user = NULL;
 
+	/** @var mixed int|NULL  */
+	protected $userId;
+	
 	/** @var mixed IIdentity|NULL  */
 	protected $userIdentity = NULL; 
 
@@ -33,6 +36,12 @@ abstract class BasePresenter extends Presenter
 	/** @var config for current presenter .. used in modules startup()*/
 	protected $config;
 		
+	
+	public function getModel()
+	{
+		return $this->model;
+	}
+	
 	protected function startup()
 	{
 		parent::startup();
@@ -60,11 +69,12 @@ abstract class BasePresenter extends Presenter
 		if (!$this->user) {
 			$this->user = $this->getUser();
 			$this->userIdentity = $this->user->isLoggedIn() ? $this->user->getIdentity() : NULL;
+			$this->userId = $this->userIdentity ? $this->userIdentity->data['id'] : NULL;
 		}
 		
 		if ($tpl instanceof Template) {
 			$tpl->user = $this->user;
-			$tpl->userId = $tpl->id_user = $this->user->isLoggedIn() ? $this->user->getIdentity()->data['id'] : NULL;
+			$tpl->userId = $tpl->id_user = $this->userId;
 			$tpl->userIdentity = $this->userIdentity;
 		}
 	}

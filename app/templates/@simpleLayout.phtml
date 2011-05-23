@@ -114,7 +114,7 @@
 </head>
 
 <body>
-<div class="all">
+<div class="all simple-layout">
 	<div class="upmenu">
 		<span>Logged as {$user->identity->realname}</span>
 		<a href="{link :Front:Files:list}">Files</a> |
@@ -142,11 +142,6 @@
 			{/snippet}
 			
 			<div class="filters-pannel">
-				{snippet searchForm, 'div class="ib"'}
-					{control searchForm}
-					<a id="searchFormClearer" href="{link clearSearchForm!}" class="ajax" title="clear search"></a>
-				{/snippet}
-				
 				{snippet menu, 'div class="filter-menu ib"'}
 				<a href="{link :Front:Files:list filter=>null}" class="ajax{ifCurrent} active{/if}">All</a>
 				<a href="{link :Front:Files:list filter=>FilesModel::FILTER_BY_VECTOR}" class="ajax{ifCurrent} active{/if}">Vector</a>
@@ -155,7 +150,8 @@
 				<a href="{link :Projects:Front:Default:list filter=>null}" class="ajax{ifCurrent} active{/if}">Projects</a>
 				{/snippet}
 			</div>
-			
+		
+			{*	
 			<div class="options-pannel">
 				<span class="toggler"><span>Show</span> Options</span>
 				<div class="options">
@@ -164,46 +160,11 @@
 				{/snippet}
 				</div>
 			</div>
+			*}
 			
-			<div id="content">
+			<div id="content" class="content-padding">
 <!--				<h1>Maga Design SVG Library</h1>-->
 				
-				{*control navigation*}
-
-				<!--FILE UPLOAD-->
-				<div class="fileUploadArea">
-					{form fileUploadForm}
-						{requiredPrefix null}
-						{*<!--<p class="error" n:foreach="$formErrors as $error">{$error}</p>-->*}
-						<div class="fileUpload-header">
-						<!--<span>Select file</span>-->
-							{input file}
-						</div>
-						<div class="invisible">
-						{label projects_id} {input projects_id}
-						{label tags} {input tags}
-						{label complexity_id} {input complexity_id}
-						</div>
-						{input save}
-					{/form}
-		
-					<table id="files">
-						<!--<tr><td class="filesInfo"></td></tr>-->
-					</table>
-					
-					<div class="fileUpload-footer">
-						<div class="filesInfo"></div>
-						<div class="action-buttons">
-							<a href="#" class="cancelUpload">X</a>
-							<button id="start_uploads" class="invisible">Upload files</button>
-						</div>
-						<div class="clear"></div>
-					</div>
-				</div> <!--end of fileUploadArea-->
-				<!--FILE UPLOAD END-->
-				
-				{*control internalNavigation*}
-	
 				@{include #content}
 			</div>
 		</div>

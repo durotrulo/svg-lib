@@ -1,6 +1,7 @@
 <?php
 
 class TokenExpiredException extends Exception {};
+class InvalidPasswordException extends Exception {};
 
 /**
  * Users authenticator.
@@ -114,7 +115,48 @@ class UsersModel extends BaseModel implements IAuthenticator
 		return parent::insert($data);
 	}
 
+//	
+//	/**
+//	 * update user's credentials
+//	 *
+//	 * @param array $data
+//	 */
+//	public function updateUserCredentials(array $data)
+//	{
+//		// user did not enter new password
+//		if (!empty($data['password'])) {
+//    		$identity = $this->getUserIdentity();
+//    		if (self::getHash($identity->username, $identity->password) !== $data['oldPassword']) {
+//    			throw new InvalidPasswordException('Zadali ste nesprávne stávajúce heslo.');
+//    		}
+//    		$data['username'] = $identity->username;
+//			unset($data['oldPassword']);
+//			unset($data['password2']);
+//			
+//			$this->update($this->userId, $data, true);
+//    	}
+//	}
 	
+
+	/**
+	 * update logged in user's data
+	 *
+	 * @param array
+	 * @param bool
+	 */
+	public function updateLoggedUser(array $data, $updateIdentity = true)
+	{
+		$this->update($this->getUserId(), $data, $updateIdentity);
+	}
+	
+	
+	/**
+	 * update user's data
+	 *
+	 * @param int user id
+	 * @param array
+	 * @param bool
+	 */
 	public function update($id, array $data, $updateIdentity = true)
 	{
 		//	if we come from userEdit form
@@ -123,6 +165,15 @@ class UsersModel extends BaseModel implements IAuthenticator
     		if (empty($data['password'])) {
 	    		unset($data['password']);
 	    	} else {
+	    		// if current password is required
+	    		if (isset($data['oldPassword'])) {
+					$dbData = $this->find($this->userId);
+	    			// check if it's correct
+		    		if (self::getHash($dbData->username, $data['oldPassword']) !== $dbData->password) {
+		    			throw new InvalidPasswordException('Zadali ste nesprávne stávajúce heslo.');
+		    		}
+		    		unset($data['oldPassword']);
+	    		}
 				$data['password'] = self::getHash($data['username'], $data['password']);
 	    	}
     	}

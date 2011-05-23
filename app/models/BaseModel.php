@@ -19,12 +19,14 @@ abstract class BaseModel extends Object
 	/** @var LogsModel */
 	private $logsModel;
 	
-	/** @var User */
+	/** @var mixed User|NULL  */
 	private $user;
 	
-	/** @var int */
+	/** @var mixed int|NULL  */
 	private $userId;
 	
+	/** @var mixed IIdentity|NULL  */
+	private $userIdentity;
 	
 	/**
 	 * @return LogsModel
@@ -62,6 +64,19 @@ abstract class BaseModel extends Object
 		}
 		
 		return $this->userId;
+	}
+	
+	
+	/**
+	 * @return int|NULL
+	 */
+	public function getUserIdentity()
+	{
+		if ($this->userIdentity === null) {
+			$this->userIdentity = $this->getUser()->isLoggedIn() ? $this->getUser()->getIdentity() : NULL;
+		}
+		
+		return $this->userIdentity;
 	}
 	
 	

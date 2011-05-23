@@ -2,7 +2,6 @@
 
 class Front_FilesPresenter extends Front_InternalPresenter
 {
-	const COOKIE_THUMBSIZE = 'thumbSize';
 	
 	/** @persistent */
 	public $complexity = FilesModel::COMPLEXITY_ALL_LEVELS_ID;
