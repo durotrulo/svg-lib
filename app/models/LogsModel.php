@@ -14,6 +14,7 @@ class LogsModel extends BaseModel
 	const ACTION_ASSOCIATE = 'associate'; // tag 2 file, file 2 lightbox, ...
 	const ACTION_SHARE = 'share'; // lightbox
 	const ACTION_DOWNLOAD = 'download'; // file, lightbox
+	const ACTION_DOWNLOAD = 'deleted'; // file, lightbox, project, tag
 	
 	
 	/**

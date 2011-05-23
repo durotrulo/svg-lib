@@ -1,0 +1,7 @@
+{snippet item-$item->id}
+	<span class="top-right show-on-hover">{$item->downloads} downloads</span>
+	<img src="{$basePath}/{$filesModel->getPreviewPath($item->projects_id, $thumbSize, $item->filename, true)}">
+	<a href="{link download! $item->id}" title="Download" class="download-link show-on-hover"></a>
+	{? $presenter['addFile2LightboxForm']['files_id']->value = $item->id}
+	<span class="ib add2lightbox show-on-hover">{control addFile2LightboxForm}</span>
+{/snippet}

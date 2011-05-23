@@ -48,6 +48,36 @@ $(function() {
 		$(this).closest('form').submit();
 	});
 	
+	
+	
+	
+	/* LIGHTBOXES */
+	
+	$('.lb-owner a.toggler').livequery('click', function(e){
+		var 
+			$this = $(this),
+			snippet = $this.next();
+		
+		// if content has been already loaded
+		if (snippet.html().length > 0) {
+			// hide
+			if (snippet.is(':visible')) {
+				snippet.slideUp();
+				
+			// show loaded content
+			} else {
+				snippet.slideDown();
+			}
+			
+			// prevent ajax load
+			e.stopImmediatePropagation();
+			e.preventDefault();
+			return false;
+		}
+	});
+	
+	
+	/* LIGHTBOXES END */
 });
 
 

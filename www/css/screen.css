@@ -660,3 +660,13 @@ a.active {
 	text-decoration:none;
 	cursor:text;
 }
+
+
+
+
+
+
+
+.editable {
+	border-bottom:1px dashed #ccc;
+}

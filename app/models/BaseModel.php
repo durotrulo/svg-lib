@@ -7,6 +7,8 @@
  */
 abstract class BaseModel extends Object
 {
+	const SHARED_ITEMS_TABLE = 'shared_items';
+	const USERS_TABLE = 'users';
 	const FILES_TABLE = 'files';
 	const FILES_2_TAGS_TABLE = 'files_2_tags';
 	const TAGS_TABLE = 'tags';
@@ -179,7 +181,7 @@ abstract class BaseModel extends Object
 	
 
 	/**
-	 * finds user by id
+	 * find item by id
 	 *
 	 * @param int $id
 	 * @return DibiRow

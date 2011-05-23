@@ -130,6 +130,8 @@ table.grid td,
 table.grid th {
 	border:1px solid;
 }
+
+.inline {display:inline;}
 																						/************ Nette Specific CSS ******************/
 
 /*

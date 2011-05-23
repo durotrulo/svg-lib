@@ -168,6 +168,27 @@ class FilesModel extends BaseModel
 	
 	
 	/**
+	 * filter items folded in given lightbox
+	 *
+	 * @param DibiFluent
+	 * @param int
+	 * @return $this
+	 */
+	public function filterByLightbox(&$items, $lightboxId)
+	{
+		$items->where('id IN (%sql)', 
+			dibi::select('files_id')
+				->from(self::FILES_2_LIGHTBOXES_TABLE)
+					->as('f2l')
+				->where('files.id = f2l.files_id AND f2l.lightboxes_id = %i', $lightboxId)
+				->__toString()
+		);
+		
+		return $this;
+	}
+	
+	
+	/**
 	 * filters items with required tags
 	 * @param DibiFluent
 	 * @param string space-separated tags
