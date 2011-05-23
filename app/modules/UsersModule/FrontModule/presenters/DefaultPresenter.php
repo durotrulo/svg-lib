@@ -54,7 +54,7 @@ class Users_Front_DefaultPresenter extends Front_BasePresenter
 				->addRule(Form::FILLED, "%label !")
 	            ->addRule(Form::EQUAL, 'Heslá sa nezhodujú!', $form['password']);
 
-		$form->addPassword("oldPassword", "Stávajúce heslo", 60)
+		$form->addPassword("currentPassword", "Stávajúce heslo", 60)
 				->addRule(Form::FILLED);
 
 		$_this = $this;

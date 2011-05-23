@@ -115,28 +115,6 @@ class UsersModel extends BaseModel implements IAuthenticator
 		return parent::insert($data);
 	}
 
-//	
-//	/**
-//	 * update user's credentials
-//	 *
-//	 * @param array $data
-//	 */
-//	public function updateUserCredentials(array $data)
-//	{
-//		// user did not enter new password
-//		if (!empty($data['password'])) {
-//    		$identity = $this->getUserIdentity();
-//    		if (self::getHash($identity->username, $identity->password) !== $data['oldPassword']) {
-//    			throw new InvalidPasswordException('Zadali ste nesprávne stávajúce heslo.');
-//    		}
-//    		$data['username'] = $identity->username;
-//			unset($data['oldPassword']);
-//			unset($data['password2']);
-//			
-//			$this->update($this->userId, $data, true);
-//    	}
-//	}
-	
 
 	/**
 	 * update logged in user's data
@@ -165,14 +143,14 @@ class UsersModel extends BaseModel implements IAuthenticator
     		if (empty($data['password'])) {
 	    		unset($data['password']);
 	    	} else {
-	    		// if current password is required
-	    		if (isset($data['oldPassword'])) {
+	    		// if current password is required (typically when calling from updateLoggedUser(); admin does not have to enter currentPassword)
+	    		if (isset($data['currentPassword'])) {
 					$dbData = $this->find($this->userId);
 	    			// check if it's correct
-		    		if (self::getHash($dbData->username, $data['oldPassword']) !== $dbData->password) {
+		    		if (self::getHash($dbData->username, $data['currentPassword']) !== $dbData->password) {
 		    			throw new InvalidPasswordException('Zadali ste nesprávne stávajúce heslo.');
 		    		}
-		    		unset($data['oldPassword']);
+		    		unset($data['currentPassword']);
 	    		}
 				$data['password'] = self::getHash($data['username'], $data['password']);
 	    	}
