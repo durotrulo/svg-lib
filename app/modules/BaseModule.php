@@ -43,12 +43,8 @@ abstract class BaseModule extends Object
 	public static function findIdByUri($uri)
 	{
 		foreach (static::$_modules as $module) {
-//			$moduleName = substr($module, 0, -6); // 6 for 'Module'
-			$moduleName = substr($module, 0, -12); // 12 for '_FrontModule', resp. '_AdminModule' - reversed order
-//				dump($moduleName);
+			$moduleName = substr($module, 0, -12); // 12 for '_FrontModule', resp. '_AdminModule' -> i.e. News
 			if (strtolower($moduleName) == $uri) {
-//				dump($moduleName . static::ROUTE_PREFIX);
-//				return self::ROUTE_PREFIX . $moduleName;
 				return $moduleName . static::ROUTE_PREFIX; // - reversed order
 			}
 		}
@@ -66,26 +62,36 @@ abstract class BaseModule extends Object
 	public static function findUriById($id)
 	{
 //		$moduleNameFromId = substr($id, strlen(self::ROUTE_PREFIX));
-		$submoduleNameFromId = substr($id, 0, strpos($id, ':')); // - reversed order
-		$moduleNameFromId = substr($id, -5);
-//		dump($id);
-//		dump($submoduleNameFromId);
-//		dump($moduleNameFromId);
+
+		// News:Admin
+		$submoduleNameFromId = substr($id, 0, -6); // News
+		$moduleNameFromId = substr($id, -5); // Admin|Front
+		
+		/*
+		// Admin:News
+		$orig_submoduleNameFromId = substr($id, 6); // News
+		$orig_moduleNameFromId = substr($id, 0, 5); // Admin|Front
+		*/
+		
 		foreach (static::$_modules as $module) {
-//			$moduleName = substr($module, 0, -6); // 6 for 'Module'
-			$submoduleName = substr($module, 0, -12); // 12 for '_FrontModule', resp. '_AdminModule' - reversed order
-			$moduleName = substr($module, -11, 5); // 12 for '_FrontModule', resp. '_AdminModule' - reversed order
-//			dump($moduleName);
-//				dump($moduleNameFromId);
+			$submoduleName = substr($module, 0, -12); // 12 for '_FrontModule', resp. '_AdminModule' -> i.e. News
+			$moduleName = substr($module, -11, 5); // Front | Admin
 			if (
 				$submoduleName == $submoduleNameFromId
 				&& $moduleName == $moduleNameFromId	
 			) {
-//				dump($id);
-//				dump($module);
-//							dump($submoduleName);
 				return strtolower($submoduleName);
 			}
+			
+			
+			/*
+			if (
+				$submoduleName == $orig_submoduleNameFromId
+				&& $moduleName == $orig_moduleNameFromId	
+			) {
+				return strtolower($submoduleName);
+			}
+			*/
 		}
 		return null;
 	}

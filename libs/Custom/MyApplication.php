@@ -93,7 +93,11 @@ class MyApplication extends Application
 			}
 			FrontModule::createRoutes($router); // setups routes for submodules
 
-			// Default route
+			/**
+			 * Default route, match only 
+			 * 	Simple Front module presenters
+			 * 	Simple Admin module presenters
+			 */
 			$router[] = new Route('[<lang [a-z]{2}>/]<module Front|Admin>/<presenter>/<action>/<id>', array(
 				'module' => 'Front',
 //				'presenter' => 'Homepage',
