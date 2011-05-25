@@ -22,6 +22,24 @@ class MyAppForm extends AppForm {
 	
 	public static $ajaxFileUploadEnabled = false;
 	
+	
+	/**
+	 * Application form constructor.
+	 */
+	public function __construct(IComponentContainer $parent = NULL, $name = NULL)
+	{
+		parent::__construct($parent, $name);
+		Rules::$defaultMessages = array(
+			self::MIN_LENGTH => 'Minimum length of %label is %d chars!',
+			self::MAX_LENGTH => 'Maximum length of %label is %d chars!',
+			self::FILLED => 'Enter %label!',
+			self::EMAIL => 'Enter valid email address!',
+			
+		);
+		
+	}
+
+	
 	/**
 	 * Enables client validation for forms loaded via AJAX
 	 * appends script to each form, required for Nette 1.0
@@ -287,50 +305,7 @@ class MyAppForm extends AppForm {
 
 	
 	
-	/****************	podedenie kvoli :filled pravidlu	*********************/
-	
-	/**
-	 * Adds single-line text input control to the form.
-	 * @param  string  control name
-	 * @param  string  label
-	 * @param  int  width of the control
-	 * @param  int  maximum number of characters the user may enter
-	 * @return TextInput
-	 */
-	public function addText($name, $label = NULL, $cols = NULL, $maxLength = NULL)
-	{
-		return $this[$name] = new MyTextInput($label, $cols, $maxLength);
-	}
-
-	
-	/**
-	 * Adds single-line text input control used for sensitive input such as passwords.
-	 * @param  string  control name
-	 * @param  string  label
-	 * @param  int  width of the control
-	 * @param  int  maximum number of characters the user may enter
-	 * @return TextInput
-	 */
-	public function addPassword($name, $label = NULL, $cols = NULL, $maxLength = NULL)
-	{
-		$control = new MyTextInput($label, $cols, $maxLength);
-		$control->setType('password');
-		return $this[$name] = $control;
-	}
-
-
-	/**
-	 * Adds multi-line text input control to the form.
-	 * @param  string  control name
-	 * @param  string  label
-	 * @param  int  width of the control
-	 * @param  int  height of the control in text lines
-	 * @return TextArea
-	 */
-	public function addTextArea($name, $label = NULL, $cols = 40, $rows = 10)
-	{
-		return $this[$name] = new MyTextArea($label, $cols, $rows);
-	}
+	/****************	podedenie kvoli custom :filled pravidlu	*********************/
 	
 
 	/**
@@ -342,19 +317,6 @@ class MyAppForm extends AppForm {
 	public function addCheckbox($name, $caption = NULL)
 	{
 		return $this[$name] = new MyCheckbox($caption);
-	}
-
-
-	/**
-	 * Adds set of radio button controls to the form.
-	 * @param  string  control name
-	 * @param  string  label
-	 * @param  array   options from which to choose
-	 * @return RadioList
-	 */
-	public function addRadioList($name, $label = NULL, array $items = NULL)
-	{
-		return $this[$name] = new MyRadioList($label, $items);
 	}
 
 

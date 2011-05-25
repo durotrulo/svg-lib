@@ -12,7 +12,8 @@ class InvalidPasswordException extends Exception {};
 class UsersModel extends BaseModel implements IAuthenticator
 {
 	const TABLE = 'users';
-	const USER_LEVELS_TABLE = 'user_levels';
+//	const USER_LEVELS_TABLE = 'user_levels';
+	const USER_LEVELS_TABLE = 'gui_acl_roles';
 	const EXPIRY_DAYS = 3; //how many days user has to confirm registration
 	
 	/** @dbsync (#user_levels.name)*/
@@ -23,11 +24,30 @@ class UsersModel extends BaseModel implements IAuthenticator
 	const UL_CLIENT = 'client';
 	
 	/** @dbsync (#user_levels.id)*/
-	const UL_SUPERADMIN_ID = 1;
-	const UL_ADMIN_ID = 2;
-	const UL_PROJECT_MANAGER_ID = 3;
-	const UL_DESIGNER_ID = 4;
-	const UL_CLIENT_ID = 5;
+	const UL_SUPERADMIN_ID = 3;
+	const UL_ADMIN_ID = 4;
+	const UL_PROJECT_MANAGER_ID = 5;
+	const UL_DESIGNER_ID = 6;
+	const UL_CLIENT_ID = 7;
+
+	
+	protected $rolesModel;
+	
+	public function getRolesModel()
+	{
+		if (!$this->rolesModel) {
+			$this->rolesModel = new RolesModel();
+		}
+		
+		return $this->rolesModel;
+	}
+	
+	
+	public function __construct()
+	{
+		$this->config['useAcl'] = Environment::getConfig('global')->useAcl;
+	}
+	
 	
 	/**
 	 * Performs an authentication
@@ -61,8 +81,30 @@ class UsersModel extends BaseModel implements IAuthenticator
 		self::update($row->id, array('last_login' => dibi::datetime()), false);
 //		dibi::update(self::TABLE, array('last_login' => dibi::datetime()))->where('id = %i', $row->id)->execute();
 
+		
+		// get roles
+//		if (Environment::getConfig('global')->useAcl) {
+		if ($this->config['useAcl']) {
+			$roles = dibi::select('r.key_name')
+						->from(self::ACL_ROLES_TABLE)
+							->as('r')
+						->rightJoin(self::ACL_USERS_2_ROLES_TABLE)
+							->as('u2r')
+							->on('r.id = u2r.role_id')
+						->where('u2r.user_id = %i', $row->id)
+						->fetchPairs();
+//        	$sql = dibi::query('SELECT r.key_name
+//                                FROM [' . TABLE_ROLES . '] AS r
+//                                RIGHT JOIN [' . TABLE_USERS_ROLES . '] AS ur ON r.id = ur.role_id
+//                                WHERE ur.user_id = %i;', $row->id);
+//       	 	$roles = $sql->fetchPairs();
+		} else {
+			$roles = $row->role;
+		}
+
+
 		unset($row->password);
-		return new Identity($row->username, $row->role, $row);
+		return new Identity($row->username, $roles, $row);
 	}
 	
 	
@@ -82,27 +124,59 @@ class UsersModel extends BaseModel implements IAuthenticator
 	}
 	
 	
+	public function find($id)
+	{
+		$user = parent::find($id);
+		$this->bindRoles($user, false);
+		return $user;
+	}
+	
+	
+	private function bindRoles(&$user, $fetchPairs = true)
+	{
+		if (!$this->config['useAcl']) {
+			return;
+		}
+		
+		$roles = dibi::query('SELECT r.id, r.name
+                            FROM %n AS r
+                            JOIN %n AS u2r ON r.id=u2r.role_id
+                            WHERE u2r.user_id = %i
+                            ORDER BY r.name;', self::ACL_ROLES_TABLE, 
+    											self::ACL_USERS_2_ROLES_TABLE, 
+    											$user->id
+    					)->fetchPairs();
+    		
+		// fetch keys only (mainly for edit user)		
+    	if (!$fetchPairs) {
+    		$roles = array_keys($roles);
+    	}
+   	 	$user['roles'] = $roles;
+	}
+	
+	
 	/**
 	 * find all users
 	 *  (optionally limited to roles weaker than given $userLevelId)
 	 * 
+	 * @param bool fetch results (and roles consequently) ?
 	 * @return DibiRow array
 	 */
-	public function findAll($fetch = true, $userLevelId = 0)
+	public function findAll($fetch = true)
 	{
-		$ret = dibi::select('u.*, ul.name AS role, ul.public_name AS publicRole')
-				->from(self::TABLE)
-					->as('u')
-				->leftJoin(self::USER_LEVELS_TABLE)
-					->as('ul')
-					->on('u.user_levels_id = ul.id')
-				->where('u.user_levels_id > %i', $userLevelId); // limit to weaker roles only!
+		$users = dibi::select('*')
+				->from(self::TABLE);
 
+		// append roles
 		if ($fetch) {
-			$ret = $ret->fetchAll();
+			$users = $users->fetchAll();
+			
+			foreach ($users as &$user) {
+	            $this->bindRoles($user);
+	        }
 		}
 
-		return $ret;
+		return $users;
 	}
 
 	
@@ -112,7 +186,18 @@ class UsersModel extends BaseModel implements IAuthenticator
 		$data['password'] = self::getHash($data['username'], $data['password']);
 		$data['registered'] = dibi::datetime();
 
-		return parent::insert($data);
+		if (isset($data['roles'])) {
+			$roles = $data['roles'];
+			unset($data['roles']);
+		}
+
+		$userId = parent::insert($data);
+		
+		if (isset($roles)) {
+			$this->getRolesModel()->updateUserRoles($userId, $roles);
+		}
+		
+		return $userId;
 	}
 
 
@@ -157,7 +242,14 @@ class UsersModel extends BaseModel implements IAuthenticator
     		unset($data['currentPassword']);
 	    	unset($data['password2']);
     	}
+    	
+    	// update roles
+    	if (isset($data['roles'])) {
+			$this->getRolesModel()->updateUserRoles($id, $data['roles']);
+			unset($data['roles']);
+    	}
     	    	
+    	// update user
 		parent::update($id, $data);
 		
 		if ($updateIdentity) {
@@ -238,23 +330,24 @@ class UsersModel extends BaseModel implements IAuthenticator
 	{
 		return dibi::select('id, CONCAT(firstname, " ", lastname) AS name')
 					->from(self::TABLE)
-					->where('user_levels_id = %i', $userLevelId)
+						->as('u')
+					->rightJoin(TABLE_USERS_ROLES)
+						->as('ur')
+						->on('u.id = ur.user_id AND ur.role_id = %i', $userLevelId)
 					->fetchPairs('id', 'name');
 	}
 	
 	
 	/**
-	 * find user roles (optionally limited to roles weaker than given $userLevelId)
+	 * find user roles that admin can set
 	 *
-	 * @param int #ul.id
 	 * @return array
 	 */
-//	public static function findRoles()
-	public function findRoles($userLevelId = 0)
+	public function findRoles()
 	{
-		return dibi::select('id, public_name')
-					->from(self::USER_LEVELS_TABLE)
-					->where('id > %i', $userLevelId) // limit to weaker roles only!
-					->fetchPairs('id', 'public_name');
+		return dibi::select('id, name')
+					->from(self::ACL_ROLES_TABLE)
+					->where('is_public = 1')
+					->fetchPairs();
 	}
 }

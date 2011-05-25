@@ -37,6 +37,11 @@ abstract class BasePresenter extends Presenter
 	protected $config;
 		
 	
+	
+    public $cache;
+
+	    
+	
 	public function getModel()
 	{
 		return $this->model;
@@ -62,14 +67,32 @@ abstract class BasePresenter extends Presenter
 		
 		$this->registerUser();
 		
+		Environment::setVariable('basePath', substr(Environment::getVariable('baseUri'), 0, -1));
 	}
 	
 	protected function registerUser(&$tpl = null)
 	{
+		
+		
 		if (!$this->user) {
 			$this->user = $this->getUser();
 			$this->userIdentity = $this->user->isLoggedIn() ? $this->user->getIdentity() : NULL;
 			$this->userId = $this->userIdentity ? $this->userIdentity->data['id'] : NULL;
+			
+			// set ACL if needed (use cache optionally)
+	        if (defined('ACL_CACHING') and ACL_CACHING) {
+	            $this->cache = Environment::getCache();
+	            if (!isset($this->cache['gui_acl'])) {
+	                $this->cache->save('gui_acl', new Acl(), array(
+	                    'files' => array(APP_DIR.'/config.ini'),
+	                ));
+	            }
+	            $this->user->setAuthorizationHandler($this->cache['gui_acl']);
+	        }
+	        else {
+	            $this->user->setAuthorizationHandler(new Acl());
+	        }
+
 		}
 		
 		if ($tpl instanceof Template) {

@@ -139,3 +139,7 @@ a {
 }
 
 small {font-size:70%;}
+/* description */
+form small {
+	display: inline-block;
+}

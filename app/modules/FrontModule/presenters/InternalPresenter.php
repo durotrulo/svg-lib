@@ -116,7 +116,7 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 		parent::startup();
 		
 		// user must be one of allowed roles
-		if (!in_array($this->userIdentity->role, $this->_allowedUserRoles)) {
+		if (count(array_intersect($this->user->getRoles(), $this->_allowedUserRoles)) === 0) {
 			$this->flashMessage('You are not allowed to enter this section', self::FLASH_MESSAGE_ERROR);
 			// todo: ked klikne napr. client na link, do kt. nema pristup, tak vznikne slucka pri presmerovani - lebo je sice prihlaseny, ale nie v potrebnej roli -> treba to tu oifovat, kam podla role presmerovat
 			$this->redirect(':Front:Login:login');

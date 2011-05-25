@@ -9,26 +9,24 @@
 	<link rel="stylesheet" media="print" href="{$basePath}/css/print.css" type="text/css">
 	<link rel="shortcut icon" href="{$basePath}/favicon.ico" type="image/x-icon">
 
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+	{* http://blogs.sitepoint.com/whats-new-in-jquery-16/ *}
+	{* load jQuery from CDN or fallback to local copy *}
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script>
+	<script>window.jQuery || document.write("<script src='{!$basePath}/js/jquery-1.6.1.min.js'>\x3C/script>")</script>
+	
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
 	<link rel="stylesheet" media="screen,projection,tv" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css">
+
+
+<!--	History.js - should be before jquery.nette.js -->
+	<script>if ( typeof window.JSON === 'undefined' ) { document.write('<script src="{$basePath}/modules/history.js/json2.js"><\/script>'); }</script>
+	{control js '../modules/history.js/amplify.store.js', '../modules/history.js/history.adapter.jquery.js', '../modules/history.js/history.js', '../modules/history.js/history.html4.js'}
+<!--	History.js END-->
 
 	{control js 'jquery.livequery.js', 'jquery.nette.js', 'netteForms.js', 'jquery.placeholder.min.js', 'common.js', 'js.js'}
 	{control css 'reset.css', 'general.css', 'screen.css', 'admin.css'}
 
-	
-	
-<!--    <link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/datagrid.css" type="text/css">-->
-<!--    <link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/ajax.css" type="text/css">-->
-<!--    <link rel="stylesheet" media="print" href="{$basePath}/css/print.css" type="text/css">-->
 
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
-
-<!--    <script type="text/javascript" src="{$basePath}/js/ckeditor/ckeditor.js"></script>
-    <script type="text/javascript" src="{$basePath}/js/datepickerForms.js"></script>
-    <script type="text/javascript" src="{$basePath}/js/datagrid.js"></script>
--->   
 	{* js a css from views *}
 	{ifset $head}{!$head}{/if}
 	

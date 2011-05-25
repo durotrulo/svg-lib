@@ -2,6 +2,12 @@
 
 abstract class Admin_BasePresenter extends BasePresenter
 {
+	/**
+	 * acl resource and privilege name, each descendant should declare these constants if custom ACL required (otherwise these const used)
+	 * @dbsync
+	 */
+	const ACL_RESOURCE = 'administration';
+	const ACL_PRIVILEGE = 'admin';
 	
 	protected function startup()
 	{
@@ -23,26 +29,9 @@ abstract class Admin_BasePresenter extends BasePresenter
 			/* todo:vymysliet univerzalne ulozisko konstant nastavenie konstant casto pouzivanych */
 			define('RECORD_NOT_FOUND', $this->translate('record_not_found'));
 			
-			// TODO: doriesit ACL
-//			$user_sections = array();
-			// role => array of allowed presenters
-			$allowed_sections = array(
-				'newsletter-moderator' => array('newsletter'),
-			);
-			$presenter_name = strtolower(substr($this->getPresenter()->name, 6)); //trim Admin-
-//			dump($presenter_name);
-			
-			//	ak to nie je admin a ide do sekcie, kam nema pristup, tak ho vratim na login form
-			if (!$user->isInRole(UsersModel::UL_ADMIN) and !$user->isInRole(UsersModel::UL_SUPERADMIN)) {
-				if (!isset($allowed_sections[$this->userIdentity->role])) {
-					throw new Exception("Unknown user role! '{$this->userIdentity->role}'");
-				}
-				
-				if (!in_array($presenter_name, $allowed_sections[$this->userIdentity->role])) {
-					$this->unauthorized();
-				}
+			if (!$user->isAllowed(static::ACL_RESOURCE, static::ACL_PRIVILEGE)) {
+				$this->unauthorized();
 			}
-			$this->template->isAdminModule = TRUE;
 		}
 	}
 	
@@ -53,12 +42,15 @@ abstract class Admin_BasePresenter extends BasePresenter
 		
 		$this->template->title = 'Admin';
 		$this->template->heading = 'Administrácia';
+
+		$this->template->isAdminModule = TRUE;
 	}
 	
 	protected function unauthorized()
 	{
 		$this->flashMessage('Prístup zamietnutý! Dôvod: nedostatočné oprávnenia', self::FLASH_MESSAGE_ERROR);
-		$this->redirect(':Front:Login:login', $this->getApplication()->storeRequest());
+//		$this->redirect(':Front:Login:login', $this->getApplication()->storeRequest());
+		$this->redirect(':Front:Login:login');
 	}
 	
 }

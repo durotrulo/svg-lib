@@ -79,24 +79,24 @@ class Admin_ComplexityPresenter extends Admin_BasePresenter
 		
 		$form->addText('firstname', 'First Name')
             ->addRule(Form::FILLED)
-            ->addRule(Form::MIN_LENGTH, 2)
-            ->addRule(Form::MAX_LENGTH, 70);
+            ->addRule(Form::MIN_LENGTH, NULL, NULL, 2)
+            ->addRule(Form::MAX_LENGTH, NULL, 70);
 
         $form->addText('lastname', 'Last Name')
             ->addRule(Form::FILLED)
-            ->addRule(Form::MIN_LENGTH, 2)
-            ->addRule(Form::MAX_LENGTH, 70);
+            ->addRule(Form::MIN_LENGTH, NULL, 2)
+            ->addRule(Form::MAX_LENGTH, NULL, 70);
 
         $form->addText('username', 'User Name')
             ->addRule(Form::FILLED)
-            ->addRule(Form::MIN_LENGTH, 3)
-            ->addRule(Form::MAX_LENGTH, 30);
+            ->addRule(Form::MIN_LENGTH, NULL, 3)
+            ->addRule(Form::MAX_LENGTH, NULL, 30);
 	   
             
         if ($this->getAction() === 'add') {
         	$form->addPassword('password', 'Password')
 	            ->addRule(Form::FILLED)
-	            ->addRule(Form::MIN_LENGTH, 6);
+	            ->addRule(Form::MIN_LENGTH, NULL, 6);
 	
 	  	  	$form->addPassword('password2', 'Confirm Password')
 	            ->addRule(Form::FILLED, 'Confirm user password!')
@@ -105,7 +105,7 @@ class Admin_ComplexityPresenter extends Admin_BasePresenter
          	$form->addPassword('password', 'Password')
 				->setOption('description', 'Fill in only if you want to change current password')
 		    	->addCondition(Form::FILLED)
-			    	->addRule(Form::MIN_LENGTH, 6);
+			    	->addRule(Form::MIN_LENGTH, NULL, 6);
 
 			$form['password']->getControlPrototype()->autocomplete('off');
 
@@ -120,7 +120,7 @@ class Admin_ComplexityPresenter extends Admin_BasePresenter
 	            ->setEmptyValue('@')
 	            ->addRule(Form::FILLED)
 	            ->addRule(Form::EMAIL)
-	            ->addRule(Form::MAX_LENGTH, 60);
+	            ->addRule(Form::MAX_LENGTH, NULL, 60);
 	
 	    $form->addSelect('role', 'Role', $this->prepareRoles())->skipFirst()
 	            ->addRule(Form::FILLED);

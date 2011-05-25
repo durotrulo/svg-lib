@@ -1,6 +1,6 @@
 <?php
 
-class RichTextArea extends MyTextArea
+class RichTextArea extends TextArea
 {
 	/** @var string */
 	public $className = 'wysiwyg';

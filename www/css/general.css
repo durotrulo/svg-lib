@@ -131,7 +131,7 @@ table.grid th {
 	border:1px solid;
 }
 
-.inline {display:inline;}
+.inline {display:inline !important;}
 																						/************ Nette Specific CSS ******************/
 
 /*

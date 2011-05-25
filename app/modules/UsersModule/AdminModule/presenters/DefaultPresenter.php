@@ -2,7 +2,9 @@
 
 class Users_Admin_DefaultPresenter extends Admin_BasePresenter
 {
-
+	const ACL_RESOURCE = 'users_admin';
+	const ACL_PRIVILEGE = 'admin';
+	
 	protected function startup()
 	{
 		parent::startup();
@@ -19,7 +21,7 @@ class Users_Admin_DefaultPresenter extends Admin_BasePresenter
 		if ($this->getAction() === 'add' or 'edit') {
 			$form = $this['itemForm'];
 //			if ($form->isSubmitted()) {
-				$this->template->users = $this->model->findAll(true, $this->userIdentity->user_levels_id);
+				$this->template->users = $this->model->findAll(true);
 //			}
 		}
 	}
@@ -28,7 +30,7 @@ class Users_Admin_DefaultPresenter extends Admin_BasePresenter
 	
   	private function prepareRoles()
   	{
-  		return BaseModel::prepareSelect($this->model->findRoles($this->userIdentity->user_levels_id), 'User Role');
+  		return BaseModel::prepareSelect($this->model->findRoles(), 'User Role');
   	}
 
 	
@@ -53,10 +55,10 @@ class Users_Admin_DefaultPresenter extends Admin_BasePresenter
 			if (!$row) {
 				throw new BadRequestException(RECORD_NOT_FOUND);
 			}
-			
-			if ($row->user_levels_id <= $this->userIdentity->user_levels_id) {
-				throw new OperationNotAllowedException('You don\'t have rights to edit this user. Contact superadmin for granting higher permissions.');
-			}
+
+//			if ($row->user_levels_id <= $this->userIdentity->user_levels_id) {
+//				throw new OperationNotAllowedException('You don\'t have rights to edit this user. Contact superadmin for granting higher permissions.');
+//			}
 			
 			$form->setDefaults($row);
 			$this->invalidateControl('itemForm');
@@ -79,52 +81,53 @@ class Users_Admin_DefaultPresenter extends Admin_BasePresenter
 		}
 		
 		$form->addText('firstname', 'First Name')
-            ->addRule(Form::FILLED)
-            ->addRule(Form::MIN_LENGTH, 2)
-            ->addRule(Form::MAX_LENGTH, 70);
+            ->addRule($form::FILLED)
+            ->addRule($form::MIN_LENGTH, NULL, 2)
+            ->addRule($form::MAX_LENGTH, NULL, 70);
 
         $form->addText('lastname', 'Last Name')
-            ->addRule(Form::FILLED)
-            ->addRule(Form::MIN_LENGTH, 2)
-            ->addRule(Form::MAX_LENGTH, 70);
+            ->addRule($form::FILLED)
+            ->addRule($form::MIN_LENGTH, NULL, 2)
+            ->addRule($form::MAX_LENGTH, NULL, 70);
 
         $form->addText('username', 'User Name')
-            ->addRule(Form::FILLED)
-            ->addRule(Form::MIN_LENGTH, 3)
-            ->addRule(Form::MAX_LENGTH, 30);
+            ->addRule($form::FILLED)
+            ->addRule($form::MIN_LENGTH, NULL, 3)
+            ->addRule($form::MAX_LENGTH, NULL, 30);
 	   
             
         if ($this->getAction() === 'add') {
         	$form->addPassword('password', 'Password')
-	            ->addRule(Form::FILLED)
-	            ->addRule(Form::MIN_LENGTH, 6);
+	            ->addRule($form::FILLED)
+	            ->addRule($form::MIN_LENGTH, NULL, 6);
 	
 	  	  	$form->addPassword('password2', 'Confirm Password')
-	            ->addRule(Form::FILLED, 'Confirm user password!')
-	            ->addRule(Form::EQUAL, 'No match for passwords!', $form['password']);
+	            ->addRule($form::FILLED, 'Confirm user password!')
+	            ->addRule($form::EQUAL, 'No match for passwords!', $form['password']);
         } elseif ($this->getAction() === 'edit') {
          	$form->addPassword('password', 'Password')
 				->setOption('description', 'Fill in only if you want to change current password')
-		    	->addCondition(Form::FILLED)
-			    	->addRule(Form::MIN_LENGTH, 6);
+		    	->addCondition($form::FILLED)
+			    	->addRule($form::MIN_LENGTH, NULL, 6);
 
 			$form['password']->getControlPrototype()->autocomplete('off');
 
 		    $form->addPassword('password2', 'Confirm Password')
 		    	->setOption('description', 'Fill in only if you want to change current password')
-					->addConditionOn($form['password'], Form::FILLED)
-						->addRule(Form::FILLED, 'Confirm your password!')
-			            ->addRule(Form::EQUAL, 'No match for passwords!', $form['password']);
+					->addConditionOn($form['password'], $form::FILLED)
+						->addRule($form::FILLED, 'Confirm your password!')
+			            ->addRule($form::EQUAL, 'No match for passwords!', $form['password']);
         }
 	
 	    $form->addText('email', 'E-Mail')
 	            ->setEmptyValue('@')
-	            ->addRule(Form::FILLED)
-	            ->addRule(Form::EMAIL)
-	            ->addRule(Form::MAX_LENGTH, 60);
+	            ->addRule($form::FILLED)
+	            ->addRule($form::EMAIL)
+	            ->addRule($form::MAX_LENGTH, NULL, 60);
 	
-	    $form->addSelect('user_levels_id', 'Role', $this->prepareRoles())->skipFirst()
-	            ->addRule(Form::FILLED);
+//	    $form->addSelect('user_levels_id', 'Role', $this->prepareRoles())->skipFirst()
+	    $form->addMultiSelect('roles', 'Role', $this->prepareRoles(), 6)->skipFirst()
+	            ->addRule($form::FILLED);
 
 		$form->addSubmit('save', 'Add');
 		$form->addSubmit('cancel', 'Cancel')->setValidationScope(NULL);

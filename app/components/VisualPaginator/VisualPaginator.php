@@ -76,6 +76,9 @@ class VisualPaginator extends BaseControl
 	/** @var bool ci sa zmenil pocet items na stranku .. kvoli invalidacii USE: if pg->itemsPerPageChanged => invalidateControl	*/
 	public $itemsPerPageChanged = false;
 	
+	/** @var bool ci sa da menit pocet zobrazenych vysledkov - podla toho sa zobrazi menu */
+	public $isResultsCountChangable = true;
+	
 	public function getPaginator()
 	{
 		if (!isset($this->paginator)) {

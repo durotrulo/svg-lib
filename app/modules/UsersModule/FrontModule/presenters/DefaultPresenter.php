@@ -50,12 +50,12 @@ class Users_Front_DefaultPresenter extends Front_BasePresenter
 		
 		$form->addText('username', 'Prihlasovacie meno')
 				->addRule(Form::FILLED)
-                ->addRule(Form::MIN_LENGTH, 3)
-            	->addRule(Form::MAX_LENGTH, 30);
+                ->addRule(Form::MIN_LENGTH, NULL, 3)
+            	->addRule(Form::MAX_LENGTH, NULL, 30);
 			
 		$form->addPassword("password", "Nové heslo", 60)
 				->addRule(Form::FILLED)
-	            ->addRule(Form::MIN_LENGTH, 6);
+	            ->addRule(Form::MIN_LENGTH, NULL, 6);
 
 		$form->addPassword("password2", "Potvrďte nové heslo", 60)
 				->addRule(Form::FILLED, "%label !")
@@ -109,29 +109,29 @@ class Users_Front_DefaultPresenter extends Front_BasePresenter
 		
 		$form->addText('firstname', 'First Name')
             ->addRule(Form::FILLED)
-            ->addRule(Form::MIN_LENGTH, 2)
-            ->addRule(Form::MAX_LENGTH, 70);
+            ->addRule(Form::MIN_LENGTH, NULL, 2)
+            ->addRule(Form::MAX_LENGTH, NULL, 70);
 
         $form->addText('lastname', 'Last Name')
             ->addRule(Form::FILLED)
-            ->addRule(Form::MIN_LENGTH, 2)
-            ->addRule(Form::MAX_LENGTH, 70);
+            ->addRule(Form::MIN_LENGTH, NULL, 2)
+            ->addRule(Form::MAX_LENGTH, NULL, 70);
 
         $form->addText('username', 'User Name')
             ->addRule(Form::FILLED)
-            ->addRule(Form::MIN_LENGTH, 3)
-            ->addRule(Form::MAX_LENGTH, 30);
+            ->addRule(Form::MIN_LENGTH, NULL, 3)
+            ->addRule(Form::MAX_LENGTH, NULL, 30);
 	   
         $form->addText('email', 'E-Mail')
 	            ->setEmptyValue('@')
 	            ->addRule(Form::FILLED)
 	            ->addRule(Form::EMAIL)
-	            ->addRule(Form::MAX_LENGTH, 60);
+	            ->addRule(Form::MAX_LENGTH, NULL, 60);
 	        
      	$form->addPassword('password', 'Password')
 			->setOption('description', 'Fill in only if you want to change current password')
 	    	->addCondition(Form::FILLED)
-		    	->addRule(Form::MIN_LENGTH, 6);
+		    	->addRule(Form::MIN_LENGTH, NULL, 6);
 
 		$form['password']->getControlPrototype()->autocomplete('off');
 

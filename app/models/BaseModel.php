@@ -18,6 +18,16 @@ abstract class BaseModel extends Object
 	const LIGHTBOXES_TABLE = 'lightboxes';
 	const FILES_2_LIGHTBOXES_TABLE = 'files_2_lightboxes';
 	
+	const ACL_TABLE = TABLE_ACL;
+	const ACL_PRIVILEGES_TABLE = TABLE_PRIVILEGES;
+	const ACL_RESOURCES_TABLE = TABLE_RESOURCES;
+	const ACL_ROLES_TABLE = TABLE_ROLES;
+	const ACL_USERS_TABLE = TABLE_USERS;
+	const ACL_USERS_2_ROLES_TABLE = TABLE_USERS_ROLES;
+	
+	
+	protected $config;
+	
 	/** @var LogsModel */
 	private $logsModel;
 	
@@ -29,6 +39,32 @@ abstract class BaseModel extends Object
 	
 	/** @var mixed IIdentity|NULL  */
 	private $userIdentity;
+	
+	
+	/** @var array of modules called via &_get() */
+	private static $models = array();
+	
+	
+	/**
+	 * Returns property value. Do not call directly.
+	 * support for models [e.g. rolesModel]
+	 * @param  string  property name
+	 * @return mixed   property value
+	 */
+	public function &__get($name)
+	{
+		$className = ucfirst($name);
+		if (String::endsWith($className, 'Model') && class_exists($className)) {
+			if (!isset(self::$models[$className])) {
+				self::$models[$className] = new $className;
+			}
+			
+			return self::$models[$className];
+		}
+		
+		return parent::__get($name);
+	}
+	
 	
 	/**
 	 * @return LogsModel

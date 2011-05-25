@@ -10,9 +10,6 @@ class Front_LoginPresenter extends BasePresenter
 //class Front_LoginPresenter extends Front_PagePresenter
 {
 	
-//	/** @persistent */
-//	public $anchor = '';
-
 	/**
 	 * @link how to http://forum.nettephp.com/cs/2175-nemohu-zprovoznit-re-storerequest?pid=14721#p14721
 	 */
@@ -35,7 +32,7 @@ class Front_LoginPresenter extends BasePresenter
 
             // pre pripad, ze zhnila session a $key uz nie je platny
             //todo: docasne riesenie
-			if (!in_array($this->userIdentity->role, array('admin', 'superadmin', 'designer', 'projectManager'))) {
+			if (count(array_intersect($this->user->getRoles(), array('admin', 'superadmin', 'designer', 'projectManager'))) === 0) {
 	            $this->redirect('logout');
             }
             

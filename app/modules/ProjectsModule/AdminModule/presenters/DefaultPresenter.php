@@ -93,13 +93,13 @@ class Projects_Admin_DefaultPresenter extends Admin_BasePresenter
 		
 		$form->addText('name', 'Project Name')
             ->addRule(Form::FILLED)
-            ->addRule(Form::MIN_LENGTH, 2)
-            ->addRule(Form::MAX_LENGTH, 70);
+            ->addRule(Form::MIN_LENGTH, NULL, 2)
+            ->addRule(Form::MAX_LENGTH, NULL, 70);
 
         $form->addText('subtitle', 'Subtitle')
             ->addCondition(Form::FILLED)
-	            ->addRule(Form::MIN_LENGTH, 'tmpzadaj %d', 2)
-	            ->addRule(Form::MAX_LENGTH, 'tmpzadaj %d', 70);
+	            ->addRule(Form::MIN_LENGTH, NULL, 2)
+	            ->addRule(Form::MAX_LENGTH, NULL, 70);
 
 	    $form->addRadioList('type', 'Type', array(
 		    	'client' => 'client', 
