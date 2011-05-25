@@ -22,7 +22,7 @@ class AccessModel extends BaseModel {
         foreach ($resources as $res) {
             foreach ($privileges as $pri) {
                 foreach ($roles as $role) {
-                    if ($acl->isAllowed($role->key_name, $res->key_name, $pri->key_name)) {
+                    if (@$acl->isAllowed($role->key_name, $res->key_name, $pri->key_name)) { // @ to repress NOTICE if assertion required and resource property (id, owner_id, ...) not set yet
                         $this->access[$i]['resource'] = $res->name;
                         $this->access[$i]['privileg'] = $pri->name;
                         $i++;

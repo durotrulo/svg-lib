@@ -4,6 +4,7 @@
 
 <h2>Authorized access for the role "{$role}"</h2>
 
+<i class="red bold">Some records depending on __assertions__ may be missing due to need of specifying resource property like 'id' or 'owner_id'...</i>
 {if count($access)}<table cellspacing="0" cellpadding="5">
     <tr><th>Resources</th><th>Privileges</th><th>Access</th></tr>
     {foreach $access as $acces}

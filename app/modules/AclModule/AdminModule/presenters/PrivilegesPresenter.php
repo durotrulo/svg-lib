@@ -15,12 +15,6 @@
  */
 class Acl_Admin_PrivilegesPresenter extends Acl_Admin_BasePresenter
 {
-    /**
-     * Init method
-     */
-    public function startup() {
-        parent::startup();
-    }
 
     /******************
      * Default
@@ -42,7 +36,7 @@ class Acl_Admin_PrivilegesPresenter extends Acl_Admin_BasePresenter
             $form->setDefaults($sql->fetch());
         }
         else
-            $form->addError('This privileg does not exist.');
+            $form->addError('This privilege does not exist.');
     }
     protected function createComponentAddEdit($name) {
         $form = new AppForm($this, $name);
@@ -74,13 +68,13 @@ class Acl_Admin_PrivilegesPresenter extends Acl_Admin_BasePresenter
             try {
                 $values = $form->getValues();
                 dibi::query('INSERT INTO ['.TABLE_PRIVILEGES.'] %v;', $values);
-                $this->flashMessage('The privileg has been added.', 'ok');
+                $this->flashMessage('The privilege has been added.', 'ok');
                 if (ACL_CACHING) {
                     unset($this->cache['gui_acl']); // invalidate cache
                 }
                 $this->redirect('Privileges:');
             } catch (Exception $e) {
-                $form->addError('The privileg has not been added.');
+                $form->addError('The privilege has not been added.');
                 throw $e;
             }
         }
@@ -89,13 +83,13 @@ class Acl_Admin_PrivilegesPresenter extends Acl_Admin_BasePresenter
                 $id = $this->getParam('id');
                 $values = $form->getValues();
                 dibi::query('UPDATE ['.TABLE_PRIVILEGES.'] SET %a WHERE id=%i;', $values, $id);
-                $this->flashMessage('The privileg has been edited.', 'ok');
+                $this->flashMessage('The privilege has been edited.', 'ok');
                 if (ACL_CACHING AND ACL_PROG_MODE) {
                     unset($this->cache['gui_acl']); // invalidate cache
                 }
                 $this->redirect('Privileges:');
             } catch (Exception $e) {
-                $form->addError('The privileg has not been edited.');
+                $form->addError('The privilege has not been edited.');
                 throw $e;
             }
         }

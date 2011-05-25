@@ -72,8 +72,6 @@ abstract class BasePresenter extends Presenter
 	
 	protected function registerUser(&$tpl = null)
 	{
-		
-		
 		if (!$this->user) {
 			$this->user = $this->getUser();
 			$this->userIdentity = $this->user->isLoggedIn() ? $this->user->getIdentity() : NULL;

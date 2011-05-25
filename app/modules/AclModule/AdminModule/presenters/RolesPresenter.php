@@ -14,12 +14,6 @@
  */
 class Acl_Admin_RolesPresenter extends Acl_Admin_BasePresenter
 {
-    /**
-     * Init method
-     */
-    public function startup() {
-        parent::startup();
-    }
 
     /******************
      * Default

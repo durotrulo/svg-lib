@@ -29,7 +29,7 @@ class Front_FilesPresenter extends Front_InternalPresenter
 //		if ($this->filter === FilesModel::COMPLEXITY_INSPIRATION_ID) {
 //			$this->complexity = $this->filter;
 //		}
-		
+
 //		$this->model = new FilesModel();
 		$this->model = $this->filesModel;
 	}

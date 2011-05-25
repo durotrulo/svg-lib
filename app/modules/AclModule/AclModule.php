@@ -18,6 +18,7 @@ class AclModule extends BaseModule
 		$db_config = Environment::getConfig('database');
         define('TABLE_ACL', $db_config->tables->acl);
         define('TABLE_PRIVILEGES', $db_config->tables->acl_privileges);
+        define('TABLE_ASSERTIONS', $db_config->tables->acl_assertions);
         define('TABLE_RESOURCES', $db_config->tables->acl_resources);
         define('TABLE_ROLES', $db_config->tables->acl_roles);
         define('TABLE_USERS', $db_config->tables->users);

@@ -1,0 +1,8 @@
+{block content}
+<h1>{block #title}Assertions{/block}{if $prog_mode} <a href="{plink Assertions:add}"><img src="{$assetsBasePath}/images/add.gif" height="19" width="19" title="Add assertion" alt="Add icon" /></a>{/if}</h1>
+<dl>
+{foreach $assertions as $assertion}
+<dt>{$assertion->class} <a href="{plink //Assertions:edit, $assertion->id}"><img src="{$assetsBasePath}/images/edit.gif" height="19" width="19" title="Edit assertion" alt="Edit icon" /></a>{if $prog_mode} <a href="{plink Assertions:delete, $assertion->id}"><img src="{$assetsBasePath}/images/delete.gif" height="19" width="19" title="Delete assertion" alt="Delete icon" /></a>{/if}</dt>
+    {ifset $assertion->comment}<dd>{$assertion->comment}</dd>{/if}
+{/foreach}
+</dl>

@@ -1,5 +1,7 @@
 <?php
 
+define('NOT_ALLOWED', 'You are not allowed to perform this operation!');
+
 // Step 1: Load Nette Framework
 // this allows load Nette Framework classes automatically so that
 // you don't have to litter your code with 'require' statements

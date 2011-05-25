@@ -15,12 +15,6 @@
  */
 class Acl_Admin_ResourcesPresenter extends Acl_Admin_BasePresenter
 {
-    /**
-     * Init method
-     */
-    public function startup() {
-        parent::startup();
-    }
 
     /******************
      * Default

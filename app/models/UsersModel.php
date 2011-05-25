@@ -19,7 +19,7 @@ class UsersModel extends BaseModel implements IAuthenticator
 	/** @dbsync (#user_levels.name)*/
 	const UL_SUPERADMIN = 'superadmin';
 	const UL_ADMIN = 'admin';
-	const UL_PROJECT_MANAGER = 'project-manager';
+	const UL_PROJECT_MANAGER = 'projectManager';
 	const UL_DESIGNER = 'designer';
 	const UL_CLIENT = 'client';
 	

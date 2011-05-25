@@ -17,12 +17,6 @@ class Acl_Admin_UsersPresenter extends Acl_Admin_BasePresenter
     /** @var string */
     private $search = '';
 
-    /**
-     * Init method
-     */
-    public function startup() {
-        parent::startup();
-    }
 
     /******************
      * Default

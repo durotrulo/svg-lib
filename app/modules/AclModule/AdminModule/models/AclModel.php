@@ -77,11 +77,13 @@ class AclModel extends BaseModel
                 a.access as access,
                 ro.key_name as role,
                 re.key_name as resource,
-                p.key_name as privilege
+                p.key_name as privilege,
+                asr.class as assertion
                 FROM [' . self::ACL_TABLE . '] a
                 JOIN [' . self::ACL_ROLES_TABLE . '] ro ON (a.role_id = ro.id)
                 LEFT JOIN [' . self::ACL_RESOURCES_TABLE . '] re ON (a.resource_id = re.id)
                 LEFT JOIN [' . self::ACL_PRIVILEGES_TABLE . '] p ON (a.privilege_id = p.id)
+               	LEFT JOIN [' . self::ACL_ASSERTIONS_TABLE . '] asr ON a.assertion_id=asr.id
                 ORDER BY a.id ASC
         ');
          $sql->setType('access', Dibi::BOOL);
@@ -95,20 +97,49 @@ class AclModel extends BaseModel
  * @author  Tomas Marcanik
  * @package GUI for Acl
  */
-class Acl extends Permission {
-    public function __construct() {
+class Acl extends Permission
+{
+	public function __construct()
+	{
         $model = new AclModel();
 
         $roles = $model->getRoles();
-        foreach($roles as $role)
+        foreach($roles as $role) {
+//        	dump($role['key_name'], $role['parent_key']);
             $this->addRole($role['key_name'], $role['parent_key']);
-
-        $model->getResources();
-        foreach($model->getResources() as $resource)
+        }
+        
+        $resources = $model->getResources();
+        foreach($resources as $resource) {
+//        	dump($resource['key_name'], $resource['parent_key']);
             $this->addResource($resource['key_name'], $resource['parent_key']);
-
-        foreach($model->getRules() as $rule)
-            $this->{$rule->access ? 'allow' : 'deny'}($rule->role, $rule->resource, $rule->privilege);
+        }
+        
+        foreach($model->getRules() as $rule) {
+        	if (!is_null($rule->assertion)) {
+        		$rule->assertion = new $rule->assertion;
+        	}
+//        	dump($rule->access ? 'allow' : 'deny', $rule->role, $rule->resource, $rule->privilege, $rule->assertion);
+        	
+            $this->{$rule->access ? 'allow' : 'deny'}($rule->role, $rule->resource, $rule->privilege, $rule->assertion);
+        }
+//        die();
     }
+    
+    
+    /**
+     * support for @http://forum.nette.org/cs/1231-2009-01-21-sikovnejsi-permission
+     */
+	public function isAllowed($role = self::ALL, $resource = self::ALL, $privilege = self::ALL)
+	{
+		$roleClassName = ucfirst($role) . "Role";
+		if (class_exists($roleClassName)) {
+			$role = new $roleClassName;
+			$role->id = intval(Environment::getUser()->getIdentity()->data['id']);
+		}
+		
+		return parent::isAllowed($role, $resource, $privilege);
+	}
+    
 }
 ?>

@@ -136,21 +136,36 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 		$this->terminate();
 	}
 
+	
+	/**
+	 * edit lightbox name using jEditable on frontend
+	 * prints updated name and exits
+	 *
+	 * @param int lightbox id
+	 * @param string new lightbox's name
+	 * @return void
+	 */
 	public function handleEditName($id, $name)
 	{
-		//todo: acl, if allowed
-		$this->model->updateName($id, $name);
-		echo $name;
+		if ($this->user->isAllowed(new LightboxResource($id), 'edit')) {
+			$this->model->updateName($id, $name);
+			echo $name;
+		} else {
+			echo NOT_ALLOWED;
+		}
 		$this->terminate();
 	}
 	
 	
 	public function handleDelete($id)
 	{
-		//todo: acl, if allowed
 		try {
-			$this->model->delete($id);
-			$this->flashMessage('Lightbox deleted.', self::FLASH_MESSAGE_SUCCESS);
+			if ($this->user->isAllowed(new LightboxResource($id), 'delete')) {
+				$this->model->delete($id);
+				$this->flashMessage('Lightbox deleted.', self::FLASH_MESSAGE_SUCCESS);
+			} else {
+				$this->flashMessage(NOT_ALLOWED, self::FLASH_MESSAGE_ERROR);
+			}
 		} catch (DibiDriverException $e) {
 			throw $e;
 			$this->flashMessage('Lightbox could NOT be deleted.', self::FLASH_MESSAGE_ERROR);

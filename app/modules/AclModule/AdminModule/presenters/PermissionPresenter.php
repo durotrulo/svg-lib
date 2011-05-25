@@ -2,7 +2,7 @@
 /**
  * GUI Acl
  *
- * @copyright  Copyright (c) 2010 Tomas Marcanik
+ * @copyright  Copyright (c) 2010 Tomas Marcanik, 2011 Matus Matula
  * @package    GUI Acl
  */
 
@@ -13,12 +13,6 @@
  */
 class Acl_Admin_PermissionPresenter extends Acl_Admin_BasePresenter
 {
-    /**
-     * Init method
-     */
-    public function startup() {
-        parent::startup();
-    }
 
     /******************
      * Default
@@ -29,11 +23,12 @@ class Acl_Admin_PermissionPresenter extends Acl_Admin_BasePresenter
         $paginator = $vp->getPaginator();
         $paginator->itemsPerPage = 20;
 
-        $sql = dibi::query('SELECT a.id, a.access, ro.name AS role, re.name AS resource, p.name AS privilege
+        $sql = dibi::query('SELECT a.id, a.access, ro.name AS role, re.name AS resource, p.name AS privilege, asr.class AS assertion
                                 FROM ['.TABLE_ACL.'] AS a
                                 LEFT JOIN ['.TABLE_ROLES.'] AS ro ON a.role_id=ro.id
                                 LEFT JOIN ['.TABLE_RESOURCES.'] AS re ON a.resource_id=re.id
                                 LEFT JOIN ['.TABLE_PRIVILEGES.'] AS p ON a.privilege_id=p.id
+                                LEFT JOIN ['.TABLE_ASSERTIONS.'] AS asr ON a.assertion_id=asr.id
                                 ORDER BY ro.name;');
         $sql->setType('access', Dibi::BOOL);
         $paginator->itemCount = count($sql);
@@ -79,11 +74,14 @@ class Acl_Admin_PermissionPresenter extends Acl_Admin_BasePresenter
         }
         // privileges
         $privileges[0] = '- All privileges -';
-        $rows = dibi::fetchAll('SELECT id, name FROM [gui_acl_privileges] ORDER BY name;');
+        $rows = dibi::fetchAll('SELECT id, name FROM %n ORDER BY name;', TABLE_PRIVILEGES);
         foreach ($rows as $row) { // function array_merge does't work correctly with integer indexes
             // manual array merge
             $privileges[$row->id] = $row->name;
         }
+        
+        // assertions
+        $assertions = array('Choose') + dibi::fetchPairs('SELECT id, class FROM %n ORDER BY class', TABLE_ASSERTIONS);
 
         //$renderer = $form->getRenderer();
         //$renderer->wrappers['label']['suffix'] = ':';
@@ -94,6 +92,7 @@ class Acl_Admin_PermissionPresenter extends Acl_Admin_BasePresenter
                 ->addRule(Form::FILLED, 'You have to fill resources.');
         $form->addMultiSelect('privilege_id', 'Privileges', $privileges, 15)
                 ->addRule(Form::FILLED, 'You have to fill privileges.');
+        $form->addSelect('assertion_id', 'Assertion', $assertions);
         //$form->addSelect('access', 'Access', $access)
         $form->addRadioList('access', 'Access', $access)
                 ->addRule(Form::FILLED, 'You have to fill access.');
@@ -115,7 +114,8 @@ class Acl_Admin_PermissionPresenter extends Acl_Admin_BasePresenter
                                 $resou = NULL;
                             if ($privi=='0')
                                 $privi = NULL;
-                            dibi::query('INSERT INTO ['.TABLE_ACL.'] (role_id, privilege_id, resource_id, access) VALUES (%i, %i, %i, %b);', $role, $privi, $resou, $values['access']);
+                           	settype($values['assertion_id'], 'int');
+                            dibi::query('INSERT INTO ['.TABLE_ACL.'] (role_id, privilege_id, resource_id, assertion_id, access) VALUES (%i, %i, %i, %iN, %b);', $role, $privi, $resou, $values['assertion_id'], $values['access']);
                         }
                     }
                 }
@@ -152,12 +152,13 @@ class Acl_Admin_PermissionPresenter extends Acl_Admin_BasePresenter
      * Delete
      ******************/
     public function actionDelete($id) {
-        $sql = dibi::query('SELECT a.id, a.access, ro.name AS role, re.name AS resource, p.name AS privilege
+        $sql = dibi::query('SELECT a.id, a.access, ro.name AS role, re.name AS resource, p.name AS privilege, asr.class AS assertion
                                 FROM ['.TABLE_ACL.'] AS a
                                 LEFT JOIN ['.TABLE_ROLES.'] AS ro ON a.role_id=ro.id
                                 LEFT JOIN ['.TABLE_RESOURCES.'] AS re ON a.resource_id=re.id
                                 LEFT JOIN ['.TABLE_PRIVILEGES.'] AS p ON a.privilege_id=p.id
-                                WHERE a.id=%i;', $id);
+	                            LEFT JOIN ['.TABLE_ASSERTIONS.'] AS asr ON a.assertion_id=asr.id
+    	                        WHERE a.id=%i;', $id);
         if (count($sql)) {
             $sql->setType('access', Dibi::BOOL);
             $acl = $sql->fetch();

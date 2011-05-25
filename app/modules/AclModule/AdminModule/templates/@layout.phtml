@@ -29,11 +29,12 @@
 <body>
     <div id="menu">
         <ul>
-            <li{if $current=='Acl:Users'} class="hover"{/if}><a href="{plink //Users:default}">Users</a></li>
-            <li{if $current=='Acl:Permission'} class="hover"{/if}><a href="{plink //Permission:}">Permission</a></li>
-            <li{if $current=='Acl:Roles'} class="hover"{/if}><a href="{plink //Roles:}">Roles</a></li>
-            <li{if $current=='Acl:Resources'} class="hover"{/if}><a href="{plink //Resources:}">Resources</a></li>
-            <li{if $current=='Acl:Privileges'} class="hover last"{/if}><a href="{plink //Privileges:}">Privileges</a></li>
+            <li{if $current=='Acl:Admin:Users'} class="hover"{/if}><a href="{plink //Users:default}">Users</a></li>
+            <li{if $current=='Acl:Admin:Permission'} class="hover"{/if}><a href="{plink //Permission:}">Permission</a></li>
+            <li{if $current=='Acl:Admin:Roles'} class="hover"{/if}><a href="{plink //Roles:}">Roles</a></li>
+            <li{if $current=='Acl:Admin:Resources'} class="hover"{/if}><a href="{plink //Resources:}">Resources</a></li>
+            <li{if $current=='Acl:Admin:Privileges'} class="hover"{/if}><a href="{plink //Privileges:}">Privileges</a></li>
+            <li{if $current=='Acl:Admin:Assertions'} class="hover last"{/if}><a href="{plink //Assertions:}">Assertions</a></li>
             {if $user->isLoggedIn()}
             <li class="last"><a href="{plink :Front:Login:logout}">Logout [{$userIdentity->name}]</a></li>
             {else}
