@@ -139,6 +139,8 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 //		}
 		
 		MyTagInput::register();
+		
+		$this->setLastRequest();
 	}
 	
 	

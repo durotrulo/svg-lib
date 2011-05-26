@@ -30,13 +30,21 @@ class Front_LoginPresenter extends BasePresenter
                 $this->getApplication()->restoreRequest($key, $anchor);
             }
 
+            
+			// provide 'start where you ended' after logout and login
+            $lastRequest = $this->getHttpRequest()->getCookie('lastRequest');
+            if (!empty($lastRequest)) {
+            	$this->redirectUri($lastRequest);
+            }
+            
             // pre pripad, ze zhnila session a $key uz nie je platny
             //todo: docasne riesenie
-			if (count(array_intersect($this->user->getRoles(), array('admin', 'superadmin', 'designer', 'projectManager'))) === 0) {
+			if (count(array_intersect($this->user->getRoles(), array('admin', 'superadmin', 'designer', 'projectManager'))) > 0) {
+	            $this->redirect(':Front:Files:list');
+            } else {
 	            $this->redirect('logout');
             }
             
-            $this->redirect(':Front:Files:list');
 //            $this->redirect(':Front:Homepage:');
         }
 	}

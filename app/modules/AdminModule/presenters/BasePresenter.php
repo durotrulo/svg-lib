@@ -32,6 +32,8 @@ abstract class Admin_BasePresenter extends BasePresenter
 			if (!$user->isAllowed(static::ACL_RESOURCE, static::ACL_PRIVILEGE)) {
 				$this->unauthorized();
 			}
+			
+			$this->setLastRequest();
 		}
 	}
 	

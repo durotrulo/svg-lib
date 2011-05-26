@@ -40,8 +40,18 @@ abstract class BasePresenter extends Presenter
 	
     public $cache;
 
-	    
+
+    /**
+     * save current uri to provide 'start where you ended' after logout and login
+     * called from startup() methods of presenters to be tracked
+     */
+    public function setLastRequest()
+    {
+		$uri = $this->getHttpRequest()->getUri()->getAbsoluteUri();
+		$this->getHttpResponse()->setCookie('lastRequest', $uri, Tools::YEAR);
+    }
 	
+    
 	public function getModel()
 	{
 		return $this->model;
