@@ -528,6 +528,10 @@ input.text {
 	position:relative;
 }
 
+	#file-detail-modal .add2lightbox {
+    	bottom: 5px;
+	}
+
 	#file-detail-modal .download-link {
 		padding-left:35px;
 	}
@@ -544,6 +548,59 @@ input.text {
 		height: 380px;
 	    margin: 40px;
    	}
+   	
+   	#file-detail-modal .actions-container {
+   		position:relative;
+   		min-height:30px;
+   	}
+   	
+   	#file-detail-modal .tags-heading {
+   		border-top: 1px solid #999;
+   		border-bottom: 1px solid #999;
+   		color:#000;
+   		
+   		background: #ededed;
+		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e7e7e7', endColorstr='#f2f2f2');
+		background:-webkit-gradient(linear, 50% 0%, 50% 100%, from(#e7e7e7), to(#f2f2f2));
+		background: -moz-linear-gradient(top,  #e7e7e7,  #f2f2f2);
+   	}
+   	
+   	
+   	.tags-container {
+   		margin-left:-10px;
+   		padding-left:10px;
+   		width:100%;
+   	}
+   	
+   	.file-detail-taglist {
+   		background-color:#f2f2f2;
+   	}
+   	
+   	.file-detail-taglist li {
+   		display:inline-block;
+   		margin:5px;
+   		padding:0 12px;
+   		background-color:#0c648b; /* default for admin and superadmin */
+   		color:#fff;
+   		
+   		-moz-border-radius: 9px;
+		-webkit-border-radius:9px;
+		border-radius:9px;
+   	}
+
+   	   	.file-detail-taglist li.user-level-projectManager {
+	   		background-color:#b2c0c9;
+   	   	}
+   	   	
+   	   	.file-detail-taglist li.user-level-designer {
+	   		background-color:#819eae;
+   	   	}
+
+   	   	.file-detail-taglist li.user-level-client {
+	   		background-color:#466f81;
+   	   	}
+
+
 
 /****************************************/
 /* PROJECTS		     			   		*/

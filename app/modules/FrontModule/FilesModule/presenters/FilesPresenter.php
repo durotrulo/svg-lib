@@ -29,6 +29,7 @@ class Front_FilesPresenter extends Front_InternalPresenter
 //		if ($this->filter === FilesModel::COMPLEXITY_INSPIRATION_ID) {
 //			$this->complexity = $this->filter;
 //		}
+		
 
 //		$this->model = new FilesModel();
 		$this->model = $this->filesModel;
@@ -54,7 +55,7 @@ class Front_FilesPresenter extends Front_InternalPresenter
 	{
 		$this->template->thumbSize = Environment::getHttpRequest()->getCookie(self::COOKIE_THUMBSIZE) ? Environment::getHttpRequest()->getCookie(self::COOKIE_THUMBSIZE) : FilesModel::SIZE_MEDIUM;
 
-//		$this->template->filesModel = $this->filesModel;
+		$this->template->filesModel = $this->filesModel;
 		
 		$this->template->itemsCount = $itemsCount = $this->items->count();
 		$vp = $this['itemPaginator'];
@@ -183,6 +184,13 @@ class Front_FilesPresenter extends Front_InternalPresenter
 		};
 
 		return $form;
+	}
+	
+	
+	public function handleGetTags($fileId)
+	{
+		$this->payload->tags = $this->model->getTags($fileId);
+		$this->terminate();
 	}
 	
 

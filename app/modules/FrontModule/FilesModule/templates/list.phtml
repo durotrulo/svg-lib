@@ -10,35 +10,57 @@
 
 {capture $head}
 <script src="{$basePath}/modules/colorbox/jquery.colorbox.js"></script>
-<script>
+ <script>
 	// generate up-to-date link with every snippet redraw
  	var linkReloadItemList = {link reloadItemList!};
  	
- 	// @see http://colorpowered.com/colorbox/
- 	$(function() {
-		$("a[rel='images']").livequery( function () {
-		 	var fileDetailModal = $('#file-detail-modal');
-	//	 	var linkReloadItemList = {link reloadItemList!};
-			$(this).colorbox({
-				inline: true, 
-				href: "#file-detail-modal",
-				onLoad: function() {
-					var el = $(this);
-					var item = el.parent('.item');
-					fileDetailModal.find('img').attr('src', el.attr('href'));
-					fileDetailModal.find('a.download-link').attr('href', item.find('a.download-link').attr('href'));
-					fileDetailModal.find('.downloads').text(item.find('.top-right').text());
-					fileDetailModal.find('.add2lightbox').html(item.find('.add2lightbox').html());
-				},
-				// reload itemlist to have up-to-date info (files could have been added 2 lightbox or downloaded)
-				onCleanup: function() {
-					$.get(linkReloadItemList);
-				}
-			}, function () { 
-				// callback
-			})
-		});
+ // @see http://colorpowered.com/colorbox/
+ $(function() {
+	$("a[rel='images']").livequery( function () {
+	 	var fileDetailModal = $('#file-detail-modal');
+	 	var linkReloadItemList = {link reloadItemList!};
+		$(this).colorbox({
+			inline: true, 
+			href: "#file-detail-modal",
+			onLoad: function() {
+				var el = $(this);
+				var item = el.parent('.item');
+				fileDetailModal.find('img').attr('src', el.attr('href'));
+				fileDetailModal.find('a.download-link').attr('href', item.find('a.download-link').attr('href'));
+				fileDetailModal.find('.downloads').text(item.find('.top-right').text());
+				fileDetailModal.find('.add2lightbox').html(item.find('.add2lightbox').html());
+				
+				
+				var taglist = fileDetailModal.find('.file-detail-taglist');
+				taglist.html('<div class="spinner"/>');
+				var itemId = el.prev('.itemId').text();
+			 	$.getJSON(linkGetTags.replace('__ID__', itemId), function(data) {
+				  var items = [];
+		
+			
+				  $.each(data['tags'], function(key, val) {
+				    items.push('<li id="tag-' + val.tags_id + '" class="user-level-' + val.userLevel + '">' + val.name + '</li>');
+				  });
+
+				  taglist.html(
+					  $('<ul/>', {
+					    html: items.join('')
+					  })
+				  );
+				  
+				  $.colorbox.resize();
+				});
+				
+			},
+			// reload itemlist to have up-to-date info (files could have been added 2 lightbox or downloaded)
+			onCleanup: function() {
+				$.get(linkReloadItemList);
+			}
+		}, function () { 
+			// callback
+		})
 	});
+});
 </script>
 <link rel="stylesheet" href="{$basePath}/modules/colorbox/colorbox.css">
 {/capture}
@@ -77,12 +99,17 @@
 @{block #content}
 {snippet itemList}
 
+{* generate up-to-date link with every snippet redraw *}
+<script>
+	 	var linkGetTags = {link getTags! __ID__};
+</script>
 	{if $itemsCount > 0}
 	
 		<div class="itemList thumbSize-{$thumbSize}">
 			<div class="item" n:foreach="$items as $item">
 			{*include '@thumb.phtml' 'item' => $item, 'thumbSize' => $thumbSize*}
 				<span class="top-right show-on-hover">{$item->downloads} downloads</span>
+				<span class="invisible itemId">{$item->id}</span>
 				<a href="{$basePath}/{$presenter->filesModel->getPreviewPath($item->projects_id, 'large', $item->filename, true)}" rel="images">
 					<img src="{$basePath}/{$presenter->filesModel->getPreviewPath($item->projects_id, $thumbSize, $item->filename, true)}">
 				</a>
@@ -100,8 +127,14 @@
 			<div id="file-detail-modal">
 				<span class="downloads">__itemDownloads__ downloads</span>
 				<img src="">
-				<a href="{link download! __itemid__}" title="Download" class="download-link"></a>
-				<span class="ib add2lightbox"></span>
+				<div class="actions-container">
+					<a href="{link download! __itemid__}" title="Download" class="download-link"></a>
+					<span class="ib add2lightbox"></span>
+				</div>
+				<div class="tags-container">
+					<div class="tags-heading">Tags:</div>
+					<div class="file-detail-taglist"></div>
+				</div>
 			</div>
 		</div>
 		
