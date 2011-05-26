@@ -7,8 +7,15 @@
  */
 //class Front_LoginPresenter extends Front_BasePresenter
 class Front_LoginPresenter extends BasePresenter
-//class Front_LoginPresenter extends Front_PagePresenter
 {
+		
+	/** @var links to redirect to, based on user's role */
+	private $redirectTo = array(
+//		'admin' => ':Admin:Homepage:',
+//		'user' => ':Front:Homepage:',
+		'guest' => ':Front:Homepage:', // default
+	);
+
 	
 	/**
 	 * @link how to http://forum.nettephp.com/cs/2175-nemohu-zprovoznit-re-storerequest?pid=14721#p14721
@@ -17,19 +24,22 @@ class Front_LoginPresenter extends BasePresenter
 	{
 		if ($key) {
            	$this->getComponent('loginForm')->getComponent('loginForm')->setDefaults(array('key' => $key, 'anchor' => $anchor));
-//           	$this->getComponent('loginForm')->setDefaults(array('key' => $key, 'anchor' => $anchor));
         }
 	}
 
 
+	/**
+	 * uživatele přesměruje, pokud už je přihlášený (aby se nemusel přihlašovat ve všech tabech, ale jen v jednom a ostatní jen refreshnout)
+	 *
+	 * @param string|null
+	 * @param mixed|null
+	 */
 	public function actionLogin($key, $anchor = NULL) 
 	{
-//		uživatele přesměruje, pokud už je přihlášený (aby se nemusel přihlašovat ve všech tabech, ale jen v jednom a ostatní jen refreshnout):
 		if ($this->getUser()->isLoggedIn()) {
             if ($key) {
                 $this->getApplication()->restoreRequest($key, $anchor);
             }
-
             
 			// provide 'start where you ended' after logout and login
             $lastRequest = $this->getHttpRequest()->getCookie('lastRequest');
@@ -45,7 +55,7 @@ class Front_LoginPresenter extends BasePresenter
 	            $this->redirect('logout');
             }
             
-//            $this->redirect(':Front:Homepage:');
+            $this->getRedirectToByRole(':Front:Homepage:');
         }
 	}
 	
@@ -60,7 +70,36 @@ class Front_LoginPresenter extends BasePresenter
 		$c->useTableLayout = true;
 		$c->useLabelOver = false;
 //		$c->useAjax = true;
+
+		$c->redirectTo = $this->getRedirectToByRole('this');
+		
+		/*
+		
+		*/
+		
 		return $c;
+	}
+	
+	
+	/**
+	 * get Presenter Link to redirect to when logged, based on user's role
+	 *
+	 * @param mixed default link
+	 * @return string Presenter Link
+	 */
+	private function getRedirectToByRole($default = NULL)
+	{
+		if ($this->user->isLoggedIn()) {
+			foreach ($this->user->getRoles() as $role) {
+				if (isset($this->redirectTo[$role])) {
+					return $this->redirectTo[$role];
+				}
+			}
+		} else {
+			return $this->redirectTo['guest'];
+		}
+		
+		return $default;
 	}
 
 }

@@ -6,7 +6,7 @@ class Front_ForgottenPassPresenter extends BasePresenter
 	protected function beforeRender()
 	{
 		parent::beforeRender();
-		$this->setLayout('/../../../templates/Login/@layout');
+		$this->setLayout('../../../LoginModule/templates/@layout');
 	}
 	
 	
