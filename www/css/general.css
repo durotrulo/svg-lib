@@ -132,7 +132,9 @@ table.grid th {
 }
 
 .spinner {
-	background: white url('../images/spinner.gif') no-repeat 50% 50%;
+	background: transparent url('../images/spinner.gif') no-repeat 50% 50%;
+	/*height: 40px;*/
+	padding: 20px;
 }
 
 .inline {display:inline !important;}

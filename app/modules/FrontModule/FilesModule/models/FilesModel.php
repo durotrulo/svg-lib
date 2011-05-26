@@ -368,7 +368,7 @@ class FilesModel extends BaseModel
 			->leftJoin(self::USERS_TABLE)
 				->as('u')
 				->on('u.id = f2t.tagged_by')
-			->leftJoin(self::USER_LEVELS_TABLE)
+			->leftJoin(self::ACL_ROLES_TABLE)
 				->as('ul')
 				->on('ul.id = u.id')
 			->where('f2t.files_id = %i', $fileId)

@@ -180,7 +180,7 @@ class Front_FilesPresenter extends Front_InternalPresenter
 		$form->onSubmit[] = function($form) use ($presenter) {
 			$values = $form->getValues();
 			$presenter->complexity = $values['complexity_id'];
-			$presenter->refresh(null, 'this');
+			$presenter->refresh(null, 'this', array(), true);
 		};
 
 		return $form;

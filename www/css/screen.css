@@ -640,6 +640,12 @@ input.text {
 	#frm-searchForm table {
 		width:415px;
 	}
+
+		#frm-searchForm table td,
+		#frm-searchForm table th {
+			padding:0;
+		}
+
 	#frmsearchForm-q {
 		width:295px;
 		background:white url(../images/search16px.png) no-repeat 9px center;

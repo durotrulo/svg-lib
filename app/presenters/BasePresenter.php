@@ -405,22 +405,13 @@ abstract class BasePresenter extends Presenter
 	 * @param string|array snippet names
 	 * @param string link destination in format "[[module:]presenter:]view" or "signal!"
 	 * @param array|mixed
+	 * @param bool forward request when using ajax? - useful when processing form and need reload dependencies already loaded in actionXYZ()
 	 * @see http://forum.nette.org/cs/6394-refreshovanie-ajaxoveho-obsahu
 	 * @return void
 	 */
-	public function refresh($snippets = NULL, $destination = 'this', $args = array())
+	public function refresh($snippets = NULL, $destination = 'this', $args = array(), $forward = false)
 	{
-        if ($this->getPresenter()->isAjax()) {
-            if ($snippets) {
-                foreach ((array) $snippets as $snippet) {
-                    $this->invalidateControl($snippet);
-                }
-            } else {
-                $this->invalidateControl();
-            }
-        } else if ($destination) {
-            $this->redirect($destination, $args);
-        }
+		BasePresenterControl::refresh($this, $snippets, $destination, $args, $forward);
 	}
 	
 	
@@ -445,25 +436,7 @@ abstract class BasePresenter extends Presenter
 	 */
 	protected function sendMsg($msg, $type = self::FLASH_MESSAGE_ERROR, $destination = 'this', $plink = false, $backlink = null)
 	{
-		$presenter = $this->getPresenter();
-		
-		if ($presenter->isAjax()) {
-			$presenter->payload->actions = array(
-				$type => $this->translate($msg),
-			);
-			
-			$presenter->sendPayload();
-		} else {
-			$presenter->flashMessage($msg, $type);
-			//	ak mame ulozeny kluc, kam sa mame vratit, ideme tam
-			if ($backlink) {
-				Environment::getApplication()->restoreRequest($backlink);
-			} elseif ($plink) {
-				$presenter->redirect($destination);
-			} else {
-				$this->redirect($destination);
-			}
-		}
+		BasePresenterControl::sendMsg($this, $msg, $type, $destination, $plink, $backlink);
 	}
 	
 	

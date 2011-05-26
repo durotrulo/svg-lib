@@ -32,7 +32,8 @@
 				
 				
 				var taglist = fileDetailModal.find('.file-detail-taglist');
-				taglist.html('<div class="spinner"/>');
+				var spinner = taglist.prev().find('.spinner').show();
+
 				var itemId = el.prev('.itemId').text();
 			 	$.getJSON(linkGetTags.replace('__ID__', itemId), function(data) {
 				  var items = [];
@@ -47,7 +48,7 @@
 					    html: items.join('')
 					  })
 				  );
-				  
+				  spinner.hide();
 				  $.colorbox.resize();
 				});
 				
@@ -132,7 +133,7 @@
 					<span class="ib add2lightbox"></span>
 				</div>
 				<div class="tags-container">
-					<div class="tags-heading">Tags:</div>
+					<div class="tags-heading">Tags:<span class="spinner"></span></div>
 					<div class="file-detail-taglist"></div>
 				</div>
 			</div>
