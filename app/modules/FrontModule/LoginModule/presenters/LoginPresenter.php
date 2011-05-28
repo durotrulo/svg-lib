@@ -13,7 +13,8 @@ class Front_LoginPresenter extends BasePresenter
 	private $redirectTo = array(
 //		'admin' => ':Admin:Homepage:',
 //		'user' => ':Front:Homepage:',
-		'guest' => ':Front:Homepage:', // default
+//		'guest' => ':Front:Homepage:', // default
+		'guest' => 'this', // default
 	);
 
 	

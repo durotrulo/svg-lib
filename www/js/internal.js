@@ -1,6 +1,78 @@
-$.Nette.addDummyUpdateSnippet('#snippet--menu');
+/**
+ * handle ajax response when in file detail view - adding and deleting tags
+ * @param array data
+ * @param string textual status of response
+ * @param jq..
+ * 
+ * @return void
+ */
+function fileDetailTags(payload, textStatus, XMLHttpRequest)
+{
+	if (payload.actions) {
+		for (var i in payload.actions) {
+			switch (payload.actions[i])
+			{
+				case 'unbindTag':
+				$.Nette.remove('#tag-' + payload.tagId);
+				break;
+	
+				case 'addTag':
+					var taglist = $('#file-detail-modal .file-detail-taglist');
+
+					var tag = buildTagListItem(payload.tag);
+					taglist.append(tag).fadeIn();
+					break;
+					
+//				case 'info':
+//					$.Nette.showInfo(payload.actions[i]);
+//					break;
+			}
+		}
+	}
+}
+
+/**
+ * build HTML formatted tag UL list
+ * @param array tags [keys => id, userLevel, name]
+ * @return array of formatted li tags
+ */
+function buildTagList(tags, fileId)
+{
+	var items = [];
+	$.each(tags, function(key, val) {
+		items.push(buildTagListItem(val, fileId));
+	});
+	
+	return items;
+}
+function buildTagListItem(tag, fileId)
+{
+	var 
+		isDeleteAllowed = true,
+		replaceStr
+		;
+	var ret = '<li id="tag-' + tag.id + '" class="user-level-' + tag.userLevel + '">' + tag.name + '__delLink__</li>';
+	if (isDeleteAllowed) {
+		replaceStr = '<span><a class="ajax" rel="nohistory" data-nette-confirm="%delete%" href="' + linkUnbindTag.replace('__fileId__', fileId).replace('__tagId__', tag.id)  + '">X</a></span>';
+	} else {
+		replaceStr = '';
+	}
+	return ret.replace('__delLink__', replaceStr);
+	
+//	return '<li id="tag-' + tag.id + '" class="user-level-' + tag.userLevel + '">' + tag.name + '</li>';
+}
+
 
 $(function() {
+	$.Nette.addDummyUpdateSnippet('#snippet--menu');
+	$.Nette.addCallback(fileDetailTags);
+
+//	$('#file-detail-modal .file-detail-taglist li span').livequery('click', function(e) {
+//		var $this = $(this);
+//	 	$.getJSON(linkDelTag.replace('__ID__', $this.parent('li').attr('id').substr(4)), function(data) {
+//
+//	});
+	
 	// show options if shown last time
 	loadOptionsVisibility();
 	

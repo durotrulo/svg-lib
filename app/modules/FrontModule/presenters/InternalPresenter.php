@@ -324,4 +324,23 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 		$this->refresh('itemList', 'this');
 	}
 	
+	
+	public function handleUnbindTag($fileId, $tagId)
+	{
+		if ($this->user->isAllowed(new FileResource($fileId), 'unbind_tag')) {
+			try {
+				$this->getFilesModel()->unbindTag($fileId, $tagId);
+				$this->payload->tagId = $tagId;
+		 		$this->payload->actions[] = 'unbindTag';
+			} catch (DibiDriverException $e) {
+				$this->flashMessage(OPERATION_FAILED, self::FLASH_MESSAGE_ERROR);
+			}
+		} else {
+			$this->flashMessage('You are not allowed to delete this tag!', self::FLASH_MESSAGE_ERROR);
+//			echo NOT_ALLOWED;
+		}
+		$this->refresh('none'); // do not redraw snippets, just for redirection in non-js
+//		$this->terminate();
+	}
+	
 }

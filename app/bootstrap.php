@@ -1,6 +1,10 @@
 <?php
 
+// ACL not allowed
 define('NOT_ALLOWED', 'You are not allowed to perform this operation!');
+
+// db error - dibiDriverException
+define('OPERATION_FAILED', 'Operation could NOT be performed. Please, try again in few seconds');
 
 // Step 1: Load Nette Framework
 // this allows load Nette Framework classes automatically so that

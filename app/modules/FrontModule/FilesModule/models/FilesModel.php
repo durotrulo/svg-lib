@@ -350,6 +350,20 @@ class FilesModel extends BaseModel
 		}
 	}
 	
+	/**
+	 * unbind tag from file
+	 *
+	 * @param int file id
+	 * @param int tag id
+	 */
+	public function unbindTag($fileId, $tagId)
+	{
+		dibi::delete(self::FILES_2_TAGS_TABLE)
+			->where('files_id = %i', $fileId)
+			->where('tags_id = %i', $tagId)
+			->execute();
+	}
+	
 	
 	/**
 	 * get tags bound to file
@@ -359,7 +373,8 @@ class FilesModel extends BaseModel
 	 */
 	public function getTags($fileId)
 	{
-		return dibi::select('f2t.tags_id, t.name, ul.name AS userLevel')
+//		return dibi::select('f2t.tags_id, t.name, ul.name AS userLevel')
+		return dibi::select('f2t.tags_id AS id, t.name, ul.name AS userLevel')
 			->from(self::FILES_2_TAGS_TABLE)
 				->as('f2t')
 			->innerJoin(self::TAGS_TABLE)

@@ -10,58 +10,52 @@
 
 {capture $head}
 <script src="{$basePath}/modules/colorbox/jquery.colorbox.js"></script>
- <script>
+<script>
 	// generate up-to-date link with every snippet redraw
  	var linkReloadItemList = {link reloadItemList!};
+
  	
- // @see http://colorpowered.com/colorbox/
- $(function() {
-	$("a[rel='images']").livequery( function () {
-	 	var fileDetailModal = $('#file-detail-modal');
-	 	var linkReloadItemList = {link reloadItemList!};
-		$(this).colorbox({
-			inline: true, 
-			href: "#file-detail-modal",
-			onLoad: function() {
-				var el = $(this);
-				var item = el.parent('.item');
-				fileDetailModal.find('img').attr('src', el.attr('href'));
-				fileDetailModal.find('a.download-link').attr('href', item.find('a.download-link').attr('href'));
-				fileDetailModal.find('.downloads').text(item.find('.top-right').text());
-				fileDetailModal.find('.add2lightbox').html(item.find('.add2lightbox').html());
-				
-				
-				var taglist = fileDetailModal.find('.file-detail-taglist');
-				var spinner = taglist.prev().find('.spinner').show();
-
-				var itemId = el.prev('.itemId').text();
-			 	$.getJSON(linkGetTags.replace('__ID__', itemId), function(data) {
-				  var items = [];
-		
-			
-				  $.each(data['tags'], function(key, val) {
-				    items.push('<li id="tag-' + val.tags_id + '" class="user-level-' + val.userLevel + '">' + val.name + '</li>');
-				  });
-
-				  taglist.html(
-					  $('<ul/>', {
-					    html: items.join('')
-					  })
-				  );
-				  spinner.hide();
-				  $.colorbox.resize();
-				});
-				
-			},
-			// reload itemlist to have up-to-date info (files could have been added 2 lightbox or downloaded)
-			onCleanup: function() {
-				$.get(linkReloadItemList);
-			}
-		}, function () { 
-			// callback
-		})
+ 	// @see http://colorpowered.com/colorbox/
+ 	$(function() {
+		$("a[rel='images']").livequery( function () {
+		 	var fileDetailModal = $('#file-detail-modal');
+		 	var linkReloadItemList = {link reloadItemList!};
+			$(this).colorbox({
+				inline: true, 
+				href: "#file-detail-modal",
+				onLoad: function() {
+					var el = $(this);
+					var item = el.parent('.item');
+					fileDetailModal.find('img').attr('src', el.attr('href'));
+					fileDetailModal.find('a.download-link').attr('href', item.find('a.download-link').attr('href'));
+					fileDetailModal.find('.downloads').text(item.find('.top-right').text());
+					fileDetailModal.find('.add2lightbox').html(item.find('.add2lightbox').html());
+					
+					
+					var taglist = fileDetailModal.find('.file-detail-taglist');
+					var spinner = taglist.prev().find('.spinner').show();
+	
+					var itemId = el.prev('.itemId').text();
+				 	$.getJSON(linkGetTags.replace('__ID__', itemId), function(data) {
+						var items = buildTagList(data['tags'], itemId);
+					  	taglist.html(
+						  	$('<ul/>', {
+							    html: items.join('')
+						  	});
+					  	);
+					  	spinner.hide();
+					  	$.colorbox.resize();
+					});
+				},
+				// reload itemlist to have up-to-date info (files could have been added 2 lightbox or downloaded)
+				onCleanup: function() {
+					$.get(linkReloadItemList);
+				}
+			}, function () { 
+				// callback
+			})
+		});
 	});
-});
 </script>
 <link rel="stylesheet" href="{$basePath}/modules/colorbox/colorbox.css">
 {/capture}

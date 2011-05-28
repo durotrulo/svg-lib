@@ -47,10 +47,8 @@ $(function() {
 		el.attr('rel', 'nofollow');
 	});
 	
-	// to admin
-	$('a.delete').live('click', function() {
-		return confirm("Really delete?");
-	});
+	// confirm for non-ajaxed links [ajaxed handled in jquery.nette.js]
+	$('a[data-nette-confirm]:not(.ajax)').live('click', $.Nette.confirm);
 	
 	// simulate placeholder behaviour
 	$('[placeholder]').livequery(function () {
@@ -106,6 +104,11 @@ window.myConsole={
 function isset(v)
 {
 	return !(v === null || v === undefined);
+}
+
+function empty(v)
+{
+	return isset(v) && v.length > 0;
 }
 
 function log(msg)

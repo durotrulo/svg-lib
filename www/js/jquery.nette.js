@@ -71,6 +71,24 @@ jQuery.extend({
 		},
 		
 		
+		confirm: function()
+		{
+			$this = $(this);
+			log($this);
+			var confirmMsg = $this.attr('data-nette-confirm');
+			if (isset(confirmMsg)) {
+				if (confirmMsg === '%delete%') {
+					confirmMsg = "Really delete?";
+				}
+
+				if (!confirm(confirmMsg)) {
+					return false;
+				}
+			}
+			
+			return true;
+		},
+		
 		/********************/
 		/* DOM Manipulation */
 		/********************/
@@ -237,22 +255,8 @@ jQuery.extend({
 			// custom actions - SHOULD NOT BE USED SINCE CALLBACKS IMPLEMENTED
 			if (payload.actions) {
 				for (var i in payload.actions) {
-//					switch (i)
 					switch (payload.actions[i])
 					{
-						//	schovavame 
-//						case 'hide': 
-//							hideJoke(payload.actions[i]);
-//							break;
-						
-//						case 'messageSent':
-//							$('#frmmessageForm-msg').val('');
-//							$(payload.messageRow.data)
-//								.hide()
-//								.prependTo('#body_messages')
-//								.slideDown('slow');
-//							break;
-							
 						case 'info':
 							$.Nette.showInfo(payload.actions[i]);
 							break;
@@ -260,6 +264,7 @@ jQuery.extend({
 						//	vypisujeme chybu
 						case 'error':
 							var errorMsg;
+							/*
 							switch (payload.actions[i])
 							{
 								case 'delete_joke':
@@ -279,12 +284,12 @@ jQuery.extend({
 									errorMsg = payload.actions[i];
 									break;
 							}
-
+							*/
 							$.Nette.showError(errorMsg);
 							break;
 							
 						default:
-							$.Nette.showWarning('no action defined!');
+//							$.Nette.showWarning('no action defined!');
 							break;
 				
 					}
@@ -452,10 +457,8 @@ $(function () {
 		event.preventDefault();
 		if ($.active) return false;
 		
-		if ($(this).hasClass('confirm')) {
-			if (!confirm("Really?")) {
-				return false;
-			}
+		if (!$.Nette.confirm.call($this)) {
+			return false;
 		}
 		
 		if ($this.attr('rel') !== 'nohistory') {
