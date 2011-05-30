@@ -74,7 +74,6 @@ jQuery.extend({
 		confirm: function()
 		{
 			$this = $(this);
-			log($this);
 			var confirmMsg = $this.attr('data-nette-confirm');
 			if (isset(confirmMsg)) {
 				if (confirmMsg === '%delete%') {
@@ -449,7 +448,8 @@ $(function () {
 		var
 			$this = $(this),
 			url = $this.attr('href'),
-			title = $this.attr('title')||null;
+			title = $this.attr('title')||null
+			customSpinner = $this.attr('data-nette-spinner');
 
 		// Continue as normal for cmd clicks etc
 		if ( event.which == 2 || event.metaKey ) { return true; }
@@ -465,8 +465,18 @@ $(function () {
 			// change state and request for new content
 			History.pushState(null, title, url);
 		} else {
-			$.Nette.showSpinner(event);
-			$.post(this.href, $.Nette.success);
+			if (customSpinner) {
+				customSpinner = $(customSpinner).show();
+			} else {
+				$.Nette.showSpinner(event);
+			}
+			var jqxhr = $.post(this.href, $.Nette.success);
+			
+			if (customSpinner) {
+				jqxhr.complete(function() {
+					customSpinner.hide();
+				});
+			}
 		}
 		
 	});
@@ -564,12 +574,19 @@ jQuery.fn.extend({
             var submitBtn = $(":submit", form).eq(0);
             submitBtnOrigText = submitBtn.val();
             
+            var customSpinner = $(form.attr('data-nette-spinner'));
+
             ajaxOptions.complete = function(){
                 form.data("ajaxSubmitCalled",false);
-                $.Nette.spinner.hide();
+                
+				if (!empty(customSpinner)) {
+					customSpinner.hide();
+				} else {
+	                $.Nette.spinner.hide();
+				}
                 
                 // obnovime btn text
-	        	submitBtn.val(submitBtnOrigText).attr("disabled", "");
+	        	submitBtn.val(submitBtnOrigText).attr("disabled", false);
             	$.Nette.spinner.removeClass('spinnerText').text('');
             };
             
@@ -577,8 +594,12 @@ jQuery.fn.extend({
             	if (form.hasClass('spinnerText')) {
 	            	$.Nette.spinner.addClass('spinnerText').text($.Nette.AJAX_PROCESSING_TEXT);
             	}
-            	
-            	$.Nette.showSpinner(e);
+
+				if (!empty(customSpinner)) {
+					customSpinner.show();
+				} else {
+	            	$.Nette.showSpinner(e);
+				}
 
             	// ukazeme, ze sa nieco deje
 	        	submitBtn.val($.Nette.AJAX_PROCESSING_TEXT).attr("disabled", "disabled");

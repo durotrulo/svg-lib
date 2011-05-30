@@ -167,7 +167,6 @@ class VisualPaginator extends BaseControl
 			$this->addCssFiles(array('skin.css', $skinSrc));
 	    }
 	    
-	    
 		$paginator = $this->paginator;
 		$page = $paginator->page;
 		if ($paginator->pageCount < 2) {
@@ -185,6 +184,7 @@ class VisualPaginator extends BaseControl
 		}
 
 		$tpl = $this->getTemplate();
+		$tpl->assetsPath = Basic::addLastSlash(self::$webloaderDestPath) . $skinSrc;
 		$tpl->renderDotsUp = ($renderDots === true or $renderDots == 'top');
 		$tpl->renderDotsDown = ($renderDots === true or $renderDots == 'bottom');
 		$tpl->steps = $steps;

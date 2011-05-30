@@ -57,6 +57,17 @@ abstract class BasePresenter extends Presenter
 		return $this->model;
 	}
 	
+	
+	/**
+	 * allows to call $this->user from within closure
+	 *
+	 * @return Nette/Web/User
+	 */
+	public function getUser()
+	{
+		return parent::getUser();
+	}
+	
 	protected function startup()
 	{
 		parent::startup();

@@ -17,10 +17,19 @@ function fileDetailTags(payload, textStatus, XMLHttpRequest)
 				break;
 	
 				case 'addTag':
-					var taglist = $('#file-detail-modal .file-detail-taglist');
+					var taglist = $('#file-detail-modal .file-detail-taglist ul');
 
-					var tag = buildTagListItem(payload.tag);
-					taglist.append(tag).fadeIn();
+//					log(payload);
+//					log(payload.tags);
+//					log(payload.fileId);
+//					var tags = buildTagList(payload.tags, payload.fileId);
+//					taglist.append(tags).fadeIn();
+					
+					var tag = buildTagListItem(payload.tags[0]);
+					$(tag).hide().appendTo(taglist).fadeIn();
+
+					$.colorbox.resize();
+
 					break;
 					
 //				case 'info':
@@ -53,7 +62,7 @@ function buildTagListItem(tag, fileId)
 		;
 	var ret = '<li id="tag-' + tag.id + '" class="user-level-' + tag.userLevel + '">' + tag.name + '__delLink__</li>';
 	if (isDeleteAllowed) {
-		replaceStr = '<span><a class="ajax" rel="nohistory" data-nette-confirm="%delete%" href="' + linkUnbindTag.replace('__fileId__', fileId).replace('__tagId__', tag.id)  + '">X</a></span>';
+		replaceStr = '<span><a class="ajax" data-nette-spinner="#tagSpinner" rel="nohistory" data-nette-confirm="%delete%" href="' + linkUnbindTag.replace('__fileId__', fileId).replace('__tagId__', tag.id)  + '">X</a></span>';
 	} else {
 		replaceStr = '';
 	}
@@ -63,6 +72,20 @@ function buildTagListItem(tag, fileId)
 }
 
 
+function toggleBindTagContainer(showForm)
+{
+	var container = $('.bindTagContainer');
+	var prompt = container.find('span');
+	var form = container.find('form');
+	if (showForm) {
+		prompt.hide();
+		form.show();
+	} else {
+		form.hide();
+		prompt.show();
+	}
+	$.colorbox.resize();
+}
 $(function() {
 	$.Nette.addDummyUpdateSnippet('#snippet--menu');
 	$.Nette.addCallback(fileDetailTags);
@@ -120,6 +143,13 @@ $(function() {
 		$(this).closest('form').submit();
 	});
 	
+	
+	
+	/* FILE DETAIL VIEW */
+	$('.bindTagContainer span.addTagPrompt').livequery('click', function(e) {
+		toggleBindTagContainer(true);
+	});
+	/* FILE DETAIL VIEW END */
 	
 	
 	

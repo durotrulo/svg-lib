@@ -81,6 +81,7 @@
     border-top:0;
     
     position: absolute;
+    	top:18px; /*when helper moved below tag-value, specify explicitly to be sure*/
     width: 100%;
     
 	/*
@@ -132,7 +133,45 @@
 
 
 
+/* FILE DETAIL VIEW */
 
+.bindTagContainer {
+	display:inline-block;
+	float: right;
+	margin-right: 10px;
+}
+	
+	.bindTagContainer form {
+		display:none;
+		height: 20px !important;
+	}
+		.bindTagContainer form * {
+			display:inline-block;
+		}
+
+   	   	.bindTagContainer .tag-control-helper {
+  			border:1px solid #ccc !important;
+   	   	}
+   	   	
+		/* hide tags to be added to file */
+   		.bindTagContainer .tag-value {
+	   		display:none !important;
+	   	}
+	   	
+		.bindTagContainer .tag-control-container {
+			width:150px;
+			display:block !important;
+			/*display:inline-block !important;*/
+			overflow:visible;
+/*			position:relative;
+				top:4px;*/
+		}
+		
+		.bindTagContainer .tag-suggest * {
+			display:block;
+		}
+
+/* FILE DETAIL VIEW END*/
 
 
 

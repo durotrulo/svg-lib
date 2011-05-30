@@ -15,7 +15,8 @@ class MyAppForm extends AppForm {
 	// todo: change to EXTENSION or FILE_EXT or sth. similar?
 	const SUFFIX = ':hasSuffix';
 
-	const BLOCK_RENDER_MODE = 1;
+	const RENDER_MODE_BLOCK = 'block';
+	const RENDER_MODE_INLINE_BLOCK = 'inline-block';
 	
 	const AJAX_CLASS = 'ajax';
 	
@@ -290,16 +291,33 @@ class MyAppForm extends AppForm {
 
 	public function setCustomRenderer($type, $className = NULL)
 	{
-		if ($type == self::BLOCK_RENDER_MODE) {
-			$renderer = $this->renderer;
-			$renderer->wrappers['form']['container'] = Html::el('div')->class('section-padding' . ($className ? " $className" : ''));
-			$renderer->wrappers['pair']['container'] = NULL;
-			$renderer->wrappers['controls']['container'] = 'dl';
-			$renderer->wrappers['control']['container'] = 'dd';
-			$renderer->wrappers['control']['.odd'] = 'odd';
-			$renderer->wrappers['label']['container'] = 'dt';
-//			$renderer->wrappers['label']['suffix'] = ':';
-//			$renderer->wrappers['label']['requiredsuffix'] = " *";
+		switch ($type) {
+			case self::RENDER_MODE_BLOCK:
+				$renderer = $this->renderer;
+				$renderer->wrappers['form']['container'] = Html::el('div')->class('section-padding' . ($className ? " $className" : ''));
+				$renderer->wrappers['pair']['container'] = NULL;
+				$renderer->wrappers['controls']['container'] = 'dl';
+				$renderer->wrappers['control']['container'] = 'dd';
+				$renderer->wrappers['control']['.odd'] = 'odd';
+				$renderer->wrappers['label']['container'] = 'dt';
+	//			$renderer->wrappers['label']['suffix'] = ':';
+	//			$renderer->wrappers['label']['requiredsuffix'] = " *";
+				break;
+		
+			case self::RENDER_MODE_INLINE_BLOCK:
+				$renderer = $this->renderer;
+				$renderer->wrappers['form']['container'] = Html::el('div')->class('ib section-padding' . ($className ? " $className" : ''));
+				$renderer->wrappers['pair']['container'] = NULL;
+				$renderer->wrappers['controls']['container'] = 'dl';
+				$renderer->wrappers['control']['container'] = 'dd';
+				$renderer->wrappers['control']['.odd'] = 'odd';
+				$renderer->wrappers['label']['container'] = 'dt';
+	//			$renderer->wrappers['label']['suffix'] = ':';
+	//			$renderer->wrappers['label']['requiredsuffix'] = " *";
+				break;
+				
+			default:
+				break;
 		}
 	}
 

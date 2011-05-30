@@ -30,6 +30,8 @@ class UsersModel extends BaseModel implements IAuthenticator
 	const UL_DESIGNER_ID = 6;
 	const UL_CLIENT_ID = 7;
 
+	/** @var array of roles suitable for tags' userlevel */
+	protected $rolesForTags = array(self::UL_PROJECT_MANAGER, self::UL_DESIGNER, self::UL_CLIENT);
 	
 	protected $rolesModel;
 	
@@ -40,6 +42,23 @@ class UsersModel extends BaseModel implements IAuthenticator
 		}
 		
 		return $this->rolesModel;
+	}
+	
+	
+	/**
+	 * return logged user's roles suitable for tag userlevel
+	 *
+	 */
+	public function getRolesForTag()
+	{
+		foreach ($this->user->getRoles() as $role) {
+			if (in_array($role, $this->rolesForTags)) {
+				return $role;
+			}
+		}
+		// return any role - e.g. last one
+		return $role;
+//		return NULL;
 	}
 	
 	

@@ -141,6 +141,13 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 		MyTagInput::register();
 		
 		$this->setLastRequest();
+		
+
+		$this->getFilesModel();
+		$this->getProjectsModel();
+		$this->getComplexityModel();
+		$this->getTagsModel();
+
 	}
 	
 	
@@ -190,11 +197,6 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 	
 	protected function createComponentFileUploadForm($name)
 	{
-		//todo: mozno odstranit (presunut init do startup?) - zatial iba tu treba projectsModel aj complexityModel - pri volaniach zvonka sa pouzije getter a vsetko je OK
-		$this->getFilesModel();
-		$this->getProjectsModel();
-		$this->getComplexityModel();
-		
 		$form = new MyAppForm($this, $name);
 //		$form->enableAjax();
 		$form->setErrorsAsFlashMessages();
@@ -224,7 +226,7 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 	            	->class('complexity-select');
 //			->setDefaultValue($this->complexity);
 
-		$form->addTag('tags', 'Tags', $this->getTagsModel()->fetchPairs())
+		$form->addTag('tags', 'Tags', $this->tagsModel->fetchPairs())
 		 	->addRule(Form::FILLED, 'Enter Tags!')
 		 	->addRule(MyTagInput::UNIQUE, 'Tags must be unique!')
 			->getControlPrototype()
@@ -301,6 +303,97 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 
 			$presenter->refresh(array('searchForm', 'itemList', 'options'), 'this');
 //			$presenter->refresh(null, 'this');
+		};
+
+		return $form;
+	}
+	
+	
+	protected function createComponentBindTagForm($name)
+	{
+		$form = new MyAppForm($this, $name);
+		$form->enableAjax();
+		$form->setErrorsAsFlashMessages();
+		$form->setCustomRenderer($form::RENDER_MODE_INLINE_BLOCK);
+		$form->getElementPrototype()->data('nette-spinner', '#tagSpinner');
+		
+		if (!is_null($this->getTranslator())) {
+			$form->setTranslator($this->getTranslator());
+		}
+		
+		$form->addTag('tags', 'Tags', $this->tagsModel->fetchPairs())
+		 	->addRule(Form::FILLED, 'Enter Tags!')
+		 	->addRule(MyTagInput::UNIQUE, 'Tags must be unique!')
+			->getControlPrototype()
+            	->class('tags-input');
+			
+        $form->addHidden('fileId');
+		$form->addSubmit('save', 'Add');
+		$_this = $this;
+		$form->onSubmit[] = function(MyAppForm $form) use ($_this) {
+			try {
+				if ($form['save']->isSubmittedBy()) {
+					$values = $form->getValues();
+//					dump($values);die();
+
+					$fileId = $values['fileId'];
+					if ($_this->user->isAllowed(new FileResource($fileId), 'bind_tag')) {
+					
+						$tags = $values['tags'];
+						unset($values['tags']);
+	
+						// insert new tags to DB and $tags
+						$newTags = $form['tags']->getNewTags();
+						if ($newTags) {
+							foreach ($newTags as $k => $tag) {
+								$insertId = $_this->tagsModel->insert(array('name' => $tag));
+								$tags[$insertId] = $tag;
+								unset($tags[$k]); // unset temporary index of new tag
+							}
+						}
+						
+						
+						// attach tags
+						$_this->filesModel->bindTags($fileId, array_keys($tags));
+						
+						$_this->flashMessage('Tag added', $_this::FLASH_MESSAGE_SUCCESS);
+	
+						// format inserted tags for jQuery processing
+						$insertedTags = array();
+						$usersModel = new UsersModel();
+						foreach ($tags as $k => $tag) {
+							$insertedTags[] = array(
+								'id' => $k,
+								'name' => $tag, 
+								'userLevel' => $usersModel->getRolesForTag(),
+							);
+						}
+						$_this->payload->actions[] = 'addTag';
+						$_this->payload->tags = $insertedTags;
+						$_this->payload->fileId = $fileId;
+
+					} else {
+						$_this->flashMessage(NOT_ALLOWED, $_this::FLASH_MESSAGE_ERROR);
+					}
+				}
+			} catch (DibiDriverException $e) {
+				// duplicate entry
+				if ($e->getCode() === 1062) {
+					$_this->flashMessage("ERROR: " . $e->getMessage(), $_this::FLASH_MESSAGE_ERROR);
+				} else {
+					throw $e; //todo:remove
+					$_this->flashMessage("ERROR: cannot save data!", $_this::FLASH_MESSAGE_ERROR);
+				}
+				// keep prefilled data, do not refresh page
+				return false;
+			}
+			
+		
+			$form->resetValues();
+			$_this->refresh('flashes'); // do not redraw snippets, just for redirection in non-js
+//			$_this->refresh(array('flashes', 'bindTagForm')); // do not redraw snippets, just for redirection in non-js
+	
+			$_this->refresh(null, 'this');
 		};
 
 		return $form;

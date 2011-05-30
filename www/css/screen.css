@@ -571,7 +571,15 @@ input.text {
    		padding-left:10px;
    		width:100%;
    	}
-   	
+   		
+   	   	/*
+   	   	.tags-container .tag-control-container {
+   	   		position:relative;
+   	   			top:4px;
+   	   	}
+   	   	*/	
+   	   	
+
    	.file-detail-taglist {
    		background-color:#f2f2f2;
    	}

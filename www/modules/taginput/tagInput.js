@@ -211,6 +211,11 @@ function initTagInput()
 	});
 
 	$('input.tag-control-helper').change(function() {
+		// pre file detail - ked dam colorbox.resize() pri suggesteri, aby sa automaticky neodoslalo
+		if ($('.tag-suggest').is(':visible')) {
+			return false;
+		}
+		
 		// prevents blur if clicked on autocomplete
 		// IE7 :hover fix
 		try {
@@ -464,6 +469,7 @@ function initTagInput()
 				$control.siblings('.tag-suggest').hide();
 				var $container = $control.siblings('.tag-suggest').children('ul');
 				$container.children('li').remove();
+				log($container.parent().parent().getValues());
 				// do not add to list if unique rule is forced and the value is already filled
 //				$.each(json, function(id, value) {
 				$.each(request, function(id, value) {

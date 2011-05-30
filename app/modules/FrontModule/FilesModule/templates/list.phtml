@@ -30,22 +30,50 @@
 					fileDetailModal.find('a.download-link').attr('href', item.find('a.download-link').attr('href'));
 					fileDetailModal.find('.downloads').text(item.find('.top-right').text());
 					fileDetailModal.find('.add2lightbox').html(item.find('.add2lightbox').html());
-					
+
+				  	$.colorbox.resize();
 					
 					var taglist = fileDetailModal.find('.file-detail-taglist');
-					var spinner = taglist.prev().find('.spinner').show();
+					var spinner = taglist.prevAll('.tags-heading').find('.spinner').show();
 	
 					var itemId = el.prev('.itemId').text();
 				 	$.getJSON(linkGetTags.replace('__ID__', itemId), function(data) {
+				 		// set file id for tab binding
+				 		$('#frmbindTagForm-fileId').val(itemId);
+				 		
+				 		// render bound tags
 						var items = buildTagList(data['tags'], itemId);
 					  	taglist.html(
 						  	$('<ul/>', {
 							    html: items.join('')
-						  	});
+						  	})
 					  	);
 					  	spinner.hide();
 					  	$.colorbox.resize();
 					});
+					
+					toggleBindTagContainer(false);
+
+					// reset bind form first
+					$('#frm-bindTagForm')[0].reset();
+					fileDetailModal.find('.tag-value').empty();
+					
+					// update colorbox size after each suggested tag 
+					// todo: nefunguje resize, ak je tam selectbox otvoreny
+//					fileDetailModal.find('.tag-suggest li').livequery(function() {
+//						$.colorbox.resize();
+//					});
+					
+					// submit form after each tag
+					fileDetailModal.find('span.tag-value span').livequery(function() {
+						$.colorbox.resize();
+						$('#frm-bindTagForm').submit();
+						// empty chosen tags
+						fileDetailModal.find('.tag-value').empty();
+
+//						fileDetailModal.find('.tag-control-helper').focus();
+					});
+
 				},
 				// reload itemlist to have up-to-date info (files could have been added 2 lightbox or downloaded)
 				onCleanup: function() {
@@ -127,7 +155,12 @@
 					<span class="ib add2lightbox"></span>
 				</div>
 				<div class="tags-container">
-					<div class="tags-heading">Tags:<span class="spinner"></span></div>
+					<div class="tags-heading">Tags:<span id="tagSpinner" class="spinner"></span>
+						<div class="bindTagContainer">
+							<span class="pointer addTagPrompt">Add Tag</span>
+							{control bindTagForm}
+						</div>
+					</div>
 					<div class="file-detail-taglist"></div>
 				</div>
 			</div>

@@ -108,7 +108,7 @@ function isset(v)
 
 function empty(v)
 {
-	return isset(v) && v.length > 0;
+	return !(isset(v) && v.length > 0);
 }
 
 function log(msg)
