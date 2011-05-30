@@ -30,11 +30,11 @@
 					fileDetailModal.find('a.download-link').attr('href', item.find('a.download-link').attr('href'));
 					fileDetailModal.find('.downloads').text(item.find('.top-right').text());
 					fileDetailModal.find('.add2lightbox').html(item.find('.add2lightbox').html());
-
-				  	$.colorbox.resize();
 					
 					var taglist = fileDetailModal.find('.file-detail-taglist');
 					var spinner = taglist.prevAll('.tags-heading').find('.spinner').show();
+
+//					$.colorbox.resize();
 	
 					var itemId = el.prev('.itemId').text();
 				 	$.getJSON(linkGetTags.replace('__ID__', itemId), function(data) {
@@ -59,12 +59,19 @@
 					fileDetailModal.find('.tag-value').empty();
 					
 					// update colorbox size after each suggested tag 
-					// todo: nefunguje resize, ak je tam selectbox otvoreny
-//					fileDetailModal.find('.tag-suggest li').livequery(function() {
+					fileDetailModal.find('.tag-suggest li').livequery(function() {
+						$this = $(this);
+						// if tag already bound to file, remove it
+						if ($.inArray($this.text(), getTaglistItemValues())) {
+							$this.remove();
+						}
+
+						// todo: nefunguje resize, ak je tam selectbox otvoreny
 //						$.colorbox.resize();
-//					});
+					});
 					
-					// submit form after each tag
+					
+					// submit form after each tag selected
 					fileDetailModal.find('span.tag-value span').livequery(function() {
 						$.colorbox.resize();
 						$('#frm-bindTagForm').submit();

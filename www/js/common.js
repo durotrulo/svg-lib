@@ -165,3 +165,61 @@ jQuery.fn.replaceAttr = function(attrName, searchRE, rep) {
         function() { return jQuery(this).attr(attrName).replace(searchRE, rep); } 
     ); 
 }; 
+
+
+/**
+ * find text nodes within element
+ *
+ * @see http://refactormycode.com/codes/341-jquery-all-descendent-text-nodes-within-a-node#refactor_12159
+ */
+jQuery.fn.textNodes = function() {
+  	var ret = [];
+  	this.contents().each( function() {
+	    var fn = arguments.callee;
+      	if ( this.nodeType == 3 || $.nodeName(this, "br") ) 
+        	ret.push( this );
+      	else $(this).contents().each(fn);
+  	});
+  	
+  	return $(ret);
+}
+
+
+/*
+ * fadeIn() using opacity - suitable when can not use fadeIn() - typically for display:inline-block 
+ * @return jQuery
+ */
+jQuery.fn.opacityFadeIn = function(duration, callback) {
+	return $(this).animate({
+		opacity: 1
+	}, duration, callback);
+}
+
+
+/*
+ * fadeOut() using opacity - suitable when can not use fadeOut() - typically for display:inline-block 
+ * @return jQuery
+ */
+jQuery.fn.opacityFadeOut = function(duration, callback) {
+	return $(this).animate({
+		opacity: 0
+	}, duration, callback);
+}
+
+
+/*
+ * show() using opacity - suitable when can not use show() - typically for display:inline-block 
+ * @return jQuery
+ */
+jQuery.fn.opacityShow = function() {
+	return $(this).css('opacity', 1);
+}
+
+
+/*
+ * hide() using opacity - suitable when can not use hide() - typically for display:inline-block 
+ * @return jQuery
+ */
+jQuery.fn.opacityHide = function() {
+	return $(this).css('opacity', 0);
+}

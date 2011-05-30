@@ -2,11 +2,11 @@
  * handle ajax response when in file detail view - adding and deleting tags
  * @param array data
  * @param string textual status of response
- * @param jq..
+ * @param jqXHR
  * 
  * @return void
  */
-function fileDetailTags(payload, textStatus, XMLHttpRequest)
+function fileDetailTags(payload, textStatus, jqXHR)
 {
 	if (payload.actions) {
 		for (var i in payload.actions) {
@@ -18,15 +18,8 @@ function fileDetailTags(payload, textStatus, XMLHttpRequest)
 	
 				case 'addTag':
 					var taglist = $('#file-detail-modal .file-detail-taglist ul');
-
-//					log(payload);
-//					log(payload.tags);
-//					log(payload.fileId);
-//					var tags = buildTagList(payload.tags, payload.fileId);
-//					taglist.append(tags).fadeIn();
-					
-					var tag = buildTagListItem(payload.tags[0]);
-					$(tag).hide().appendTo(taglist).fadeIn();
+					var tag = buildTagListItem(payload.tags[0], payload.fileId);
+					$(tag).opacityHide().appendTo(taglist).opacityFadeIn();
 
 					$.colorbox.resize();
 
@@ -54,6 +47,13 @@ function buildTagList(tags, fileId)
 	
 	return items;
 }
+
+
+/**
+ * build HTML formatted tag LI item
+ * @param array tags [keys => id, userLevel, name]
+ * @return HTML LI tag
+ */
 function buildTagListItem(tag, fileId)
 {
 	var 
@@ -72,6 +72,23 @@ function buildTagListItem(tag, fileId)
 }
 
 
+/**
+ * get textual values of taglist items
+ * @return Array
+ */
+function getTaglistItemValues()
+{
+	vals = [];
+	taglist.find('li').each(function() {
+		vals.push($(this).textNodes().eq(0).text());
+	});
+	return vals;
+}
+
+/**
+ * toggle visibility of 'Add Tag' prompt and form for adding tags (binding to files)
+ * @param bool show form?
+ */
 function toggleBindTagContainer(showForm)
 {
 	var container = $('.bindTagContainer');
@@ -84,17 +101,14 @@ function toggleBindTagContainer(showForm)
 		form.hide();
 		prompt.show();
 	}
-	$.colorbox.resize();
+//	$.colorbox.resize();
 }
+
+
 $(function() {
 	$.Nette.addDummyUpdateSnippet('#snippet--menu');
 	$.Nette.addCallback(fileDetailTags);
 
-//	$('#file-detail-modal .file-detail-taglist li span').livequery('click', function(e) {
-//		var $this = $(this);
-//	 	$.getJSON(linkDelTag.replace('__ID__', $this.parent('li').attr('id').substr(4)), function(data) {
-//
-//	});
 	
 	// show options if shown last time
 	loadOptionsVisibility();

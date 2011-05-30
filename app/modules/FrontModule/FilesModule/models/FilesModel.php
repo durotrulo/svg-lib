@@ -346,7 +346,15 @@ class FilesModel extends BaseModel
 		
 		foreach ($tagIds as $tagId) {
 			$data['tags_id'] = $tagId;
-			dibi::insert(self::FILES_2_TAGS_TABLE, $data)->execute();
+			$id = dibi::insert(self::FILES_2_TAGS_TABLE, $data)->execute(dibi::IDENTIFIER);
+			$this->logsModel->insert(
+				array(
+					'users_id' => $this->userId,
+					'files_id' => $fileId,
+					'tags_id' => $tagId,
+					'action' => LogsModel::ACTION_ASSOCIATE,
+				)
+			);
 		}
 	}
 	
@@ -362,6 +370,15 @@ class FilesModel extends BaseModel
 			->where('files_id = %i', $fileId)
 			->where('tags_id = %i', $tagId)
 			->execute();
+			
+		$this->logsModel->insert(
+			array(
+				'users_id' => $this->userId,
+				'files_id' => $fileId,
+				'tags_id' => $tagId,
+				'action' => LogsModel::ACTION_UNBIND,
+			)
+		);
 	}
 	
 	

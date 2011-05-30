@@ -24,11 +24,21 @@ class TagsModel extends BaseModel
 	 */
 	public function insert(array $data)
 	{
-		return parent::insert(array(
+		$id = parent::insert(array(
 			'name' => $data['name'],
 			'users_id' => $this->userId,
 			'created' => dibi::datetime()
 		));
+
+		$this->logsModel->insert(
+			array(
+				'users_id' => $this->userId,
+				'tags_id' => $id,
+				'action' => LogsModel::ACTION_CREATE,
+			)
+		);
+		
+		return $id;
 	}
 	
 	/*
