@@ -15,10 +15,10 @@ jQuery.extend({
 		AJAX_ERROR_EVENT: 'onError',
 
 		// array of html IDs which shouldn't be animated while updating content
-		dummyUpdateSnippets: new Array(),
+		dummyUpdateSnippets: [],
 		
 		// array of callbacks that are called after event fired
-		callbacks: new Array(),
+		callbacks: [],
 
 		
 		// constructor
@@ -57,7 +57,7 @@ jQuery.extend({
 				event = this.AJAX_SUCCESS_EVENT;
 			}
 			
-			pos = $.inArray(fn, this.callbacks[event]);
+			var pos = $.inArray(fn, this.callbacks[event]);
 			if (pos != -1) {
 				this.callbacks[event].splice(pos, 1);
 			}
@@ -73,7 +73,7 @@ jQuery.extend({
 		
 		confirm: function()
 		{
-			$this = $(this);
+			var $this = $(this);
 			var confirmMsg = $this.attr('data-nette-confirm');
 			if (isset(confirmMsg)) {
 				if (confirmMsg === '%delete%') {
@@ -207,6 +207,8 @@ jQuery.extend({
 		
 		success: function (payload, textStatus, XMLHttpRequest)
 		{
+			var i; // iterator for 'for in' loops
+			
 			// to avoid errors when loading js scripts via ajax
 			if (payload === null || payload === undefined) {
 				return false;
@@ -230,14 +232,14 @@ jQuery.extend({
 
 			// snippets
 			if (payload.snippets) {
-				for (var i in payload.snippets) {
+				for (i in payload.snippets) {
 					$.Nette.updateSnippet(i, payload.snippets[i]);
 				}
 			}
 			
 			// remove snippets
 			if (payload.removed) {
-				for (var i in payload.removed) {
+				for (i in payload.removed) {
 					$.Nette.removeSnippet(payload.removed[i]);
 				}
 			}
@@ -248,12 +250,12 @@ jQuery.extend({
 			}
 
 			// custom callbacks
-			cbs = $.Nette.callbacks[$.Nette.AJAX_SUCCESS_EVENT];
+			var cbs = $.Nette.callbacks[$.Nette.AJAX_SUCCESS_EVENT];
 			$.Nette.fireAjaxCb(cbs, payload, textStatus, XMLHttpRequest);
 			
 			// custom actions - SHOULD NOT BE USED SINCE CALLBACKS IMPLEMENTED
 			if (payload.actions) {
-				for (var i in payload.actions) {
+				for (i in payload.actions) {
 					switch (payload.actions[i])
 					{
 						case 'info':
@@ -310,7 +312,7 @@ jQuery.extend({
 		error: function(jqXHR, textStatus, errorThrown)
 		{
 			// custom callbacks
-			cbs = $.Nette.callbacks[$.Nette.AJAX_ERROR_EVENT];
+			var cbs = $.Nette.callbacks[$.Nette.AJAX_ERROR_EVENT];
 			$.Nette.fireAjaxCb(cbs, jqXHR, textStatus, errorThrown);
 			
 //			log(jqXHR);
@@ -403,10 +405,10 @@ $(function () {
 	        // Prepare Variables
 			var
 				State = History.getState(),
-				url = State.url;
+				url = State.url,
 				$body = $(document.body),
 				rootUrl = History.getRootUrl(),
-				relativeUrl = url.replace(rootUrl, '');
+				relativeUrl = url.replace(rootUrl, ''),
 				scrollOptions = {
 					duration: 800,
 					easing:'swing'
@@ -448,7 +450,7 @@ $(function () {
 		var
 			$this = $(this),
 			url = $this.attr('href'),
-			title = $this.attr('title')||null
+			title = $this.attr('title')||null,
 			customSpinner = $this.attr('data-nette-spinner');
 
 		// Continue as normal for cmd clicks etc
@@ -535,10 +537,11 @@ jQuery.fn.extend({
         }
 
         // Abychom formulář neodeslali zbytečně vícekrát
-        if(form.data("ajaxSubmitCalled")==true)
-            return null;
+        if (form.data("ajaxSubmitCalled") === true) {
+        	return null;
+        }
 
-        form.data("ajaxSubmitCalled",true);
+        form.data("ajaxSubmitCalled", true);
 
         // Tím, že zaregistruji ajaxové odeslání až teď, tak se provede jako poslední. (až po všech ostatních)
         form.one("submit",function(){
@@ -572,7 +575,7 @@ jQuery.fn.extend({
 
             // submit button - to show processing to user
             var submitBtn = $(":submit", form).eq(0);
-            submitBtnOrigText = submitBtn.val();
+            var submitBtnOrigText = submitBtn.val();
             
             var customSpinner = $(form.attr('data-nette-spinner'));
 

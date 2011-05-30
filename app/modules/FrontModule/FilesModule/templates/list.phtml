@@ -21,7 +21,11 @@
 		 	var fileDetailModal = $('#file-detail-modal');
 		 	var linkReloadItemList = {link reloadItemList!};
 			$(this).colorbox({
-				inline: true, 
+				inline: true,
+				loop: false,
+				preloading: true,
+				scrolling: false,
+				innerWidth: '460px',
 				href: "#file-detail-modal",
 				onLoad: function() {
 					var el = $(this);
@@ -73,7 +77,6 @@
 					
 					// submit form after each tag selected
 					fileDetailModal.find('span.tag-value span').livequery(function() {
-						$.colorbox.resize();
 						$('#frm-bindTagForm').submit();
 						// empty chosen tags
 						fileDetailModal.find('.tag-value').empty();

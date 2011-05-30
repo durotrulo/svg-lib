@@ -42,7 +42,7 @@ $(function() {
     //	vsetko co sa zacina na 'external' tak sa otvara do noveho okna..da sa to pekne rozdelit do skupin [fork, visual, ..]
 	//	dal som tu aj nofollow odkazy
 	$('a[rel*=external], a[rel=nofollow]').each(function(key) {
-		el = $(this);
+		var el = $(this);
 		el.attr('target', el.attr('rel'));
 		el.attr('rel', 'nofollow');
 	});
@@ -63,7 +63,7 @@ $(function() {
 			color: 'white',
 			padding: '1px 3px'
 		})
-		.click(function(e){
+		.click(function(e) {
 			log('to be implemented!');
 	});
 		
@@ -182,7 +182,7 @@ jQuery.fn.textNodes = function() {
   	});
   	
   	return $(ret);
-}
+};
 
 
 /*
@@ -193,7 +193,7 @@ jQuery.fn.opacityFadeIn = function(duration, callback) {
 	return $(this).animate({
 		opacity: 1
 	}, duration, callback);
-}
+};
 
 
 /*
@@ -204,7 +204,7 @@ jQuery.fn.opacityFadeOut = function(duration, callback) {
 	return $(this).animate({
 		opacity: 0
 	}, duration, callback);
-}
+};
 
 
 /*
@@ -213,7 +213,7 @@ jQuery.fn.opacityFadeOut = function(duration, callback) {
  */
 jQuery.fn.opacityShow = function() {
 	return $(this).css('opacity', 1);
-}
+};
 
 
 /*
@@ -222,4 +222,4 @@ jQuery.fn.opacityShow = function() {
  */
 jQuery.fn.opacityHide = function() {
 	return $(this).css('opacity', 0);
-}
+};

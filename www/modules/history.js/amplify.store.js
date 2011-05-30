@@ -34,7 +34,7 @@ store.addType = function( type, storage ) {
 		options.type = type;
 		return store( key, value, options );
 	};
-}
+};
 store.error = function() {
 	return "amplify.store quota exceeded";
 };
@@ -96,7 +96,7 @@ function createSimpleStorage( storageType, storage ) {
 					try {
 						storage[ key ] = parsed;
 						values[ key ] = true;
-					} catch( error ) {
+					} catch( error2 ) {
 						throw store.error();
 					}
 				}

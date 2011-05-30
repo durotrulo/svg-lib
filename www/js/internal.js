@@ -13,7 +13,8 @@ function fileDetailTags(payload, textStatus, jqXHR)
 			switch (payload.actions[i])
 			{
 				case 'unbindTag':
-				$.Nette.remove('#tag-' + payload.tagId);
+					$.Nette.remove('#tag-' + payload.tagId);
+					$.colorbox.resize();
 				break;
 	
 				case 'addTag':

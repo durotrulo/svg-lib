@@ -495,7 +495,7 @@ abstract class BasePresenter extends Presenter
 	        $js->filters[] = array($this, "packJs");
 	    } else {
 //	        $js->filters[] = array($this, "packJs");
-//	         $js->joinFiles = true;
+//         	$js->joinFiles = true;
 		    $js->throwExceptions = true;
 	    }
 	
