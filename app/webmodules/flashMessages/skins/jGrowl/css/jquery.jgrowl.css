@@ -81,7 +81,8 @@ div.center div.jGrowl-notification, div.center div.jGrowl-closer {
 }
 
 div.jGrowl div.jGrowl-notification, div.jGrowl div.jGrowl-closer {
-	background-color: 		#000;
+	background-color: 		#000 !important;
+	border:none;
 	opacity: 				.85;
     -ms-filter: 			"progid:DXImageTransform.Microsoft.Alpha(Opacity=85)"; 
     filter: 				progid:DXImageTransform.Microsoft.Alpha(Opacity=85); 
@@ -122,6 +123,11 @@ div.jGrowl div.jGrowl-closer {
 	font-size:				.9em;
 	font-weight: 			bold;
 	text-align: 			center;
+	color: white !important;
+	background-image: none;
+	/* center it according to jGrowl-notification's bg (paddingLeft) */
+	padding-left:28px;
+	padding-right:27px;
 }
 
 /** Hide jGrowl when printing **/

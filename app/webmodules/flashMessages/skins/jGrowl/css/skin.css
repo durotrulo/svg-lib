@@ -1,0 +1,34 @@
+
+div.flash {
+	display: none;
+}
+
+.jGrowl-message {
+ 	padding-right: 10px;
+}
+
+div.jGrowl div.jGrowl-notification {
+	background-position : 7px 12px;
+	background-repeat: no-repeat;
+    padding-left:45px;
+    margin:5px 0;
+}
+	div.jGrowl div.jGrowl-notification.error {
+/*	    color: #D8000C;*/
+	    background-color: #FFBABA;
+	    background-image: url('../images/error.png');
+	}
+	
+	div.jGrowl div.jGrowl-notification.info {
+	    /*color: #00529B;*/
+	    background-color: #C6DBFF;
+	    background-image: url('../images/info.png');
+	}
+	
+	div.jGrowl div.jGrowl-notification.success {
+	    background-image: url('../images/success.png');
+	}
+	
+	div.jGrowl div.jGrowl-notification.warning {
+	    background-image: url('../images/warning.png');
+	}

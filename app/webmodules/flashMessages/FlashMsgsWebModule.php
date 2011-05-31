@@ -22,17 +22,43 @@ class FlashMsgsWebModule extends BaseWebModule implements IWebModule
   			call_user_func_array(array($this, 'setParams'), $args);
   		}
   		
-  		//	old static layout
-  		if ($this->skin == 'old-static') {
-	  		$this->addJsFile('basic.js', '/js');
-  		} else {
-  		// fixed position, close all button, ...
-	  		$this->addJsFile('advanced.js', '/js');
+  		$assets = array(
+  			'css' => array(),
+  			'js' => array(),
+  		);
+  		
+  		switch ($this->skin) {
+	  		//	old static layout
+  			case 'old-static':
+  				$assets['js'][] = 'basic.js';
+  				break;
+
+  			case 'jGrowl':
+  				$assets['js'][] = 'jGrowl.js';
+  				$assets['js'][] = 'jquery.jgrowl.js';
+  				$assets['css'][] = 'jquery.jgrowl.css';
+  				break;
+  				
+	  		// fixed position, close all button, ...
+  			default:
+  				$assets['js'][] = 'advanced.js';
+  				break;
+  		}
+
+  		// load js
+  		foreach ($assets['js'] as $js) {
+  			$this->addJsFile($js, '/js');
   		}
   		
+  		// load css
 		$skinSrc = 'skins/' . $this->skin;
-		$this->addCssFile('skin.css', $skinSrc . '/css');
-  		$this->copy($skinSrc . '/images');	// copy images to webtemp if not present, CSS urls rely on that
+  		$assets['css'][] = 'skin.css';
+  		foreach ($assets['css'] as $css) {
+			$this->addCssFile($css, $skinSrc . '/css');
+  		}
+
+  		// copy images to webtemp if not present, CSS urls rely on that
+  		$this->copy($skinSrc . '/images');
 	}
   	
 	

@@ -165,7 +165,7 @@ abstract class BasePresenter extends Presenter
 			$this->template->errors = array();
 		}
 		
-		$this->loadWebModule('FlashMsgsWebModule', 'big-dark-fixed');
+		$this->loadWebModule('FlashMsgsWebModule', Environment::getConfig('webmodules')->flashMessages->skin);
 	}
 	
 		

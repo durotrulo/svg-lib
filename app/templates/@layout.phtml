@@ -106,8 +106,8 @@
 	
 	
 <!--	jGrowl-->
-	<link rel="stylesheet" href="{$basePath}/modules/jgrowl/jquery.jgrowl.css">
-	<script src="{$basePath}/modules/jgrowl/jquery.jgrowl.js"></script>
+	<!--<link rel="stylesheet" href="{$basePath}/modules/jgrowl/jquery.jgrowl.css">
+	<script src="{$basePath}/modules/jgrowl/jquery.jgrowl.js"></script>-->
 <!--	jGrowl END-->
 	
 	
@@ -149,6 +149,10 @@
 		
 			{snippet flashes 'div class="flashes"'}
 				{foreach $flashes as $flash}<div class="flash {$flash->type}">{$flash->message}</div>{/foreach}
+				<div class="flash info">info msg really long long info msg really long long info msg really long long info msg really long long info msg really long long info msg really long long</div>
+				<div class="flash error">error</div>
+				<div class="flash success">success</div>
+				<div class="flash warning">warning</div>
 			{/snippet}
 			
 			<div class="filters-pannel">
