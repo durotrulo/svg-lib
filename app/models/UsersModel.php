@@ -352,7 +352,8 @@ class UsersModel extends BaseModel implements IAuthenticator
 						->as('u')
 					->rightJoin(TABLE_USERS_ROLES)
 						->as('ur')
-						->on('u.id = ur.user_id AND ur.role_id = %i', $userLevelId)
+						->on('u.id = ur.user_id')
+					->where('ur.role_id = %i', $userLevelId)
 					->fetchPairs('id', 'name');
 	}
 	

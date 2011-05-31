@@ -76,9 +76,7 @@ jQuery.extend({
 			var $this = $(this);
 			var confirmMsg = $this.attr('data-nette-confirm');
 			if (isset(confirmMsg)) {
-				if (confirmMsg === '%delete%') {
-					confirmMsg = "Really delete?";
-				}
+				confirmMsg = confirmMsg.replace('%delete%', "Really delete?");
 
 				if (!confirm(confirmMsg)) {
 					return false;
@@ -463,7 +461,10 @@ $(function () {
 			return false;
 		}
 		
-		if ($this.attr('rel') !== 'nohistory') {
+		// if not explicitly skipping history NOR link to signal NOR same url
+		if ($this.attr('rel') !== 'nohistory' && !$this.attr('href').match(/[&?]do=/gi)
+			&& History.getState().url !== document.location.href // if on the same url 'statechange' would not fire -> we want to be able ajaxify these links too -> via standard ajax post
+		) {
 			// change state and request for new content
 			History.pushState(null, title, url);
 		} else {

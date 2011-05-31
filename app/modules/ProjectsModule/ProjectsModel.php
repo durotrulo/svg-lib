@@ -20,6 +20,9 @@ class ProjectsModel extends BaseModel
 	const ORDER_BY_NAME = 'name';
 	const ORDER_BY_DATE = 'date';
 	
+	/** @var int @dbsync */
+	const GENERAL_PROJECT_ID = 0;
+	
 	
 	public function findAll()
 	{
@@ -211,6 +214,56 @@ class ProjectsModel extends BaseModel
 		}
 		
 		return $this;
+	}
+	
+	
+	/**
+	 * basic delete specified by $id
+	 *
+	 * @param int $id
+	 * @param bool [optional] erase dir on filesystem?
+	 * @return DibiResult
+	 */
+	public function delete($id)
+	{
+		if ($id === self::GENERAL_PROJECT_ID) {
+			throw new ArgumentOutOfRangeException('Project GENERAL cannot be deleted');
+		}
+		
+		
+		/**
+		 * vymazat subory s duplicitnym nazvom v projekte GENERAL? alebo hodit warning? alebo?
+		 */
+		
+		try {
+			// delete duplicate files?
+			// ...
+			
+
+			// move files to project GENERAL
+			dibi::update(self::TABLE, array(
+				'projects_id' => self::GENERAL_PROJECT_ID,
+			))
+			->where('projects_id = %i', $id)
+			->execute();
+			
+			// rename project's dirname
+			rename(self::PATH . "/$id", self::PATH . '/' . self::GENERAL_PROJECT_ID);
+			
+			// delete project
+			return parent::delete($id);
+		} catch (DibiDriverException $e) {
+			throw $e;
+		}
+		
+//		if (func_num_args() > 1) {
+//			$rmDir = func_get_arg(1);
+//			if (!empty($rmDir)) {
+//				Basic::rmdir(static::PATH . $id, true);
+//			}
+//		}
+//
+//		return dibi::delete(static::TABLE)->where('id=%i', $id)->execute();
 	}
 	
 	

@@ -75,6 +75,7 @@ input.text {
 	width:95%;
 }
 
+.required {color:darkred;}
 
 /* for browsers with native support for placeholder */
 :-moz-placeholder { color: #aaa; }

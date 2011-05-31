@@ -10,7 +10,8 @@
 	
 {snippet projectsList}
 {if isset($projects) and count($projects) > 0}
-	<table>
+	<br>
+	<table class="gray-colored">
 		<thead>
 			<tr>
 				<th>Project Name</th>
@@ -29,7 +30,7 @@
 				<td>{$project->type}</td>
 				<td>{$project->manager}</td>
 				<td><a class="ajax" href="{link edit $project->id}">{_'edit'}</a></td>
-				<td><a class="confirm ajax" href="{link delete! $project->id}">{_'delete'}</a></td>
+				<td><a n:if="intval($project->id) !== ProjectsModel::GENERAL_PROJECT_ID" class="ajax" data-nette-confirm="%delete% All " href="{link delete! $project->id}">{_'delete'}</a></td>
 			</tr>
 		</tbody>
 	</table>

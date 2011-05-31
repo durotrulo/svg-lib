@@ -57,7 +57,7 @@ class Projects_Admin_DefaultPresenter extends Admin_BasePresenter
 
 
 //	public function renderEdit($id = 0)
-	public function actionEdit($id = 0)
+	public function actionEdit($id)
 	{
 		$this->projectId = $id;
 		$form = $this['itemForm'];
@@ -148,17 +148,19 @@ class Projects_Admin_DefaultPresenter extends Admin_BasePresenter
 	{
 		try {
 			if ($form['save']->isSubmittedBy()) {
-				$id = (int) $this->getParam('id');
 				$values = $form->getValues();
 
-				// 0 = GENERAL
-				if ($id >= 0) {
-					$this->model->update($id, $values);
-					$this->flashMessage('Project updated.', self::FLASH_MESSAGE_SUCCESS);
-				} else {
+				// insert
+				if (is_null($this->getParam('id'))) {
 					$values['created'] = dibi::datetime();
 					$id = $this->model->insert($values);
 					$this->flashMessage('Project created.', self::FLASH_MESSAGE_SUCCESS);
+				// update
+				} else {
+					// 0 = GENERAL
+					$id = intval($this->getParam('id'));
+					$this->model->update($id, $values);
+					$this->flashMessage('Project updated.', self::FLASH_MESSAGE_SUCCESS);
 				}
 			}
 		} catch (DibiDriverException $e) {
@@ -180,7 +182,16 @@ class Projects_Admin_DefaultPresenter extends Admin_BasePresenter
 	
 	public function handleDelete($id)
 	{
-		$this->model->delete($id);
+		if ($id === ProjectsModel::GENERAL_PROJECT_ID) {
+			$this->flashMessage('Project GENERAL can not be deleted', self::FLASH_MESSAGE_WARNING);
+		} else {
+			if ($this->user->isAllowed('project', 'delete')) {
+				$this->model->delete($id);
+			} else {
+				$this->flashMessage(NOT_ALLOWED, self::FLASH_MESSAGE_ERROR);
+			}
+		}
+
 		$this->refresh('projectsList', 'add');
 	}
 	
