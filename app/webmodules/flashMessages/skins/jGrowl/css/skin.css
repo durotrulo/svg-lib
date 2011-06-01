@@ -1,5 +1,5 @@
 
-div.flash {
+.flashes, div.flash {
 	display: none;
 }
 

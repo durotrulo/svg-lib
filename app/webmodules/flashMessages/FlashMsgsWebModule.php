@@ -28,7 +28,6 @@ class FlashMsgsWebModule extends BaseWebModule implements IWebModule
   		);
   		
   		switch ($this->skin) {
-	  		//	old static layout
   			case 'old-static':
   				$assets['js'][] = 'basic.js';
   				break;

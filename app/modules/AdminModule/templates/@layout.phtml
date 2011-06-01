@@ -46,7 +46,7 @@
 		<div>
 			<strong>Username:</strong> {$user->getIdentity()->data['username']}
 			<strong>Name:</strong> {$user->getIdentity()->data['realname']}
-			<a href="{link :Front:Homepage:}">Frontend</a>
+			<a href="{link :Front:Files:list}">Frontend</a>
 			<a n:if="$user->isLoggedIn()" href="{link :Front:Login:logout lang=>'en'}">Logout</a>
 			
 			<ul class="admin-menu">

@@ -1,3 +1,4 @@
 www/webtemp/
 var/
 libs/Custom/HtmPurifier/standalone/HTMLPurifier/DefinitionCache/
+www/data/

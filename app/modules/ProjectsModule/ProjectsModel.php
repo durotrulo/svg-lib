@@ -251,7 +251,18 @@ class ProjectsModel extends BaseModel
 			rename(self::PATH . "/$id", self::PATH . '/' . self::GENERAL_PROJECT_ID);
 			
 			// delete project
-			return parent::delete($id);
+			$res = parent::delete($id);
+			
+			// log
+			$this->logsModel->insert(
+				array(
+					'users_id' => $this->userId,
+					'projects_id' => $id,
+					'action' => LogsModel::ACTION_DELETE,
+				)
+			);
+			
+			return $res;
 		} catch (DibiDriverException $e) {
 			throw $e;
 		}

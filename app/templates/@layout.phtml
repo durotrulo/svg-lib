@@ -105,11 +105,17 @@
 	
 	
 	
-<!--	jGrowl-->
+<!--	jGrowl- loaded in flash messages -->
 	<!--<link rel="stylesheet" href="{$basePath}/modules/jgrowl/jquery.jgrowl.css">
 	<script src="{$basePath}/modules/jgrowl/jquery.jgrowl.js"></script>-->
 <!--	jGrowl END-->
 	
+
+<!--	tipsy -->
+	<link rel="stylesheet" href="{$basePath}/modules/tipsy/jquery.tipsy.css">
+	<script src="{$basePath}/modules/tipsy/jquery.tipsy.js"></script>
+	<script src="{$basePath}/modules/tipsy/init.js"></script>
+<!--	tipsy END-->
 	
 	
 	
@@ -126,21 +132,20 @@
 <div class="all">
 	<div class="upmenu">
 		<span>Logged as {$user->identity->realname}</span>
-		<a href="{link :Front:Files:list}">Files</a> |
-		<a href="{link :Users:Front:Default:edit}">Settings</a> |
-		<a href="{link :Projects:Admin:Default:default}">Projects admin</a> |
-		<a href="{link :Users:Admin:Default:add}">Users admin</a>
+		<a href="{link :Acl:Admin:Users:}">ACL</a>
 	</div>
 	<div class="extender">
 		<div id="header">
-				<a href="{link :Acl:Admin:Users:}" title="Help" class="menu-icon help-icon"></a>
 	
-			<a href="#" title="Home" class="menu-icon home-icon"></a>
-			<a href="#" title="Settings" class="menu-icon settings-icon"></a>
-			<a href="#" title="Client Packages" class="menu-icon client-package-icon"></a>
+			<a href="{link :Front:Files:list}" title="Home" class="menu-icon home-icon"></a>
 			<a href="{link :Front:Lightboxes:list}" title="Lightboxes" class="menu-icon lightbox-icon"></a>
+			<a href="{link :Users:Admin:Default:add}" title="Users admin" class="menu-icon users-icon"></a>
+			<a href="{link :Projects:Admin:Default:add}" title="Projects admin" class="menu-icon projects-icon"></a>
+			<a href="#" title="Client Packages" class="menu-icon client-package-icon"></a>
+			<a href="{link :Users:Front:Default:edit}" title="Settings" class="menu-icon settings-icon"></a>
 			<a href="{link :Front:Login:logout}" title="Logout" class="menu-icon logout-icon"></a>
 			<a href="{link :RichText:Front:Default:detail 1}" title="Help" class="menu-icon help-icon"></a>
+
 			<a href="#" title="Upload File(s)" class="menu-icon upload-icon"></a>
 			
 		</div>
@@ -149,10 +154,12 @@
 		
 			{snippet flashes 'div class="flashes"'}
 				{foreach $flashes as $flash}<div class="flash {$flash->type}">{$flash->message}</div>{/foreach}
+				{* todo:remove
 				<div class="flash info">info msg really long long info msg really long long info msg really long long info msg really long long info msg really long long info msg really long long</div>
 				<div class="flash error">error</div>
 				<div class="flash success">success</div>
 				<div class="flash warning">warning</div>
+				*}
 			{/snippet}
 			
 			<div class="filters-pannel">

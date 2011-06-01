@@ -77,6 +77,11 @@ input.text {
 
 .required {color:darkred;}
 
+/* to prevent flashing onload */
+.flashes, div.flash {
+	display: none;
+}
+
 /* for browsers with native support for placeholder */
 :-moz-placeholder { color: #aaa; }
 ::-webkit-input-placeholder { color: #aaa; } /* nemoze to byt na 1 riadku za sebou, potom to webkit nezoberie */
@@ -280,6 +285,20 @@ input.text {
 		background-position:-136px -44px;
 	}
 		.lightbox-icon:hover {
+			background-position:-136px -3px;
+		}
+		
+	.users-icon {
+		background-position:-136px -44px;
+	}
+		.users-icon:hover {
+			background-position:-136px -3px;
+		}
+		
+	.projects-icon {
+		background-position:-136px -44px;
+	}
+		.projects-icon:hover {
 			background-position:-136px -3px;
 		}
 	

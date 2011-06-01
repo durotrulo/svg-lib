@@ -52,7 +52,8 @@ abstract class Admin_BasePresenter extends BasePresenter
 	{
 		$this->flashMessage('Prístup zamietnutý! Dôvod: nedostatočné oprávnenia', self::FLASH_MESSAGE_ERROR);
 //		$this->redirect(':Front:Login:login', $this->getApplication()->storeRequest());
-		$this->redirect(':Front:Login:login');
+//		$this->redirect(':Front:Login:login');
+		$this->redirect(':Front:Login:denied');
 	}
 	
 }
