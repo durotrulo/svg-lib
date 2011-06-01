@@ -68,6 +68,18 @@ abstract class BasePresenter extends Presenter
 		return parent::getUser();
 	}
 	
+	
+	/**
+	 * allows to call $this->userId from within closure
+	 *
+	 * @return int|NULL
+	 */
+	public function getUserId()
+	{
+		return $this->userId;
+	}
+	
+	
 	protected function startup()
 	{
 		parent::startup();

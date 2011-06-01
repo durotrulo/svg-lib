@@ -77,7 +77,7 @@ function buildTagListItem(tag, fileId)
  * get textual values of taglist items
  * @return Array
  */
-function getTaglistItemValues()
+function getTaglistItemValues(taglist)
 {
 	vals = [];
 	taglist.find('li').each(function() {
@@ -167,13 +167,24 @@ $(function() {
 	/* FILE DETAIL VIEW END */
 	
 	
+	$('.simple-toggler').livequery('click', function(e){
+		var $this = $(this),
+			target = $($this.attr('data-nette-toggleTarget'));
+		$this.toggleClass('active');
+		target.slideToggle('slow');
+	});
+	
+	// toggler in general
+	$('.toggler').livequery('click', function(e){
+		var $this = $(this);
+		$this.toggleClass('active');
+	});
 	
 	/* LIGHTBOXES */
 	
 	$('.lb-owner a.toggler').livequery('click', function(e){
-		var 
-			$this = $(this),
-			snippet = $this.next();
+		var $this = $(this),
+			snippet = $($this.attr('data-nette-toggleTarget'));
 		
 		// if content has been already loaded
 		if (snippet.html().length > 0) {

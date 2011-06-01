@@ -1,13 +1,18 @@
 $(function() {
  	$('.editable').livequery(function() {
- 		el = $(this);
- 		el.editable(el.data('editableProcessUrl'), {
+ 		$this = $(this);
+ 		$this.editable($this.data('editableProcessUrl'), {
 	    	indicator 	: 'Saving...',
-	        tooltip   	: 'Click to edit...',
-	        name		: el.data('editableName'),
+//	        tooltip   	: 'Click to edit...',
+	        name		: $this.data('editableName'),
 	        id			: 'elementId',
-	        style		: 'inherit'
+	        style		: 'inherit',
+	        event		: 'dblclick'
 //	        ajaxoptions	: { type: 'GET' }
 	    });
  	});
+ 	
+ 	$('.trigger-editable').livequery('click', function() {
+	    	$(this).parent().prevAll('.editable').trigger('dblclick');
+    });
 });

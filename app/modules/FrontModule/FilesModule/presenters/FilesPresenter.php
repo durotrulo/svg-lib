@@ -36,6 +36,16 @@ class Front_FilesPresenter extends Front_InternalPresenter
 	}
 	
 	
+	protected function beforeRender()
+	{
+		parent::beforeRender();
+		$this->setRenderSections(array(
+			self::RENDER_SECTION_FILTERS => true,
+		));
+		
+		$this->template->filesControl = $this['filesControl'];
+	}
+	
 	public function actionList()
 	{
 		$this->items = $this->model->findAll();
@@ -50,6 +60,10 @@ class Front_FilesPresenter extends Front_InternalPresenter
 		}
 	}
 	
+	public function getTpl()
+	{
+		return 'test.phtml';
+	}
 	
 	public function renderList()
 	{

@@ -1,0 +1,24 @@
+<span class="bold resultsCount">{$itemsCount} results found</span>
+	<span class="orderby">
+		<span class="bold">Display</span>
+		<a href="{link this orderby=>FilesModel::ORDER_BY_NAME}" {attr class('ajax', true) class('active', $presenter->orderby === FilesModel::ORDER_BY_NAME)}>Alphabetically</a>
+		<a href="{link this orderby=>FilesModel::ORDER_BY_SIZE}" {attr class('ajax', true) class('active', $presenter->orderby === FilesModel::ORDER_BY_SIZE)}>By Size</a>
+		<a href="{link this orderby=>FilesModel::ORDER_BY_DATE}" {attr class('ajax', true) class('active', $presenter->orderby === FilesModel::ORDER_BY_DATE)}>By Date</a>
+	</span>
+	
+	<span class="sorting">
+		<a href="{link this sorting=>dibi::ASC}" {attr class('ajax', true) class('active', $presenter->sorting === dibi::ASC)}>asc</a>
+		<a href="{link this sorting=>dibi::DESC}" {attr class('ajax', true) class('active', $presenter->sorting === dibi::DESC)}>desc</a>
+	</span>
+	
+	<span>
+		<span class="bold">Complexity</span>
+		{control complexityForm}
+	</span>
+	
+	<span class="thumbsizeControl">
+		{foreach FilesModel::getSizes() as $size}
+			<a href="{link setThumbSize! $size}"{attr class($size, true) class('active', $thumbSize === $size)} title="{$size}"></a>
+		{/foreach}
+		<span class="bold">Thumbnail Size</span>
+	</span>

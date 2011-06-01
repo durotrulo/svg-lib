@@ -3,10 +3,22 @@
 class Front_LightboxesPresenter extends Front_InternalPresenter
 {
 	
-	/** @persistent */
+	/** 
+	 * @var int
+	 * @persistent 
+	 */
 	public $ownerId;
 	
-	protected $_allowedFilters = array(
+	/**
+	 * @var string comma separated user ids (owners of lbs)
+	 * @persistent
+	 */
+    public $ownerIds = '';
+    
+    /** @var array $this->ownerIds cast to array */
+    public $ownerIds_a;
+	
+    protected $_allowedFilters = array(
 		FilesModel::FILTER_BY_VECTOR, 
 		FilesModel::FILTER_BY_BITMAP, 
 		FilesModel::FILTER_BY_INSPIRATION
@@ -19,10 +31,55 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 	);
 	
 	
+	/**
+	 * initialize $this->ownerIds_a based on $this->ownerIds
+	 * called from startup()
+	 */
+    private function initOwnerIdsA()
+	{
+		//	aby mi to nevracalo pole s prazdnym retazcom
+		if (!empty($this->ownerIds)) {
+			$this->ownerIds_a = explode('-', $this->ownerIds);
+		} else {
+			$this->ownerIds_a = array();
+		}
+	}
+	
+	
+	
+    /**
+     * nastavi id tagov, podla kt. sa sortuje
+     *
+     */
+	private function processOwnerId()
+	{
+		if (!empty($this->ownerId)) {
+			//	pridam tag, iba ak sa tam este nenachadza taky tag
+//			if (!in_array($this->ownerId, $this->ownerIds_a) && $this->ownerId !== 0) {
+			if (!in_array($this->ownerId, $this->ownerIds_a)) {
+				$this->ownerIds_a[] = $this->ownerId;
+			//	inak ho vyhodim .. testovacia tmp?
+			} else {
+				MyArrayTools::unsetByValue($this->ownerIds_a, $this->ownerId);
+			}
+
+			// vynulujem tag, aby som sa vyhol smycke, kedze zmena persistentneho parametra sposobuje redirect/reload
+//			$this->ownerId = 0;
+			$this->ownerIds = join('-', $this->ownerIds_a);
+		
+//			if ($this->isAjax()) {
+//				$this->invalidateControl();
+//			}
+		}
+	}
+	
 	protected function startup()
 	{
 		parent::startup();
 
+		$this->initOwnerIdsA();
+		$this->processOwnerId();
+		
 		$this->config = Environment::getConfig('files');
 
 		// if filtering by inspiration complexity -> show it in select box complexity
@@ -55,11 +112,19 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 	 */
 	public function setTemplateLightboxes()
 	{
-		if ($this->ownerId) {
-			$this->template->lightboxes = array(
-				$this->ownerId => $this->model->findByOwner($this->ownerId),
-			);
+		if (!empty($this->ownerIds_a)) {
+			$lightboxes = array();
+			foreach ($this->ownerIds_a as $ownerId) {
+				$lightboxes[$ownerId] = $this->model->findByOwner($ownerId);
+			}
+			
+			$this->template->lightboxes = $lightboxes;
 		}
+//		if ($this->ownerId) {
+//			$this->template->lightboxes = array(
+//				$this->ownerId => $this->model->findByOwner($this->ownerId),
+//			);
+//		}
 	}
 	
 	/**
@@ -167,9 +232,11 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 				$this->flashMessage(NOT_ALLOWED, self::FLASH_MESSAGE_ERROR);
 			}
 		} catch (DibiDriverException $e) {
-			throw $e;
 			$this->flashMessage('Lightbox could NOT be deleted.', self::FLASH_MESSAGE_ERROR);
 		}
+
+		// reload owner's lightboxes
+		$this->setTemplateLightboxes();
 		$this->refresh(null, 'list');
 	}
 	
@@ -210,7 +277,8 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 	
 			// reload owner's lightboxes
 			$_this->setTemplateLightboxes();
-			$_this->refresh(null, 'this');
+//			$_this->refresh(null, 'this');
+			$_this->refresh('lb_' . $_this->userId, 'this');
 		};
 		
 		return $form;

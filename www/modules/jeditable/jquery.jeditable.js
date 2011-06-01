@@ -142,6 +142,7 @@
                 /* prevent default action and bubbling */
                 e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation();
                 
                 /* remove tooltip */
                 if (settings.tooltip) {
@@ -295,12 +296,13 @@
 
                 form.submit(function(e) {
 
-                    if (t) { 
+                	if (t) { 
                         clearTimeout(t);
                     }
 
                     /* do no submit */
-                    e.preventDefault(); 
+                    e.preventDefault();
+	                e.stopPropagation();
             
                     /* call before submit hook. */
                     /* if it returns false abort submitting */                    

@@ -758,6 +758,115 @@ a.active {
 
 
 
-.editable {
-	border-bottom:1px dashed #ccc;
+
+
+
+/****************************************/
+/* LIGHTBOXES		     			  	*/
+/****************************************/
+.top-heading {
+	border-bottom: 1px solid #999999;
+    border-top: 1px solid #999999;
 }
+
+.lightboxes {
+	background: url('../images/bg_left-box.gif') repeat-y left top;
+}
+.lightboxes .top-heading {
+	background-color:#cce8f8;
+}
+	.top-heading .share-link {
+		float: right;
+	    line-height: 35px;
+	    margin-right: 20px;
+	}
+	
+	.top-heading h1, 
+	.top-heading h2 {
+		font-size: 20px;
+	    line-height: 20px;
+	    padding: 10px;
+		color:#000;
+		display:inline-block;
+	}
+	.top-heading h2 {
+		margin-left:125px;
+	}
+
+.lightboxes .left-box {
+	width:240px;
+	float:left;
+	font-size:12px;
+}
+	.lightboxes .left-box .margin-all {
+		margin:10px;
+	}
+	
+	.left-box .lb-owner {
+		width: 92%;
+	}
+
+		.left-box .lb-owner .action-links {
+			float:right;
+		}
+		
+		.left-box .lb-owner a, 
+		.left-box .lb-owner a * {
+			text-decoration:none;
+			font-size:12px;
+		}
+		
+			.left-box .lb-owner a:hover {
+				text-decoration:none;
+			}
+
+			.left-box .lb-owner a.toggler { 
+				color: #999999;
+			}
+
+		.lightboxes .left-box .user-lbs,
+		.left-box .lb-owner ul {
+			margin-left:20px;
+		}
+	
+		.lb-owner .editable {
+			/*border-bottom:1px dashed #ccc;*/
+			color: #0070bb;
+		}
+		.lb-owner .editable.active {
+			color: #000;
+		}
+		.lb-owner .editable:hover {
+			color: #333;
+		}
+
+
+
+.lightboxes .right-box {
+	float:left;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

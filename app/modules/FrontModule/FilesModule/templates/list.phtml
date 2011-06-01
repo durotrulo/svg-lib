@@ -9,175 +9,18 @@
  **}
 
 {capture $head}
-<script src="{$basePath}/modules/colorbox/jquery.colorbox.js"></script>
-<script>
-	// generate up-to-date link with every snippet redraw
- 	var linkReloadItemList = {link reloadItemList!};
-
- 	
- 	// @see http://colorpowered.com/colorbox/
- 	$(function() {
-		$("a[rel='images']").livequery( function () {
-		 	var fileDetailModal = $('#file-detail-modal');
-		 	var linkReloadItemList = {link reloadItemList!};
-			$(this).colorbox({
-				inline: true,
-				loop: false,
-				preloading: true,
-				scrolling: false,
-				innerWidth: '460px',
-				href: "#file-detail-modal",
-				onLoad: function() {
-					var el = $(this);
-					var item = el.parent('.item');
-					fileDetailModal.find('img').attr('src', el.attr('href'));
-					fileDetailModal.find('a.download-link').attr('href', item.find('a.download-link').attr('href'));
-					fileDetailModal.find('.downloads').text(item.find('.top-right').text());
-					fileDetailModal.find('.add2lightbox').html(item.find('.add2lightbox').html());
-					
-					var taglist = fileDetailModal.find('.file-detail-taglist');
-					var spinner = taglist.prevAll('.tags-heading').find('.spinner').show();
-
-//					$.colorbox.resize();
-	
-					var itemId = el.prev('.itemId').text();
-				 	$.getJSON(linkGetTags.replace('__ID__', itemId), function(data) {
-				 		// set file id for tab binding
-				 		$('#frmbindTagForm-fileId').val(itemId);
-				 		
-				 		// render bound tags
-						var items = buildTagList(data['tags'], itemId);
-					  	taglist.html(
-						  	$('<ul/>', {
-							    html: items.join('')
-						  	})
-					  	);
-					  	spinner.hide();
-					  	$.colorbox.resize();
-					});
-					
-					toggleBindTagContainer(false);
-
-					// reset bind form first
-					$('#frm-bindTagForm')[0].reset();
-					fileDetailModal.find('.tag-value').empty();
-					
-					// update colorbox size after each suggested tag 
-					fileDetailModal.find('.tag-suggest li').livequery(function() {
-						$this = $(this);
-						// if tag already bound to file, remove it
-						if ($.inArray($this.text(), getTaglistItemValues())) {
-							$this.remove();
-						}
-
-						// todo: nefunguje resize, ak je tam selectbox otvoreny
-//						$.colorbox.resize();
-					});
-					
-					
-					// submit form after each tag selected
-					fileDetailModal.find('span.tag-value span').livequery(function() {
-						$('#frm-bindTagForm').submit();
-						// empty chosen tags
-						fileDetailModal.find('.tag-value').empty();
-
-//						fileDetailModal.find('.tag-control-helper').focus();
-					});
-
-				},
-				// reload itemlist to have up-to-date info (files could have been added 2 lightbox or downloaded)
-				onCleanup: function() {
-					$.get(linkReloadItemList);
-				}
-			}, function () { 
-				// callback
-			})
-		});
-	});
-</script>
-<link rel="stylesheet" href="{$basePath}/modules/colorbox/colorbox.css">
+	{include $filesControl->getHeadFilesTplPath()}
 {/capture}
  
 {block title}Files{/block}
 
 
 {block #options}
-	<span class="bold resultsCount">{$itemsCount} results found</span>
-	<span class="orderby">
-		<span class="bold">Display</span>
-		<a href="{link this orderby=>FilesModel::ORDER_BY_NAME}" {attr class('ajax', true) class('active', $presenter->orderby === FilesModel::ORDER_BY_NAME)}>Alphabetically</a>
-		<a href="{link this orderby=>FilesModel::ORDER_BY_SIZE}" {attr class('ajax', true) class('active', $presenter->orderby === FilesModel::ORDER_BY_SIZE)}>By Size</a>
-		<a href="{link this orderby=>FilesModel::ORDER_BY_DATE}" {attr class('ajax', true) class('active', $presenter->orderby === FilesModel::ORDER_BY_DATE)}>By Date</a>
-	</span>
-	
-	<span class="sorting">
-		<a href="{link this sorting=>dibi::ASC}" {attr class('ajax', true) class('active', $presenter->sorting === dibi::ASC)}>asc</a>
-		<a href="{link this sorting=>dibi::DESC}" {attr class('ajax', true) class('active', $presenter->sorting === dibi::DESC)}>desc</a>
-	</span>
-	
-	<span>
-		<span class="bold">Complexity</span>
-		{control complexityForm}
-	</span>
-	
-	<span class="thumbsizeControl">
-		{foreach FilesModel::getSizes() as $size}
-			<a href="{link setThumbSize! $size}"{attr class($size, true) class('active', $thumbSize === $size)} title="{$size}"></a>
-		{/foreach}
-		<span class="bold">Thumbnail Size</span>
-	</span>
+	{include $filesControl->getOptionsTplPath()}
 {/block}
 
 
 @{block #content}
 {snippet itemList}
-
-{* generate up-to-date link with every snippet redraw *}
-<script>
-	 	var linkGetTags = {link getTags! __ID__};
-</script>
-	{if $itemsCount > 0}
-	
-		<div class="itemList thumbSize-{$thumbSize}">
-			<div class="item" n:foreach="$items as $item">
-			{*include '@thumb.phtml' 'item' => $item, 'thumbSize' => $thumbSize*}
-				<span class="top-right show-on-hover">{$item->downloads} downloads</span>
-				<span class="invisible itemId">{$item->id}</span>
-				<a href="{$basePath}/{$presenter->filesModel->getPreviewPath($item->projects_id, 'large', $item->filename, true)}" rel="images">
-					<img src="{$basePath}/{$presenter->filesModel->getPreviewPath($item->projects_id, $thumbSize, $item->filename, true)}">
-				</a>
-				<a href="{link download! $item->id}" title="Download" class="download-link show-on-hover"></a>
-				{? $presenter->prepareAddFile2LightboxForm($item->id)}
-				<span class="ib add2lightbox show-on-hover">{control addFile2LightboxForm_$item->id}</span>
-
-			</div>
-			<div class="clear"></div>
-		</div>
-		{control itemPaginator false, step2}
-		<div class="clear"></div>
-		
-		<div class="invisible">
-			<div id="file-detail-modal">
-				<span class="downloads">__itemDownloads__ downloads</span>
-				<img src="">
-				<div class="actions-container">
-					<a href="{link download! __itemid__}" title="Download" class="download-link"></a>
-					<span class="ib add2lightbox"></span>
-				</div>
-				<div class="tags-container">
-					<div class="tags-heading">Tags:<span id="tagSpinner" class="spinner"></span>
-						<div class="bindTagContainer">
-							<span class="pointer addTagPrompt">Add Tag</span>
-							{control bindTagForm}
-						</div>
-					</div>
-					<div class="file-detail-taglist"></div>
-				</div>
-			</div>
-		</div>
-		
-		
-	{else}
-		<div class="infoMsg">No results found</div>
-	{/if}
+	{include $filesControl->getItemListTplPath()}
 {/snippet}

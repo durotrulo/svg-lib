@@ -2,7 +2,7 @@
 
 class Users_Admin_DefaultPresenter extends Admin_BasePresenter
 {
-	const ACL_RESOURCE = 'users_admin';
+	const ACL_RESOURCE = 'user';
 	const ACL_PRIVILEGE = 'admin';
 	
 	protected function startup()

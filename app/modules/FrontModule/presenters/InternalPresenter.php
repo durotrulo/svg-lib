@@ -157,38 +157,6 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 	}
 	
 	
-	protected function createComponentInternalNavigation($name)
-	{
-		$nav = new NavigationControl($this, $name);
-//		$nav->setupHomepage("Úvod", $this->link("Homepage:"));
-		
-			/*
-			$args = !is_null($item->nette_link_args) ? Basic::string2array(str_replace('%id%', $item->id, $item->nette_link_args)) : array();
-			
-			switch ($item->id) {
-				case 3:
-					$currentLink = ':News:Front:Default:*';
-					break;
-					
-				case 5:
-					$currentLink = ':Publications:Front:Default:*';
-					break;
-			
-				default:
-					$currentLink = null;
-					break;
-			}
-			*/
-			$nav->add('Project', $this->link(':Front:Projects:list'));
-			$nav->add('Vector', $this->link(':Front:Files:list', array('type' => 'vector')));
-			$nav->add('Bitmap', $this->link(':Front:Files:list', array('type' => 'bitmap')));
-			$nav->add('Inspiration', $this->link(':Front:Projects:list'));
-			$nav->add('All Files', $this->link(':Front:Files:list', array('type' => null)));
-			$nav->add('Lightboxes', $this->link(':Front:Projects:list'));
-	}
-	
-	
-	
 	public function actionTagInputSuggestTags($tagFilter)
 	{
 		$form = $this->getComponent('fileUploadForm');

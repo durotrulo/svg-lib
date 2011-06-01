@@ -1,0 +1,87 @@
+<script src="{$basePath}/modules/colorbox/jquery.colorbox.js"></script>
+<script>
+	// generate up-to-date link with every snippet redraw
+ 	var linkReloadItemList = {link reloadItemList!};
+
+ 	
+ 	// @see http://colorpowered.com/colorbox/
+ 	$(function() {
+		$("a[rel='images']").livequery( function () {
+		 	var fileDetailModal = $('#file-detail-modal');
+		 	var linkReloadItemList = {link reloadItemList!};
+			$(this).colorbox({
+				inline: true,
+				loop: false,
+				preloading: true,
+				scrolling: false,
+				innerWidth: '460px',
+				href: "#file-detail-modal",
+				onLoad: function() {
+					var el = $(this);
+					var item = el.parent('.item');
+					fileDetailModal.find('img').attr('src', el.attr('href'));
+					fileDetailModal.find('a.download-link').attr('href', item.find('a.download-link').attr('href'));
+					fileDetailModal.find('.downloads').text(item.find('.top-right').text());
+					fileDetailModal.find('.add2lightbox').html(item.find('.add2lightbox').html());
+					
+					var taglist = fileDetailModal.find('.file-detail-taglist');
+					var spinner = taglist.prevAll('.tags-heading').find('.spinner').show();
+
+//					$.colorbox.resize();
+	
+					var itemId = el.prev('.itemId').text();
+				 	$.getJSON(linkGetTags.replace('__ID__', itemId), function(data) {
+				 		// set file id for tab binding
+				 		$('#frmbindTagForm-fileId').val(itemId);
+				 		
+				 		// render bound tags
+						var items = buildTagList(data['tags'], itemId);
+					  	taglist.html(
+						  	$('<ul/>', {
+							    html: items.join('')
+						  	})
+					  	);
+					  	spinner.hide();
+					  	$.colorbox.resize();
+					});
+					
+					toggleBindTagContainer(false);
+
+					// reset bind form first
+					$('#frm-bindTagForm')[0].reset();
+					fileDetailModal.find('.tag-value').empty();
+					
+					// update colorbox size after each suggested tag 
+					fileDetailModal.find('.tag-suggest li').livequery(function() {
+						$this = $(this);
+						// if tag already bound to file, remove it
+						if ($.inArray($this.text(), getTaglistItemValues())) {
+							$this.remove();
+						}
+
+						// todo: nefunguje resize, ak je tam selectbox otvoreny
+//						$.colorbox.resize();
+					});
+					
+					
+					// submit form after each tag selected
+					fileDetailModal.find('span.tag-value span').livequery(function() {
+						$('#frm-bindTagForm').submit();
+						// empty chosen tags
+						fileDetailModal.find('.tag-value').empty();
+
+//						fileDetailModal.find('.tag-control-helper').focus();
+					});
+
+				},
+				// reload itemlist to have up-to-date info (files could have been added 2 lightbox or downloaded)
+				onCleanup: function() {
+					$.get(linkReloadItemList);
+				}
+			}, function () { 
+				// callback
+			})
+		});
+	});
+</script>
+<link rel="stylesheet" href="{$basePath}/modules/colorbox/colorbox.css">

@@ -2,6 +2,11 @@
 
 abstract class Front_BasePresenter extends BasePresenter
 {
+	
+	const RENDER_SECTION_FILEUPLOAD = 'fileUpload';
+	const RENDER_SECTION_FILTERS = 'filters';
+	const RENDER_SECTION_OPTIONS = 'options';
+	
 //	/** @persistent */
 //	public $orderBy;
 
@@ -28,42 +33,29 @@ abstract class Front_BasePresenter extends BasePresenter
 	}
 	
 
+	/**
+	 * set sections to be rendered
+	 *
+	 * @param array
+	 */
+	protected function setRenderSections($sections = array())
+	{
+		$defaults = array(
+			self::RENDER_SECTION_FILEUPLOAD => true,
+			self::RENDER_SECTION_FILTERS => false,
+			self::RENDER_SECTION_OPTIONS => true,
+		);
+
+		$this->template->renderSections = array_merge($defaults, $sections);
+	}
+	
+	
 	protected function beforeRender()
 	{
 		parent::beforeRender();
 		$this->template->isHomepage = false;
-	}
-	
-	
-	protected function createComponentNavigation($name)
-	{
-		$nav = new NavigationControl($this, $name);
-//		$nav->setupHomepage("Úvod", $this->link("Homepage:"));
-		/*
-		$lang = $this->lang;
-		$menuItems = dibi::select("id, label_$lang AS label, nette_link, nette_link_args")
-			->from('menu')
-			->fetchAll();
-			
-		foreach ($menuItems as $item) {
-			$args = !is_null($item->nette_link_args) ? Basic::string2array(str_replace('%id%', $item->id, $item->nette_link_args)) : array();
-			
-			switch ($item->id) {
-				case 3:
-					$currentLink = ':News:Front:Default:*';
-					break;
-					
-				case 5:
-					$currentLink = ':Publications:Front:Default:*';
-					break;
-			
-				default:
-					$currentLink = null;
-					break;
-			}
-			
-			$nav->add($item->label, $this->link($item->nette_link, $args), $currentLink);
-		}*/
+		
+		$this->setRenderSections();
 	}
 	
 	
@@ -80,4 +72,10 @@ abstract class Front_BasePresenter extends BasePresenter
 		exit(0);
 	}
 
+	
+	protected function createComponentFilesControl($name)
+	{
+		$files = new FilesControl($this, $name);
+		return $files;
+	}
 }

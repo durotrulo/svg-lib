@@ -73,12 +73,14 @@ class LightboxesModel extends BaseModel
 	
 	public function findOwners()
 	{
-		return dibi::select('DISTINCT u.id, u.firstname AS name')
+		return dibi::select('DISTINCT u.id, CONCAT(u.firstname, " ", u.lastname) AS name')
 					->from(self::USERS_TABLE)
 						->as('u')
 					->innerJoin(self::TABLE)
 						->as('l')
 						->on('l.owner_id = u.id')
+//					->orderBy('u.id - %i ASC', $this->userId) // first should be logged user's lightboxes
+					->where('u.id != %i', $this->userId) // except logged user
 					->fetchAll();
 	}
 	

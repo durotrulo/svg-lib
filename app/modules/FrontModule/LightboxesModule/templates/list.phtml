@@ -45,85 +45,88 @@
 <link rel="stylesheet" href="{$basePath}/modules/colorbox/colorbox.css">
 {/capture}
  
-{block title}Files{/block}
+{block title}Lightboxes{/block}
 
 
 {block #options}
-	
+	options
 {/block}
 
 
 @{block #content}
 
 <div class="lightboxes">
-	<div class="left-box">
-		@{foreach $lightboxOwners as $owner}
-		<div class="lb-owner">
-			<a class="ajax toggler" href="{link loadLightboxesByOwner! 'ownerId' => $owner->id}">{$owner->name}'s</a>
-			{snippet lb_$owner->id}
-				{if isset($lightboxes[$owner->id])}
-					{foreach $lightboxes[$owner->id] as $lb}
-						<a class="ajax" href="{link list $lb->id}">{$lb->name}</a>
-					{/foreach}
-				{/if}
-			{/snippet}
-		</div>
-		@{/foreach}
-		
-		<br>
-		<br>
-		
-		{snippet addLightboxForm}
-			{control addLightboxForm}
+	<div class="top-heading">
+		<h1>Lightboxes</h1>
+		{snippet lb-name 'h2'}
+			{ifset $lightbox}
+				{$lightbox->name}
+			{/if}
 		{/snippet}
 
+		{snippet sharelink 'span class="share-link"'}
+			{ifset $lightbox}
+			<a class="ajax" rel="nohistory" href="{link share! $lightbox->id}">Share</a>
+			{/if}
+		{/snippet}
 	</div>
-</div>
+	
+	<div class="left-box">
+		<div class="margin-all">
+		
+			
+			@{include '@lb-owners.phtml' lightboxes => $lightboxes, ownerId => $userId, ownerName => 'My Lightboxes', user => $user}
 
-{snippet itemList}
-
-@{ifset $lightbox}
-	<span class="editable" data-editable-name="name" data-editable-process-url="{link editName! $lightbox->id}">{$lightbox->name}</span> created by {$lightbox->owner}
-	<br>
-	<br>
-	<a class="ajax" rel="nohistory" href="{link share! $lightbox->id}">Share</a>
-	{snippet sharelink}{/snippet}
-	<br>
-	<br>
-	<a class="delete" rel="nohistory" href="{link delete! $lightbox->id}">Delete</a>
-@{else}
-	<p>Select lightbox from left menu.</p>
-@{/if}
-
-{*
-	*}
-	{if isset($itemsCount) and $itemsCount > 0}
-	{var thumbSize 'medium'}	
-		<div class="itemList thumbSize-{$thumbSize}">
-			<div class="item" n:foreach="$items as $item">
-				<span class="top-right show-on-hover">{$item->downloads} downloads</span>
-				<a href="{$basePath}/{$presenter->filesModel->getPreviewPath($item->projects_id, 'large', $item->filename, true)}" rel="images">
-					<img src="{$basePath}/{$presenter->filesModel->getPreviewPath($item->projects_id, $thumbSize, $item->filename, true)}">
-				</a>
-				<a href="{link download! $item->id}" title="Download" class="download-link show-on-hover"></a>
-
+			{*<a class="ajax toggler" rel="forceHistory" data-nette-toggleTarget="#snippet--lb_{$owner->id}" href="{link loadOwners! 'ownerId' => $owner->id}">User Lightboxes</a>*}
+			<span class="simple-toggler active" href="#" data-nette-toggleTarget=".user-lbs">User Lightboxes</span>
+			{*<div class="user-lbs" style="display:none;">*}
+			<div class="user-lbs">
+				@{foreach $lightboxOwners as $owner}
+					@{include '@lb-owners.phtml' lightboxes => $lightboxes, ownerId => $owner->id, ownerName => $owner->name, user => $user}
+				@{/foreach}
 			</div>
+			
+			<br>
+			<br>
+			
+			{snippet addLightboxForm}
+				{control addLightboxForm}
+			{/snippet}
+		</div>
+	</div>
+
+	{snippet itemList 'div class="right-box"'}
+	
+		{if isset($itemsCount) and $itemsCount > 0}
+		{var thumbSize 'medium'}	
+			<div class="itemList thumbSize-{$thumbSize}">
+				<div class="item" n:foreach="$items as $item">
+					<span class="top-right show-on-hover">{$item->downloads} downloads</span>
+					<a href="{$basePath}/{$presenter->filesModel->getPreviewPath($item->projects_id, 'large', $item->filename, true)}" rel="images">
+						<img src="{$basePath}/{$presenter->filesModel->getPreviewPath($item->projects_id, $thumbSize, $item->filename, true)}">
+					</a>
+					<a href="{link download! $item->id}" title="Download" class="download-link show-on-hover"></a>
+	
+				</div>
+				<div class="clear"></div>
+			</div>
+			{control itemPaginator false, step2}
 			<div class="clear"></div>
-		</div>
-		{control itemPaginator false, step2}
-		<div class="clear"></div>
-		
-		<div class="invisible">
-			<div id="file-detail-modal">
-				<span class="downloads">__itemDownloads__ downloads</span>
-				<img src="">
-				<a href="{link download! __itemid__}" title="Download" class="download-link"></a>
-				<span class="ib add2lightbox"></span>
+			
+			<div class="invisible">
+				<div id="file-detail-modal">
+					<span class="downloads">__itemDownloads__ downloads</span>
+					<img src="">
+					<a href="{link download! __itemid__}" title="Download" class="download-link"></a>
+					<span class="ib add2lightbox"></span>
+				</div>
 			</div>
-		</div>
-		
-		
-	{else}
-		<div class="infoMsg">No results found</div>
-	{/if}
-{/snippet}
+			
+			
+		{else}
+			<div class="infoMsg">No results found</div>
+		{/if}
+	{/snippet}
+	
+	<div class="clear"></div>
+</div> <!--end of .lightboxes-->

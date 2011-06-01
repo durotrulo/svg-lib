@@ -1,0 +1,49 @@
+{* generate up-to-date link with every snippet redraw *}
+<script>
+ 	var linkGetTags = {link getTags! __ID__};
+</script>
+
+{if $itemsCount > 0}
+
+	<div class="itemList thumbSize-{$thumbSize}">
+		<div class="item" n:foreach="$items as $item">
+		{*include '@thumb.phtml' 'item' => $item, 'thumbSize' => $thumbSize*}
+			<span class="top-right show-on-hover">{$item->downloads} downloads</span>
+			<span class="invisible itemId">{$item->id}</span>
+			<a href="{$basePath}/{$presenter->filesModel->getPreviewPath($item->projects_id, 'large', $item->filename, true)}" rel="images">
+				<img src="{$basePath}/{$presenter->filesModel->getPreviewPath($item->projects_id, $thumbSize, $item->filename, true)}">
+			</a>
+			<a href="{link download! $item->id}" title="Download" class="download-link show-on-hover"></a>
+			{? $presenter->prepareAddFile2LightboxForm($item->id)}
+			<span class="ib add2lightbox show-on-hover">{control addFile2LightboxForm_$item->id}</span>
+
+		</div>
+		<div class="clear"></div>
+	</div>
+	{control itemPaginator false, step2}
+	<div class="clear"></div>
+	
+	<div class="invisible">
+		<div id="file-detail-modal">
+			<span class="downloads">__itemDownloads__ downloads</span>
+			<img src="">
+			<div class="actions-container">
+				<a href="{link download! __itemid__}" title="Download" class="download-link"></a>
+				<span class="ib add2lightbox"></span>
+			</div>
+			<div class="tags-container">
+				<div class="tags-heading">Tags:<span id="tagSpinner" class="spinner"></span>
+					<div class="bindTagContainer">
+						<span class="pointer addTagPrompt">Add Tag</span>
+						{control bindTagForm}
+					</div>
+				</div>
+				<div class="file-detail-taglist"></div>
+			</div>
+		</div>
+	</div>
+	
+	
+{else}
+	<div class="infoMsg">No results found</div>
+{/if}

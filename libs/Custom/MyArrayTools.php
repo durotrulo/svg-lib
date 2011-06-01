@@ -4,6 +4,41 @@ class MyArrayTools extends Object
 {
 
 	/**
+	 * unset array item with value $val
+	 *
+	 * @param array
+	 * @param mixed
+	 */
+	public static function unsetByValue($arr, $val)
+	{
+		$key = self::getKey($arr, $val);
+		array_splice($arr, $key, 1);
+	}
+	
+	
+	/**
+	 * get key of array item with specified value $needle
+	 *
+	 * @param array
+	 * @param string
+	 * @return array key OR false (if none or more than 1 key found)
+	 */
+	public static function getKey($arr, $needle)
+	{
+		if (!is_array($arr)) {
+			return false;
+		}
+		
+		$keys = array_keys($arr, $needle);
+		if (count($keys) != 1) {
+			return false;
+		}
+		
+		return $keys[0];
+	}
+	
+	
+	/**
 	 * append $arr2 at the end of $arr1
 	 * keep indexes intact
 	 *
