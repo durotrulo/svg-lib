@@ -48,15 +48,38 @@ class BaseControl extends Control
 	/** @var PresenterComponent holds presenter control is attached to */
 	private static $presenter = null;
 	
+	/** @var data model */
+	protected $model;
+	
+	/** @var config */
+	protected $config;
+	
 	public function __construct(IComponentContainer $parent = NULL, $name = NULL)
 	{
 		parent::__construct($parent, $name);
 		$this->db = dibi::getConnection();
-		$this->user = $this->getUser();
 
 		self::$count++;
 //		$this->setWebloaderPaths();
 	}
+	
+	
+	public function getModel()
+	{
+		return $this->model;
+	}
+	
+	
+	/**
+	 * allows to call $this->userId from within closure
+	 *
+	 * @return int|NULL
+	 */
+	public function getUserId()
+	{
+		return $this->userId;
+	}
+	
 	
 	// kvoli tomu, ze sa vola komponenta viac krat, tak sa cesta k webloaderu nastavena v construct moze prepisat, treba to znova nastavit
 	protected function setWebloaderPaths()
@@ -205,7 +228,8 @@ class BaseControl extends Control
  	{
  		parent::attached($presenter);
  		self::$presenter = $presenter;
- 	}
+ 		$this->user = $presenter->getUser();
+	}
 	
 	
 	protected function createTemplate()
@@ -309,11 +333,13 @@ class BaseControl extends Control
 	
 	
 	/**
-	 * @return User
+	 * allows to call $this->user from within closure
+	 *
+	 * @return Nette/Web/User
 	 */
-	protected function getUser()
+	public function getUser()
 	{
-		return Environment::getUser();
+		return $this->user;
 	}
 	
 	/**

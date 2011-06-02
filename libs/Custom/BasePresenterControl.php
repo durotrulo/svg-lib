@@ -52,7 +52,7 @@ class BasePresenterControl extends Object
                 $_this->invalidateControl();
             }
             if ($forward) {
-            	$_this->forward($destination, $args);
+            	$_this->presenter->forward($destination, $args);
             }
         } else if ($destination) {
             $_this->redirect($destination, $args);

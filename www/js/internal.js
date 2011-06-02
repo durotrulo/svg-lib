@@ -115,14 +115,6 @@ $(function() {
 	loadOptionsVisibility();
 	
 	// FilesPresenter thumb size control
-	/*
-	$('.thumbsizeControl a').each(function(index) {
-		$(this).click(function(e) {
-			setThumbSize(index+1);
-			return false;
-		});
-	});
-	*/
 	$('.thumbsizeControl a').live('click', function(e) {
 		var self = $(this);
 		setThumbSize(self.attr('title'));
@@ -211,7 +203,7 @@ $(function() {
 
 /**
  * sets .options (in)visible according to cookie set
- **/
+ */
 function loadOptionsVisibility()
 {
 	if ($.cookie("optionsVisible") === 'true') {
@@ -222,25 +214,20 @@ function loadOptionsVisibility()
 
 
 /**
- * sets .options (in)visible and sets cookie accordingly
+ * set .options (in)visible and store in cookie
  * @param jQuery Element
  * @param jQuery Element
- **/
+ */
 function setOptionsVisibility(content, togglerSpan)
 {
-//	var isVisible = content.is(':visible');
 	var isVisible = content.css('opacity') !== '0';
 	if (isVisible) {
-//			content.hide('fast', function(){
-//		content.fadeOut('fast', function(){
 		content.fadeTo('fast', 0, function(){
 			togglerSpan.text('Show')
 				.addClass('hide');
 			setOptVisCookie(!isVisible);
 		});
 	} else {
-//			content.show('fast', function() {
-//		content.fadeIn('fast', function() {
 		content.fadeTo('fast', 1, function() {
 			togglerSpan.text('Hide')
 				.removeClass('hide');
@@ -251,9 +238,9 @@ function setOptionsVisibility(content, togglerSpan)
 
 
 /**
- * sets cookie for options visibility to remember last state
+ * set cookie for options visibility to remember last state
  * @param bool
- **/
+ */
 function setOptVisCookie(isVisible)
 {
 	$.cookie(
@@ -261,14 +248,14 @@ function setOptVisCookie(isVisible)
 		isVisible, 
 		{
 			expires: 365,
-			path: '/' // path must be specified to be compatible with server-side cookies
+			path: SESSION_PATH // path must be specified to be compatible with server-side cookies
 		}
 	);
 }
 
 
 /**
- * sets cookie for persistence, class for parent container and src to required $size
+ * set cookie for size of thumbnails, class for parent container and img src to required $size
  * @param enum [small|medium|large]
  **/
 function setThumbSize($size)
@@ -279,9 +266,10 @@ function setThumbSize($size)
 		$size, 
 		{
 			expires: 365,
-			path: '/' // path must be specified to be compatible with server-side cookies
+			path: SESSION_PATH // path must be specified to be compatible with server-side cookies
 //			domain: 'jquery.shaddow.sk'
-		}); 
+		}
+	);
 	
 	// set class for parent container
 	$('.itemList').replaceAttr('class', /thumbSize-(small|medium|large)/, 'thumbSize-' + $size);

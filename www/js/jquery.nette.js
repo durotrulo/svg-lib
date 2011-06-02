@@ -467,7 +467,7 @@ $(function () {
 //		if ($this.attr('rel') !== 'nohistory' && !$this.attr('href').match(/[&?]do=/i)
 		if (
 			$this.attr('rel') !== 'nohistory' && 
-			(!$this.attr('href').match(/[&?]do=(?!itemPaginator-goto)/i) || $this.attr('rel') && $this.attr('rel').match(/forceHistory/i)) // no signals by default, exception can be made by rel="forceHistory"
+			(!$this.attr('href').match(/[&?]do=(?!(.*)itemPaginator-goto)/i) || $this.attr('rel') && $this.attr('rel').match(/forceHistory/i)) // no signals by default, exception can be made by rel="forceHistory"
 			&& relativeUrl !== $this.attr('href') // if on the same url 'statechange' would not fire -> we want to be able ajaxify these links too -> via standard ajax post
 		) {
 			// change state and request for new content

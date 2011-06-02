@@ -14,13 +14,14 @@
  
 {block title}Files{/block}
 
-
 {block #options}
-	{include $filesControl->getOptionsTplPath()}
+	{*include $filesControl->getOptionsTplPath()*}
+	{$filesControl->renderOptions()}
 {/block}
 
 
 @{block #content}
 {snippet itemList}
-	{include $filesControl->getItemListTplPath()}
+	{*include $filesControl->getItemListTplPath()*}
+	{$filesControl->renderList()}
 {/snippet}

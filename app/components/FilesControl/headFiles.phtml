@@ -1,6 +1,6 @@
 <script src="{$basePath}/modules/colorbox/jquery.colorbox.js"></script>
 <script>
-	// generate up-to-date link with every snippet redraw
+	// generate link and update it on every snippet redraw in itemList.phtml
  	var linkReloadItemList = {link reloadItemList!};
 
  	
@@ -8,7 +8,7 @@
  	$(function() {
 		$("a[rel='images']").livequery( function () {
 		 	var fileDetailModal = $('#file-detail-modal');
-		 	var linkReloadItemList = {link reloadItemList!};
+//		 	var linkReloadItemList = {link reloadItemList!};
 			$(this).colorbox({
 				inline: true,
 				loop: false,
@@ -48,14 +48,14 @@
 					toggleBindTagContainer(false);
 
 					// reset bind form first
-					$('#frm-bindTagForm')[0].reset();
+					$('.bindTagForm')[0].reset();
 					fileDetailModal.find('.tag-value').empty();
 					
 					// update colorbox size after each suggested tag 
 					fileDetailModal.find('.tag-suggest li').livequery(function() {
 						$this = $(this);
 						// if tag already bound to file, remove it
-						if ($.inArray($this.text(), getTaglistItemValues(taglist))) {
+						if ($.inArray($this.text(), getTaglistItemValues(taglist)) !== -1) {
 							$this.remove();
 						}
 
@@ -66,7 +66,7 @@
 					
 					// submit form after each tag selected
 					fileDetailModal.find('span.tag-value span').livequery(function() {
-						$('#frm-bindTagForm').submit();
+						$('.bindTagForm').submit();
 						// empty chosen tags
 						fileDetailModal.find('.tag-value').empty();
 

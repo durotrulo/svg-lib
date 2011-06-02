@@ -58,8 +58,9 @@ class MyAppForm extends AppForm {
 		if ($this->getPresenter()->isAjax()) {
 			$js .= 'Nette.initForm(document.getElementById("' . $this->getElementPrototype()->id . '"));';
 		}
-		
-		if (strchr($this->getElementPrototype()->class, 'useUICss')) {
+//		dump($this->getElementPrototype()->class);die();
+//		if (strchr($this->getElementPrototype()->class, 'useUICss')) {
+		if (in_array('useUICss', (array) $this->getElementPrototype()->class)) {
 			$js .= '$(function(){applyUItoForm("' . $this->getElementPrototype()->id . '")});';
 		}
 		
@@ -152,9 +153,11 @@ class MyAppForm extends AppForm {
 	 */
 	public function addClass($class)
 	{
-		$origClass = $this->getElementPrototype()->class;
 		$this->getElementPrototype()
-			->class(empty($origClass) ? $class : ($origClass . ' ' . $class));
+			->class[] = $class;
+//		$origClass = $this->getElementPrototype()->class;
+//		$this->getElementPrototype()
+//			->class(empty($origClass) ? $class : ($origClass . ' ' . $class));
 	}
 	
 	
@@ -165,7 +168,9 @@ class MyAppForm extends AppForm {
 	 */
 	public function removeClass($class)
 	{
-		$this->getElementPrototype()->class(preg_replace("/\s*$class\s*/", '', $this->getElementPrototype()->class));
+		$this->getElementPrototype()->class($class, NULL);
+//		unset($this->getElementPrototype()->class[$class]);
+//		$this->getElementPrototype()->class(preg_replace("/\s*$class\s*/", '', $this->getElementPrototype()->class));
 	}
 	
 	
