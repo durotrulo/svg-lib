@@ -33,92 +33,78 @@
 	<script>window.jQuery || document.write("<script src='{!$basePath}/js/jquery-1.6.1.min.js'>\x3C/script>")</script>
 	
 
-<!--	History.js - should be before jquery.nette.js -->
+	<!--	History.js - should be before jquery.nette.js -->
 	<script>if ( typeof window.JSON === 'undefined' ) { document.write('<script src="{$basePath}/modules/history.js/json2.js"><\/script>'); }</script>
 	{control js '../modules/history.js/amplify.store.js', '../modules/history.js/history.adapter.jquery.js', '../modules/history.js/history.js', '../modules/history.js/history.html4.js'}
-<!--	History.js END-->
+	<!--	History.js END-->
 
+	
 	{control js 'jquery.livequery.js', 'jquery.nette.js', 'netteForms.js', 'jquery.placeholder.min.js', 'jquery.cookie.js', 'internal.js', 'common.js', 'js.js'}
 	{control css 'reset.css', 'general.css', 'screen.css'}
 
-	{*
-	 * Google Analytics
-	 * todo: define GA id
-	 * Debug::$productionMode je true na production, ak nie som z dev IP
-	 *}
-	{if Environment::isProduction() && Debug::$productionMode}
-	<script type="text/javascript">
-		var id = '';
-		if (id) {
-		  	var _gaq = _gaq || [];
-		  	_gaq.push(['_setAccount', id]);
-		  	_gaq.push(['_trackPageview']);
+	
+	{if $isAdminModule}
+
+		<link rel="stylesheet" href="{$basePath}/css/admin.css">
+		<script src="{$basePath}/js/admin.js"></script>
+	
+		<!--tipsy -->
+		<link rel="stylesheet" href="{$basePath}/modules/tipsy/jquery.tipsy.css">
+		<script src="{$basePath}/modules/tipsy/jquery.tipsy.js"></script>
+		<script src="{$basePath}/modules/tipsy/init.js"></script>
+		<!--tipsy END-->
+	
+	{else}
+	
+		{*
+		 * Google Analytics
+		 * todo: define GA id
+		 * Debug::$productionMode je true na production, ak nie som z dev IP
+		 *}
+		{if Environment::isProduction() && Debug::$productionMode}
+		<script type="text/javascript">
+			var id = '';
+			if (id) {
+			  	var _gaq = _gaq || [];
+			  	_gaq.push(['_setAccount', id]);
+			  	_gaq.push(['_trackPageview']);
+			
+			  	(function() {
+			    	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			    	ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			    	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+			  	})();
+			}
+		</script>
+		{/if}
 		
-		  	(function() {
-		    	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		    	ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		    	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		  	})();
-		}
-	</script>
+		
+		<!--FILE UPLOAD-->
+		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/themes/base/jquery-ui.css" id="theme">
+		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js"></script>
+		<!--FILE UPLOAD END-->
+	
+		{* FILE UPLOAD + TAG INPUT + TIPSY *}
+		{control js '../modules/file-upload/jquery.fileupload.js', '../modules/file-upload/jquery.fileupload-ui.js', '../modules/file-upload/jquery.fileupload-uix.js', '../modules/file-upload/jquery.dotimeout.min.js', '../modules/file-upload/inline.js', '../modules/taginput/tagInput.js', '../modules/tipsy/jquery.tipsy.js', '../modules/tipsy/init.js'}
+		{control css '../modules/file-upload/jquery.fileupload-ui.css', '../modules/taginput/tagInput2.css', '../modules/tipsy/jquery.tipsy.css'}
+
 	{/if}
 	
+	
+	
+	
+		
 	{* js a css from views *}
 	{ifset $head}{!$head}{/if}
 
+	{* todo:Remove if not needed *}
 	<!--[if IE]>
 		<link rel="stylesheet" media="screen" href="{$basePath}/css/ie.css" type="text/css">
-	<![endif]-->	
+	<![endif]-->
 	
-	
-	
-	
-<!--	FILE UPLOAD-->
-
-	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/themes/base/jquery-ui.css" id="theme">
-	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js"></script>
-
-<!--	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>-->
-	{*
-*}
-	<link rel="stylesheet" href="{$basePath}/modules/file-upload/jquery.fileupload-ui.css">
-	<script src="{$basePath}/modules/file-upload/jquery.fileupload.js"></script>
-	<script src="{$basePath}/modules/file-upload/jquery.fileupload-ui.js"></script>
-	<script src="{$basePath}/modules/file-upload/jquery.fileupload-uix.js"></script>
-	
-<!--	http://benalman.com/projects/jquery-dotimeout-plugin/-->
-	<script src="{$basePath}/modules/file-upload/jquery.dotimeout.min.js"></script>
-	<script src="{$basePath}/modules/file-upload/inline.js"></script>
-	
-<!--	FILE UPLOAD END-->
-
-
-<!--	TAG INPUT-->
-	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/modules/taginput/tagInput2.css" type="text/css">
-	<script type="text/javascript" src="{$basePath}/modules/taginput/tagInput.js"></script>
-<!--	TAG INPUT END-->
-
-	{* FILE UPLOAD + TAG INPUT 
-	{control js '../modules/file-upload/jquery.fileupload.js', '../modules/file-upload/jquery.fileupload-ui.js', '../modules/file-upload/jquery.dotimeout.min.js', '../modules/file-upload/inline.js', '../modules/taginput/tagInput.js'}
-	{control css '../modules/file-upload/jquery.fileupload-ui.css', '../modules/taginput/tagInput.css'}
-	*}
-	
-	
-	
-<!--	jGrowl- loaded in flash messages -->
-	<!--<link rel="stylesheet" href="{$basePath}/modules/jgrowl/jquery.jgrowl.css">
-	<script src="{$basePath}/modules/jgrowl/jquery.jgrowl.js"></script>-->
-<!--	jGrowl END-->
 	
 
-<!--	tipsy -->
-	<link rel="stylesheet" href="{$basePath}/modules/tipsy/jquery.tipsy.css">
-	<script src="{$basePath}/modules/tipsy/jquery.tipsy.js"></script>
-	<script src="{$basePath}/modules/tipsy/init.js"></script>
-<!--	tipsy END-->
-	
-	
-	
+	{* set global constants/variables *}
 	<script>
 		var debug = !{= Environment::isProduction() && Debug::$productionMode};
 
@@ -133,19 +119,19 @@
 <div class="all">
 	<div class="upmenu">
 		<span>Logged as {$user->identity->realname}</span>
-		<a href="{link :Acl:Admin:Users:}">ACL</a>
+		<a n:if="$user->isAllowed(Acl_Admin_BasePresenter::ACL_RESOURCE, Acl_Admin_BasePresenter::ACL_PRIVILEGE)"  href="{link :Acl:Admin:Users:}">ACL</a>
 	</div>
 	<div class="extender">
 		<div id="header">
 	
-			<a href="{link :Front:Files:list}" title="Home" class="menu-icon home-icon"></a>
-			<a href="{link :Front:Lightboxes:list ownerId=>$userId, ownerIds=>null}" title="Lightboxes" class="menu-icon lightbox-icon"></a>
-			<a n:if="$user->isAllowed('user', 'admin')" href="{link :Users:Admin:Default:add}" title="Users admin" class="menu-icon users-icon"></a>
-			<a href="{link :Projects:Admin:Default:add}" title="Projects admin" class="menu-icon projects-icon"></a>
-			<a href="#" title="Client Packages" class="menu-icon client-package-icon"></a>
-			<a href="{link :Users:Front:Default:edit}" title="Settings" class="menu-icon settings-icon"></a>
-			<a href="{link :Front:Login:logout}" title="Logout" class="menu-icon logout-icon"></a>
-			<a href="{link :RichText:Front:Default:detail 1}" title="Help" class="menu-icon help-icon"></a>
+			<a href="{link :Front:Files:list, filter=>null}" title="Home" class="menu-icon home-icon{ifCurrent} active{/if}"></a>
+			<a href="{link :Front:Lightboxes:list ownerId=>$userId, ownerIds=>null}" title="Lightboxes" class="menu-icon lightbox-icon{ifCurrent} active{/if}"></a>
+			<a n:if="$user->isAllowed('user', 'admin')" href="{link :Users:Admin:Default:add}" title="Users admin" class="menu-icon users-icon{ifCurrent} active{/if}"></a>
+			<a href="{link :Projects:Admin:Default:add}" title="Projects admin" class="menu-icon projects-icon{ifCurrent} active{/if}"></a>
+			<a href="#" title="Client Packages" class="menu-icon client-package-icon{ifCurrent} active{/if}"></a>
+			<a href="{link :Users:Front:Default:edit}" title="Settings" class="menu-icon settings-icon{ifCurrent} active{/if}"></a>
+			<a href="{link :Front:Login:logout}" title="Logout" class="menu-icon logout-icon{ifCurrent} active{/if}"></a>
+			<a href="{link :RichText:Front:Default:detail 1}" title="Help" class="menu-icon help-icon{ifCurrent} active{/if}"></a>
 
 			<a n:if="$renderSections['fileUpload']" href="#" title="Upload File(s)" class="menu-icon upload-icon"></a>
 			

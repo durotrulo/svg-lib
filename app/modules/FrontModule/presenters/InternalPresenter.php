@@ -154,11 +154,6 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 	}
 	
 	
-	protected function createComponentItemPaginator($name)
-	{
-		return new VisualPaginator($this, $name);
-	}
-	
 	
 	public function actionTagInputSuggestTags($tagFilter)
 	{
@@ -259,21 +254,23 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 		$form = new MyAppForm($this, $name);
 		$form->enableAjax();
 			
-		$form->addText('q', 'Search')
-			->setDefaultValue($this->q);
+		$form->addText('q')
+			->setDefaultValue($this->q)
+			->getControlPrototype()->setPlaceholder('Search');
+			
 			
 		$form->addSubmit('search', 'Search')
 			->getControlPrototype()->class('noJS noJS-tr');
 
-		$presenter = $this;
-		$form->onSubmit[] = function(MyAppForm $form) use (&$presenter) {
+		$_this = $this;
+		$form->onSubmit[] = function(MyAppForm $form) use (&$_this) {
 			if ($form['search']->isSubmittedBy()) {
 				$values = $form->getValues();
-				$presenter->q = $values['q'];
+				$_this->q = $values['q'];
 			}
 
-			$presenter->refresh(array('searchForm', 'itemList', 'options'), 'this');
-//			$presenter->refresh(null, 'this');
+			$_this->refresh(array('searchForm', 'itemList', 'options'), 'this');
+//			$_this->refresh(null, 'this');
 		};
 
 		return $form;
@@ -291,7 +288,6 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 	
 	public function handleReloadItemList()
 	{
-//		dump($this->q);die();
 		$this->refresh('itemList', 'this');
 	}
 	

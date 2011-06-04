@@ -27,7 +27,9 @@ abstract class Admin_BasePresenter extends BasePresenter
 		} else {
 			
 			/* todo:vymysliet univerzalne ulozisko konstant nastavenie konstant casto pouzivanych */
-			define('RECORD_NOT_FOUND', $this->translate('record_not_found'));
+			if (!defined('RECORD_NOT_FOUND')) {
+				define('RECORD_NOT_FOUND', $this->translate('record_not_found'));
+			}
 			
 			if (!$user->isAllowed(static::ACL_RESOURCE, static::ACL_PRIVILEGE)) {
 				$this->unauthorized();
@@ -46,6 +48,13 @@ abstract class Admin_BasePresenter extends BasePresenter
 		$this->template->heading = 'Administrácia';
 
 		$this->template->isAdminModule = TRUE;
+		
+
+		$this->setRenderSections(array(
+			self::RENDER_SECTION_FILEUPLOAD => false,
+			self::RENDER_SECTION_FILTERS => false,
+			self::RENDER_SECTION_OPTIONS => false,
+		));
 	}
 	
 	protected function unauthorized()

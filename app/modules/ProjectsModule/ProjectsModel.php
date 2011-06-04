@@ -27,6 +27,7 @@ class ProjectsModel extends BaseModel
 	public function findAll()
 	{
 		return dibi::select('p.*, 
+			IF(p.completed, DATE_FORMAT(p.completed, "%m/%d/%Y"), "In Progress") as completedFormatted,
 			CONCAT(u.firstname, " ", u.lastname) AS manager,
 			COUNT(f.id) AS vectorFilesCount,
 			COUNT(f2.id) AS bitmapFilesCount
@@ -59,6 +60,22 @@ class ProjectsModel extends BaseModel
 		return $this->findAll()
 					->where('p.id = %i', $id)
 					->fetch();
+	}
+	
+	
+	
+	/**
+	 * check if projectname is available
+	 *
+	 * @param string
+	 * @return bool
+	 */
+	public function isAvailable($name)
+	{
+		return !(bool) dibi::select('COUNT(*)')
+							->from(self::TABLE)
+							->where('name = %s', $name)
+							->fetchSingle();
 	}
 	
 	
@@ -174,14 +191,14 @@ class ProjectsModel extends BaseModel
 
 	
 	/**
-	 * filters items with given name (or part of it)
+	 * filters items with given name or subtitle (or part of it)
 	 * @param DibiFluent
 	 * @param string
 	 */
-	public function filterByName(&$items, $name)
+	public function filterByNameOrSubtitle(&$items, $name)
 	{
 		if (!empty($name)) {
-			$items->where('name LIKE %s', "%$name%");
+			$items->where('name LIKE %s OR subtitle LIKE %s', "%$name%", "%$name%");
 		}
 		
 		return $this;
@@ -232,7 +249,7 @@ class ProjectsModel extends BaseModel
 		
 		
 		/**
-		 * vymazat subory s duplicitnym nazvom v projekte GENERAL? alebo hodit warning? alebo?
+		 * todo: vymazat subory s duplicitnym nazvom v projekte GENERAL? alebo hodit warning? alebo?
 		 */
 		
 		try {
@@ -241,7 +258,7 @@ class ProjectsModel extends BaseModel
 			
 
 			// move files to project GENERAL
-			dibi::update(self::TABLE, array(
+			dibi::update(self::FILES_TABLE, array(
 				'projects_id' => self::GENERAL_PROJECT_ID,
 			))
 			->where('projects_id = %i', $id)

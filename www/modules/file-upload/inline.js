@@ -75,6 +75,8 @@ $(function () {
     fileUploadForm.fileUploadUI({
     	maxFilesCount: 20, // pridane na kontrolu
     	previewAsCanvas: false,
+//    	previewAsCanvas: true,
+    	imageTypes: /^image\/(gif|jpeg|png|svg|svg\+xml)$/,
     	previewMaxWidth: 150,
     	previewMaxHeight: 113,
         uploadTable: $('#files'),
@@ -182,7 +184,7 @@ $(function () {
 		// zaistim, aby server response bola spracovana Nette.success
 		onComplete: function (event, files, index, xhr, handler) {
         	fileUploads.remove(files[index]);
-        	log('complete');
+//        	log('complete');
 			handler.removeNode(handler.uploadRow);
 			
             if (fileUploads.count === 0) {

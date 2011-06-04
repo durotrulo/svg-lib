@@ -1,9 +1,12 @@
-{block title}Forgotten password{/block}
+{block #title}Forgotten password{/block}
+
+{block #bottomLink}
+	<a href="{link :Front:Login:login}">Login</a>
+{/block}
 
 @{block #content}
-
-<br />
-<p>Zadajte Vašu e-mailovú adresu, na ktorú Vám odošleme nové prihlasovacie údaje</p>
-<br />
-
-{control sendPassForm}
+<div class="forgotten-pass">
+	<p class="prompt">Enter your e-mail address where new login credentials will be sent.</p>
+	
+	{control sendPassForm}
+</div>

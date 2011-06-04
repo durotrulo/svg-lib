@@ -15,7 +15,7 @@
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
 	
 	{control js 'jquery.livequery.js', 'jquery.nette.js', 'netteForms.js', 'jquery.placeholder.min.js', 'common.js', 'js.js'}
-	{control css 'reset.css', 'general.css', 'screen.css'}
+	{control css 'reset.css', 'general.css', 'screen.css', 'login.css'}
 
 	{*
 	 * Google Analytics
@@ -51,24 +51,25 @@
 <body>
 <div class="all">
 	<div class="extender">
-	<div id="header">
-	{include #title}
-	</div>
-	<div id="container">
-	
-		<div class="flashes">
-		{snippet flashes}
-			{foreach $flashes as $flash}<div class="flash {$flash->type}">{$flash->message}</div>{/foreach}
-		{/snippet}
-		</div>	
-		
-		<div id="content">
-			<a href="{link :Front:ForgottenPass:default}">Forgot password?</a>
-			<a href="{link :Front:Login:login}">Login</a>
-			@{include #content}
+		<div id="header">
+		{include #title}
 		</div>
-	</div>
+		<div id="container">
+		
+			<div class="flashes">
+			{snippet flashes}
+				{foreach $flashes as $flash}<div class="flash {$flash->type}">{$flash->message}</div>{/foreach}
+			{/snippet}
+			</div>	
+			
+			<div id="content">
+				@{include #content}
+			</div>
+		</div>
 	
+		<div class="bottomDiv">
+		{include #bottomLink}
+		</div>
 	</div>
 	
 	<div id="footer">

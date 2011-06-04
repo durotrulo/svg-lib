@@ -469,7 +469,6 @@ function initTagInput()
 				$control.siblings('.tag-suggest').hide();
 				var $container = $control.siblings('.tag-suggest').children('ul');
 				$container.children('li').remove();
-				log($container.parent().parent().getValues());
 				// do not add to list if unique rule is forced and the value is already filled
 //				$.each(json, function(id, value) {
 				$.each(request, function(id, value) {

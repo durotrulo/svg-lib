@@ -43,6 +43,9 @@ class ImageModel extends FileModel
 	        }
 		}
         
+		// PNG does not save alpha channel (transparency) by default, needs to be turned on explicitly
+		$img->saveAlpha(true);
+		
 		$img->save($dest, self::$quality);
 		
    		return $filename;
@@ -63,6 +66,9 @@ class ImageModel extends FileModel
 		}
 		
 		$dest = $dirname . $filename;
+		
+		// PNG does not save alpha channel (transparency) by default, needs to be turned on explicitly
+		$img->saveAlpha(true);
 		
 		$img->save($dest, self::$quality);
 		
@@ -159,10 +165,16 @@ class ImageModel extends FileModel
 			}
 		}
 
+		// PNG does not save alpha channel (transparency) by default, needs to be turned on explicitly
+		$img2->saveAlpha(true);
+
 		$img2->save($dest, self::$quality);
 		
 		 // nahlad
         self::makeThumbnail($img, $thumb_w, $thumb_h);
+
+        // PNG does not save alpha channel (transparency) by default, needs to be turned on explicitly
+		$img->saveAlpha(true);
 		$img->save($dest_thumb, self::$quality);
 		
 	}

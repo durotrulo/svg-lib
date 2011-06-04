@@ -63,7 +63,8 @@ function buildTagListItem(tag, fileId)
 		;
 	var ret = '<li id="tag-' + tag.id + '" class="user-level-' + tag.userLevel + '">' + tag.name + '__delLink__</li>';
 	if (isDeleteAllowed) {
-		replaceStr = '<span><a class="ajax" data-nette-spinner="#tagSpinner" rel="nohistory" data-nette-confirm="%delete%" href="' + linkUnbindTag.replace('__fileId__', fileId).replace('__tagId__', tag.id)  + '">X</a></span>';
+//		replaceStr = '<span><a class="ajax" data-nette-spinner="#tagSpinner" rel="nohistory" data-nette-confirm="Are you sure?" href="' + linkUnbindTag.replace('__fileId__', fileId).replace('__tagId__', tag.id)  + '"></a></span>';
+		replaceStr = '<a title="delete tag" class="ajax" data-nette-spinner="#tagSpinner" rel="nohistory" data-nette-confirm="Are you sure?" href="' + linkUnbindTag.replace('__fileId__', fileId).replace('__tagId__', tag.id)  + '"></a>';
 	} else {
 		replaceStr = '';
 	}
@@ -98,6 +99,7 @@ function toggleBindTagContainer(showForm)
 	if (showForm) {
 		prompt.hide();
 		form.show();
+		form.find('.tag-control-helper').focus();
 	} else {
 		form.hide();
 		prompt.show();

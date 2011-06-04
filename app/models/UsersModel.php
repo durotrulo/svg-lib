@@ -151,26 +151,47 @@ class UsersModel extends BaseModel implements IAuthenticator
 	}
 	
 	
-	private function bindRoles(&$user, $fetchPairs = true)
+	/**
+	 * bind user roles to users
+	 *
+	 * @param DibiRow | DibiRow array
+	 * @param bool fetch pairs or just return keys?
+	 */
+	public function bindRoles(&$users, $fetchPairs = true)
 	{
 		if (!$this->config['useAcl']) {
 			return;
 		}
 		
-		$roles = dibi::query('SELECT r.id, r.name
-                            FROM %n AS r
-                            JOIN %n AS u2r ON r.id=u2r.role_id
-                            WHERE u2r.user_id = %i
-                            ORDER BY r.name;', self::ACL_ROLES_TABLE, 
-    											self::ACL_USERS_2_ROLES_TABLE, 
-    											$user->id
-    					)->fetchPairs();
-    		
-		// fetch keys only (mainly for edit user)		
-    	if (!$fetchPairs) {
-    		$roles = array_keys($roles);
-    	}
-   	 	$user['roles'] = $roles;
+		// if not array, cast to array and at the end cast back
+		$arrayApplied = false;
+		if (!is_array($users)) {
+			$users = array($users);
+			$arrayApplied = true;
+		}
+		
+		// bind roles for each user
+		foreach ($users as &$user) {
+			$roles = dibi::query('SELECT r.id, r.name
+	                            FROM %n AS r
+	                            JOIN %n AS u2r ON r.id=u2r.role_id
+	                            WHERE u2r.user_id = %i
+	                            ORDER BY r.name;', self::ACL_ROLES_TABLE, 
+	    											self::ACL_USERS_2_ROLES_TABLE, 
+	    											$user->id
+	    					)->fetchPairs();
+	    		
+			// fetch keys only (mainly for edit user)		
+	    	if (!$fetchPairs) {
+	    		$roles = array_keys($roles);
+	    	}
+	   	 	$user['roles'] = $roles;
+		}
+		
+		// cast back if necessary
+		if ($arrayApplied) {
+			$users = $users[0];
+		}
 	}
 	
 	
@@ -189,10 +210,7 @@ class UsersModel extends BaseModel implements IAuthenticator
 		// append roles
 		if ($fetch) {
 			$users = $users->fetchAll();
-			
-			foreach ($users as &$user) {
-	            $this->bindRoles($user);
-	        }
+            $this->bindRoles($users);
 		}
 
 		return $users;
@@ -369,5 +387,36 @@ class UsersModel extends BaseModel implements IAuthenticator
 					->from(self::ACL_ROLES_TABLE)
 					->where('is_public = 1')
 					->fetchPairs();
+	}
+	
+	
+	
+	/**
+	 * check if username is available
+	 *
+	 * @param string
+	 * @return bool
+	 */
+	public function isAvailable($name)
+	{
+		return !(bool) dibi::select('COUNT(*)')
+							->from(self::TABLE)
+							->where('username = %s', $name)
+							->fetchSingle();
+	}
+	
+		
+	/**
+	 * filter users having %username%
+	 * @param DibiFluent
+	 * @param string
+	 */
+	public function filterByUsername(&$items, $name)
+	{
+		if (!empty($name)) {
+			$items->where('username LIKE %s', "%$name%");
+		}
+		
+		return $this;
 	}
 }

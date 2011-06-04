@@ -1,0 +1,14 @@
+tieto treba prilinkovat
+
+	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/themes/base/jquery-ui.css" id="theme">
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js"></script>
+
+	{*
+	<link rel="stylesheet" href="{$basePath}/modules/file-upload/jquery.fileupload-ui.css">
+	<script src="{$basePath}/modules/file-upload/jquery.fileupload.js"></script>
+	<script src="{$basePath}/modules/file-upload/jquery.fileupload-ui.js"></script>
+	<script src="{$basePath}/modules/file-upload/jquery.fileupload-uix.js"></script>
+	
+	<script src="{$basePath}/modules/file-upload/jquery.dotimeout.min.js"></script>
+	<script src="{$basePath}/modules/file-upload/inline.js"></script>
+	*}

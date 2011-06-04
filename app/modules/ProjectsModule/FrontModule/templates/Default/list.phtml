@@ -62,7 +62,7 @@
 				<tbody>
 					<tr n:foreach="$items as $project">
 						<td>{$project->name}</td>
-						<td>{= is_null($project->completed) ? 'In Progress' : TemplateHelpers::date($project->completed)}</td>
+						<td>{$project->completedFormatted}</td>
 						<td>{$project->vectorFilesCount} Vector Files</td>
 						<td>{$project->bitmapFilesCount} Images</td>
 					</tr>

@@ -1,7 +1,55 @@
-@{block #content2}
+@{block #content}
+<div class="users-admin">
+	<div class="top-heading green" n:snippet="topHeading"><h1>{$topHeading}</h1></div>
+	
+	<div class="bg_lightgreen">
+	{snippet itemForm 'div class="add-projectUser-form add-user-form th-align_r form-el-padding"'}
+		{control itemForm}
+		<!--<br>
+		<hr>
+		<p class="align_c">* = required fields</p>-->
+	{/snippet}
+	</div>
 
-<div class="menu">
-{snippet itemForm}
-	{control itemForm}
-{/snippet}
+	<div class="top-heading blue"><h1>Recent Users</h1></div>
+	<div class="recent-projectUser">
+	{snippet searchForm}
+		{control searchForm}
+		<a id="searchFormClearer" href="{link clearSearchForm!}" class="ajax" title="clear search"></a>
+	{/snippet}
+	
+	
+	{snippet itemList}
+	{if isset($users) and count($users) > 0}
+		<br>
+		<table class="blue-colored width_100 projectUser-list">
+			<thead>
+				<tr>
+					<th class="align_l">User Name</th>
+					<th>First Name</th>
+					<th>Last Name</th>
+					<th>User Level</th>
+					<th>Edit</th>
+					<th>Delete</th>
+				</tr>
+			</thead>
+		
+			<tbody>
+				<tr n:foreach="$users AS $user">
+					<td class="projectUser-name align_l">{$user->username}</td>
+					<td>{$user->firstname}</td>
+					<td>{$user->lastname}</td>
+					<td>{= join(', ', $user->roles)}</td>
+					<td><a class="ajax edit-icon" href="{link edit $user->id}"></a></td>
+					<td><a class="ajax del-icon" data-nette-confirm="%delete%" data-nette-confirm2="Are you sure?" href="{link delete! $user->id}"></a></td>
+				</tr>
+			</tbody>
+		</table>
+		{control itemPaginator false, step2}
+	{else}
+		<div class="infoMsg">No users in system yet.</div>
+	{/if}
+	{/snippet}
+	</div>
+
 </div>

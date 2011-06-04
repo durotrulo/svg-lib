@@ -3,10 +3,6 @@
 abstract class Front_BasePresenter extends BasePresenter
 {
 	
-	const RENDER_SECTION_FILEUPLOAD = 'fileUpload';
-	const RENDER_SECTION_FILTERS = 'filters';
-	const RENDER_SECTION_OPTIONS = 'options';
-	
 //	/** @persistent */
 //	public $orderBy;
 
@@ -33,29 +29,12 @@ abstract class Front_BasePresenter extends BasePresenter
 	}
 	
 
-	/**
-	 * set sections to be rendered
-	 *
-	 * @param array
-	 */
-	protected function setRenderSections($sections = array())
-	{
-		$defaults = array(
-			self::RENDER_SECTION_FILEUPLOAD => true,
-			self::RENDER_SECTION_FILTERS => false,
-			self::RENDER_SECTION_OPTIONS => true,
-		);
-
-		$this->template->renderSections = array_merge($defaults, $sections);
-	}
-	
 	
 	protected function beforeRender()
 	{
 		parent::beforeRender();
 		$this->template->isHomepage = false;
-		
-		$this->setRenderSections();
+		$this->template->isAdminModule = false;
 	}
 	
 	

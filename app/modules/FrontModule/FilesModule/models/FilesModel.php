@@ -390,21 +390,86 @@ class FilesModel extends BaseModel
 	 */
 	public function getTags($fileId)
 	{
-//		return dibi::select('f2t.tags_id, t.name, ul.name AS userLevel')
-		return dibi::select('f2t.tags_id AS id, t.name, ul.name AS userLevel')
-			->from(self::FILES_2_TAGS_TABLE)
-				->as('f2t')
-			->innerJoin(self::TAGS_TABLE)
-				->as('t')
-				->on('t.id = f2t.tags_id')
-			->leftJoin(self::USERS_TABLE)
-				->as('u')
-				->on('u.id = f2t.tagged_by')
-			->leftJoin(self::ACL_ROLES_TABLE)
-				->as('ul')
-				->on('ul.id = u.id')
-			->where('f2t.files_id = %i', $fileId)
-			->fetchAll();
+//dump(
+//			dibi::query(
+//			"
+//			SELECT key_name
+//			FROM %n
+//			WHERE id IN (
+//				SELECT role_id
+//				FROM %n
+//				WHERE user_id IN (
+//					SELECT tagged_by
+//					FROM %n
+//					WHERE files_id = %i
+//				)
+//			)
+//			ORDER BY id DESC
+//			", self::ACL_ROLES_TABLE,
+//				self::ACL_USERS_2_ROLES_TABLE,
+//				self::FILES_2_TAGS_TABLE,
+//				$fileId
+//			)->fetchAll()
+//		);
+//		die();
+		dump(
+			dibi::select('f2t.tags_id AS id, t.name, r.key_name
+				 AS userLevel'
+				
+				)
+				->from(self::FILES_2_TAGS_TABLE)
+					->as('f2t')
+				->crossJoin(self::ACL_ROLES_TABLE)
+					->as('r')
+				->innerJoin(self::TAGS_TABLE)
+					->as('t')
+					->on('t.id = f2t.tags_id')
+				->where('f2t.files_id = %i', $fileId)
+				->where('
+					r.id IN (
+						SELECT role_id
+						FROM %n
+						WHERE user_id IN (
+							SELECT tagged_by
+							FROM %n
+							WHERE files_id = %i AND tags_id = t.id
+						)
+					)
+					ORDER BY id DESC
+				', 		self::ACL_USERS_2_ROLES_TABLE,
+						self::FILES_2_TAGS_TABLE,$fileId
+				)
+//				->test()
+				->fetchAll()
+		);die();
+		return dibi::select('f2t.tags_id AS id, t.name,
+				(
+					SELECT key_name
+					FROM %n
+					WHERE id IN (
+						SELECT role_id
+						FROM %n
+						WHERE user_id IN (
+							SELECT tagged_by
+							FROM %n
+							WHERE files_id = %i
+						)
+					)
+					ORDER BY id DESC
+					LIMIT 1
+				) AS userLevel'
+				, self::ACL_ROLES_TABLE,
+						self::ACL_USERS_2_ROLES_TABLE,
+						self::FILES_2_TAGS_TABLE,
+						$fileId
+				)
+				->from(self::FILES_2_TAGS_TABLE)
+					->as('f2t')
+				->innerJoin(self::TAGS_TABLE)
+					->as('t')
+					->on('t.id = f2t.tags_id')
+				->where('f2t.files_id = %i', $fileId)
+				->fetchAll();
 	}
 	
 	

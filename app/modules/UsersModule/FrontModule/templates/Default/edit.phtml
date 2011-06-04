@@ -4,17 +4,19 @@
  * @param ProjectsModel $projectsModel
  * @param string renderMode [one of Projects_Front_DefaultPresenter::$_allowedRenderModes]
  *
- *
- *
  **}
 
 {block #title}Settings{/block}
 
-{block #options}
-{/block}
-
 @{block #content}
-{snippet itemList}
-	{*control credentialsForm*}
-	{control userInfoForm}
-{/snippet}
+<div class="settings">
+	<div class="top-heading green"><h1>Settings</h1></div>
+	
+	<div class="bg_lightgreen">
+	{snippet itemList 'div class="add-projectUser-form th-align_r form-el-padding"'}
+		{*control credentialsForm*}
+		{control userInfoForm}
+	{/snippet}
+	</div>
+
+</div>

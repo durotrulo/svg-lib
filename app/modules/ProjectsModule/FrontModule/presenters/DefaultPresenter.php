@@ -91,7 +91,7 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 		$this->items = $this->model->findAll();
 //		try {
 			$this->model->filter($this->items, $this->filter)
-						->filterByName($this->items, $this->q)
+						->filterByNameOrSubtitle($this->items, $this->q)
 //						->filterByComplexity($this->items, $this->complexity)
 						->order($this->items, $this->orderby, $this->sorting);
 //		} catch (TagNotFound $e) {

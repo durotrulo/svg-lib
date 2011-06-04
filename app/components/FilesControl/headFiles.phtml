@@ -13,8 +13,10 @@
 				inline: true,
 				loop: false,
 				preloading: true,
+//				preloading: false,
 				scrolling: false,
 				innerWidth: '460px',
+				initialHeight: '500px',
 				href: "#file-detail-modal",
 				onLoad: function() {
 					var el = $(this);
@@ -27,11 +29,11 @@
 					var taglist = fileDetailModal.find('.file-detail-taglist');
 					var spinner = taglist.prevAll('.tags-heading').find('.spinner').show();
 
-//					$.colorbox.resize();
+					initTagInput();
 	
 					var itemId = el.prev('.itemId').text();
 				 	$.getJSON(linkGetTags.replace('__ID__', itemId), function(data) {
-				 		// set file id for tab binding
+				 		// set file id for tag binding
 				 		$('#frmbindTagForm-fileId').val(itemId);
 				 		
 				 		// render bound tags
@@ -74,13 +76,16 @@
 					});
 
 				},
+				onComplete: function() {
+					$.colorbox.resize();
+					// make sure it gets resized - fixing bug with shrinking to blank box
+					setTimeout($.colorbox.resize, 100);
+				},
 				// reload itemlist to have up-to-date info (files could have been added 2 lightbox or downloaded)
 				onCleanup: function() {
 					$.get(linkReloadItemList);
 				}
-			}, function () { 
-				// callback
-			})
+			});
 		});
 	});
 </script>

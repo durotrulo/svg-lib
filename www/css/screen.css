@@ -74,11 +74,42 @@ input.text {
 	padding:0.4em;
 	width:95%;
 }
+/* todo: if adding file 2 lbs should display used lbs too
+option[disabled] {
+    background-color: lightgray;
+    font-weight:normal;
+}
+*/
+input, textarea, select {
+	border:solid 1px #999999;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright:5px;
+	-moz-border-radius-bottomleft:5px;
+	-moz-border-radius-bottomright:5px;
+	-webkit-border-top-left-radius:5px;
+	-webkit-border-top-right-radius:5px;
+	-webkit-border-bottom-left-radius:5px;
+	-webkit-border-bottom-right-radius:5px;
+	border-top-left-radius:5px;
+	border-top-right-radius:5px;
+	border-bottom-left-radius:5px;
+	border-bottom-right-radius:5px;
+}
 
-.required {color:darkred;}
+.form-el-padding input,
+.form-el-padding textarea,
+.form-el-padding select
+{
+	padding:0.4em;
+}
 
-/* to prevent flashing onload */
-.flashes, div.flash {
+/*.required {color:darkred;}*/
+
+/* to prevent flashing onload - shown as jGrowl */
+.flashes,
+div.flash,
+form ul.error,
+form ul.error li {
 	display: none;
 }
 
@@ -96,7 +127,7 @@ input.text {
 
 
 #header {
-	padding: 0 10px 10px;
+	padding: 1px 10px 3px;
 	margin-top:10px; /* gradient over border-radius fix */
 	background: #fafafa;
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f5f5f5');
@@ -255,58 +286,84 @@ input.text {
 .menu-icon {
 	background:transparent url(../images/icons.png);
 	display:inline-block;
-	width:21px;
+	width:22px;
 	height:18px;
-	margin-right: 15px;
+	margin-right: 10px;
 	/*border: 1px solid red;*/
 }		
+
+	.menu-icon.active {
+		background-color:transparent;
+	}
 	.home-icon {
 		background-position:-11px -44px;
 	}
 		.home-icon:hover {
-			background-position:-11px -3px;
+			background-position:-11px -4px;
+		}
+		.home-icon.active {
+			background-position:-11px 30px;
 		}
 		
 	.settings-icon {
 		background-position:-51px -44px;
 	}
 		.settings-icon:hover {
-			background-position:-51px -3px;
+			background-position:-51px -4px;
+		}
+		.settings-icon.active {
+			background-position:-51px 30px;
 		}
 
+	/* moved down 1px in comparison with other icons */
 	.client-package-icon {
-		background-position:-93px -44px;
+		background-position:-93px -43px;
 	}
 		.client-package-icon:hover {
 			background-position:-93px -3px;
+		}
+		.client-package-icon.active {
+			background-position:-93px 31px;
 		}
 	
 	.lightbox-icon {
 		background-position:-136px -44px;
 	}
 		.lightbox-icon:hover {
-			background-position:-136px -3px;
+			background-position:-136px -4px;
+		}
+		.lightbox-icon.active {
+			background-position:-136px 30px;
 		}
 		
 	.users-icon {
-		background-position:-136px -44px;
+		background-position:-312px -44px;
 	}
 		.users-icon:hover {
-			background-position:-136px -3px;
+			background-position:-312px -4px;
+		}
+		.users-icon.active {
+			background-position:-312px 30px;
 		}
 		
 	.projects-icon {
-		background-position:-136px -44px;
+		background-position:-347px -44px;
 	}
 		.projects-icon:hover {
-			background-position:-136px -3px;
+			background-position:-347px -4px;
+		}
+		.projects-icon.active {
+			background-position:-347px 30px;
 		}
 	
 	.help-icon {
 		background-position:-179px -44px;
 	}
 		.help-icon:hover {
-			background-position:-179px -3px;
+			background-position:-179px -4px;
+		}
+		.help-icon.active {
+			background-position:-179px 30px;
 		}
 		
 	.upload-icon {
@@ -314,7 +371,7 @@ input.text {
 		background-position:-214px -44px;
 	}
 		.upload-icon:hover {
-			background-position:-214px -3px;
+			background-position:-214px -4px;
 		}
 
 	.logout-icon {
@@ -323,8 +380,8 @@ input.text {
     	width: 11px;
 	}
 		.logout-icon:hover {
-			/*background-position:-244px -3px;*/
-			background-position:-250px -3px;
+			/*background-position:-244px -4px;*/
+			background-position:-250px -4px;
 		}
 		
 .fileUploadArea {
@@ -479,7 +536,7 @@ input.text {
 			}
 			
 		/*.item*/ .download-link {
-			background:transparent url(../images/icons.png) no-repeat scroll -270px -3px;
+			background:transparent url(../images/icons.png) no-repeat scroll -270px -4px;
 			width:21px;
 			height:18px;
 			color:#999;
@@ -553,7 +610,7 @@ input.text {
 	}
 
 	#file-detail-modal .download-link {
-		padding-left:35px;
+		/*padding-left:35px;*/
 	}
 	
 	#file-detail-modal .downloads {
@@ -608,7 +665,7 @@ input.text {
    		display:inline-block;
    		margin:5px;
    		padding:0 12px;
-   		background-color:#0c648b; /* default for admin and superadmin */
+   		background-color:#809EAD; /* default for admin and superadmin */
    		color:#fff;
    		
    		-moz-border-radius: 9px;
@@ -617,16 +674,30 @@ input.text {
    	}
 
    	   	.file-detail-taglist li.user-level-projectManager {
-	   		background-color:#b2c0c9;
+	   		background-color:#B3B3B3;
    	   	}
    	   	
    	   	.file-detail-taglist li.user-level-designer {
-	   		background-color:#819eae;
+	   		background-color:#999999;
    	   	}
 
    	   	.file-detail-taglist li.user-level-client {
-	   		background-color:#466f81;
+	   		background-color:#ccc;
    	   	}
+   	   	
+   		.file-detail-taglist li a {
+			/*background:#B3B3B3 url('../images/button-cancel.png') no-repeat 95% center;*/
+			background:url('../images/button-cancel.png') no-repeat center center;
+			display:inline-block;
+			width:19px;
+			height:19px;
+			position: relative;
+    			top: 3px;
+				left: 8px;
+		}
+   			.file-detail-taglist li a:hover {
+				/*background-color:#797B7B;*/
+			}
 
 
 
@@ -675,7 +746,8 @@ input.text {
 		}
 
 	#frmsearchForm-q {
-		width:295px;
+		/*width:295px;todo:remove if OK*/
+		width:341px;
 		background:white url(../images/search16px.png) no-repeat 9px center;
 	    padding-left: 30px;
 	    padding-right: 35px;
@@ -758,7 +830,14 @@ a.active {
 
 
 
+.bg_lightgreen {
+	background-color:#EFF6E6;
+	overflow: hidden; /*for correct margin apply*/
+}
 
+.bg_lightblue {
+	background-color:#EBF6FC;
+}
 
 
 /****************************************/
@@ -769,11 +848,16 @@ a.active {
     border-top: 1px solid #999999;
 }
 
+.top-heading.blue {
+	background-color:#cce8f8;
+}
+
+.top-heading.green {
+	background-color:#AED483;
+}
+
 .lightboxes {
 	background: url('../images/bg_left-box.gif') repeat-y left top;
-}
-.lightboxes .top-heading {
-	background-color:#cce8f8;
 }
 	.top-heading .share-link {
 		float: right;
@@ -848,7 +932,42 @@ a.active {
 
 
 
+.ok-button,
+.cancel-button {
+	font: bold 13px "Lucida Grande";
+	color:white;
+	text-transform:uppercase;
+	padding: 5px 40px 5px 5px !important;
+	border:0;	
+	-moz-border-radius-topleft: 10px;
+	-moz-border-radius-topright:10px;
+	-moz-border-radius-bottomleft:10px;
+	-moz-border-radius-bottomright:10px;
+	-webkit-border-top-left-radius:10px;
+	-webkit-border-top-right-radius:10px;
+	-webkit-border-bottom-left-radius:10px;
+	-webkit-border-bottom-right-radius:10px;
+	border-top-left-radius:10px;
+	border-top-right-radius:10px;
+	border-bottom-left-radius:10px;
+	border-bottom-right-radius:10px;
+}
 
+.ok-button {
+	/*background:#39B54A url('../images/admin-icons.png');*/
+	background:#39B54A url('../images/button-arrow.png') no-repeat 95% center;
+}
+.ok-button:hover {
+	background-color:#00984E;
+}
+
+.cancel-button {
+	/*background:#39B54A url('../images/admin-icons.png');*/
+	background:#B3B3B3 url('../images/button-cancel.png') no-repeat 95% center;
+}
+.cancel-button:hover {
+	background-color:#797B7B;
+}
 
 
 

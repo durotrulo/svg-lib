@@ -46,7 +46,7 @@ class LoginControl extends BaseControl
 		'remember' => 'Remember me on this computer',
 		'username' => 'Username',
 		'password' => 'Password',
-		'submit' => 'OK',
+		'submit' => 'Login',
 	);
 	
 	
@@ -91,7 +91,8 @@ class LoginControl extends BaseControl
 		$form->addHidden('key');
 		$form->addHidden('anchor');
 		
-		$form->addSubmit('ok', $this->labels['submit']);
+		$form->addSubmit('ok', $this->labels['submit'])
+			->getControlPrototype()->class[] = 'ok-button';
 	
         if ($this->useProtection) {
 			$form->addProtection('Form validity time expired. Please send the form again.');

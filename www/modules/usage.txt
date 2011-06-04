@@ -1,0 +1,2 @@
+<link rel="stylesheet" href="{$basePath}/modules/jgrowl/jquery.jgrowl.css">
+	<script src="{$basePath}/modules/jgrowl/jquery.jgrowl.js"></script>

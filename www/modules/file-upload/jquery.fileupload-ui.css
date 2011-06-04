@@ -16,7 +16,8 @@
   width: 309px;
   height: 31px;
   line-height: 30px;
-  background: transparent url(upload-button-big-notext.png) no-repeat;
+  /*background: transparent url(upload-button-big-notext.png) no-repeat;*/
+  background: transparent url('../modules/file-upload/upload-button-big-notext.png') no-repeat; /* url relative to webtemp */
   
 }
 

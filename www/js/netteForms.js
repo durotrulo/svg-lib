@@ -227,7 +227,7 @@ Nette.toggle = function(id, visible) {
 Nette.initForm = function(form) {
 	/*added to allow inline onsubmit event on form*/
 	var origOnSubmit = form.onsubmit;
-	form.onsubmit = function() {
+	form.onsubmit = function(e) {
 		if (typeof origOnSubmit === 'function') {
 			if (origOnSubmit() === false) {
 				return false;

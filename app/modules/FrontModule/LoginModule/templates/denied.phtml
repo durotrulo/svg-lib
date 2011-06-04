@@ -1,4 +1,13 @@
-{block content}
-<h1>{block title}Access denied{/block}</h1>
+{var robots => noindex}
 
-<p class="error">You do not have permission to access this section!</p>
+{block #title}Access denied{/block}
+
+{block #bottomLink}
+	<a href="{link :Front:Login:login}">Login</a>
+	<a href="{link :Front:ForgottenPass:default}">Forgot password?</a>
+{/block}
+
+{block #content}
+<div class="denied">
+	<p>You do not have permission to access this section!</p>
+</div>

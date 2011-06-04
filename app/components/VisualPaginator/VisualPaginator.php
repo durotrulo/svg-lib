@@ -184,7 +184,7 @@ class VisualPaginator extends BaseControl
 		}
 
 		$tpl = $this->getTemplate();
-		$tpl->assetsPath = Basic::addLastSlash(self::$webloaderDestPath) . $skinSrc;
+		$tpl->assetsPath = Basic::addLastSlash(self::$webloaderDestUri) . $skinSrc;
 		$tpl->renderDotsUp = ($renderDots === true or $renderDots == 'top');
 		$tpl->renderDotsDown = ($renderDots === true or $renderDots == 'bottom');
 		$tpl->steps = $steps;

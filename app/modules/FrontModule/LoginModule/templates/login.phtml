@@ -1,16 +1,11 @@
 {var robots => noindex}
 
-{block title}Log in{/block}
+{block #title}Login{/block}
+
+{block #bottomLink}
+	<a href="{link :Front:ForgottenPass:default}">Forgot password?</a>
+{/block}
 
 @{block #content}
 
-<div class="headline">
-	<span>PRIHLÁSENIE</span>
-</div>
-
-<div class="shadow">
-	<div class="texts">
-		<p>Pre vstup do administračného rozhrania sa musíte prihlásiť</p>
-		@{control loginForm}
-	</div>
-</div>
+@{control loginForm}

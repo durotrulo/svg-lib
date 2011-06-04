@@ -1,0 +1,81 @@
+.all {
+	width:480px;
+	margin:120px auto;
+	padding-bottom:50px;
+}
+
+.extender {
+}
+#container {
+	background: url('../images/bg_login-image.jpg') no-repeat top left;
+	height:430px;
+	overflow:hidden;
+	font-size:12px;
+}
+
+#header {
+	color:#000;
+	/*font-weight:bold;*/
+	font-size:17px;
+	padding: 0px 10px 3px 20px;
+}
+
+form {
+	color:#000;
+	margin-top:200px;
+	line-height: 40px;
+}
+
+form input {
+	color:#999;
+}
+
+table {
+	margin-left:70px;
+}
+
+.required {
+	font-weight:bold;
+}
+
+.ok-button {
+	float:right;
+}
+
+.bottomDiv {
+	background: #fafafa;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f5f5f5', endColorstr='#ffffff');
+	background:-webkit-gradient(linear, 50% 0%, 50% 100%, from(#f5f5f5), to(#ffffff));
+	background: -moz-linear-gradient(top,  #f5f5f5,  #fff);
+	
+	padding: 3px 10px 0px 20px;
+	margin-bottom:10px; /* gradient over border-radius fix */
+}
+
+.bottomDiv a {
+	color:#999;
+	text-decoration:none;
+	font-size:12px;
+	position:relative;
+		top:2px;
+}
+
+/*Forgotten pass*/
+.prompt {
+	margin-top:200px;
+	color:#000;
+	padding: 0 50px;
+	text-align:center;
+}
+
+.forgotten-pass form {
+	margin-top:10px;
+}
+
+.denied p {
+	margin-top:200px;
+	color:#ff3333;
+	padding: 0 50px;
+	text-align:center;
+	font-size:30px;
+}

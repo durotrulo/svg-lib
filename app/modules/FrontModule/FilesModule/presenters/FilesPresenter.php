@@ -2,7 +2,6 @@
 
 class Front_FilesPresenter extends Front_InternalPresenter
 {
-
 	protected $_allowedFilters = array(
 		FilesModel::FILTER_BY_VECTOR, 
 		FilesModel::FILTER_BY_BITMAP, 
@@ -42,6 +41,7 @@ class Front_FilesPresenter extends Front_InternalPresenter
 		));
 		
 		 
+		// init filesControl
 		$this->template->filesControl = $fileControl = $this['filesControl'];
 
 		$vp = $fileControl['itemPaginator'];

@@ -92,9 +92,15 @@
                         (maxWidth || img.width) / img.width,
                         (maxHeight || img.height) / img.height
                     );
-                if (scale > 1) {
-                    scale = 1;
-                }
+                  // changed - aby sa zachoval normalny pomer stran
+//                if (scale > 1) {
+//                    scale = 1;
+//                }
+
+				// added - pridane +1 kvoli scrollbarom
+//				img.width = parseInt(img.width * scale, 10) +1;
+//                img.height = parseInt(img.height * scale, 10) +1;
+                
                 img.width = parseInt(img.width * scale, 10);
                 img.height = parseInt(img.height * scale, 10);
                 if (noCanvas || typeof canvas.getContext !== func) {

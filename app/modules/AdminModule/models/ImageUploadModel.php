@@ -113,10 +113,16 @@ class ImageUploadModel extends ImageModel
             
             //	nahlad
             self::makeThumbnail($img, $thumb_w, $thumb_h);
+
+            // PNG does not save alpha channel (transparency) by default, needs to be turned on explicitly
+			$img->saveAlpha(true);
 			$img->save($dest_thumb . $filename, self::$quality);
 			
 			//	big one - proportionally
 			$img2->resize($big_w, $big_h);
+
+			// PNG does not save alpha channel (transparency) by default, needs to be turned on explicitly
+			$img2->saveAlpha(true);
 			$img2->save($dest_big . $filename, self::$quality);
 			
 			//	priznak, ze sme vobec daco nahrali

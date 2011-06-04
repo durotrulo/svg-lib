@@ -17,4 +17,14 @@ $(function() {
         });
         el.val($.datepicker.formatDate(el.datepicker("option", "dateFormat"), date));
     });
+    
+    // show form erorrs as jGrowl
+   	$("form ul.error li").livequery(function () {
+    	var $this = $(this);
+		$.jGrowl($this.text(), {
+			theme: 'error',
+			life: 7000
+		});
+		$this.remove();
+	});
 });

@@ -25,7 +25,9 @@ class Front_ForgottenPassPresenter extends BasePresenter
 			->addRule(Form::FILLED)
 			->addRule(Form::EMAIL);
 			
-		$form->addSubmit('send', 'Send me password');
+		$form->addSubmit('send', 'Send me password')
+			->getControlPrototype()->class[] = 'ok-button';
+
 
 		$form->addProtection('Form validity time expired. Please send the form again.');
 

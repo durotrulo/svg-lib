@@ -1,6 +1,6 @@
 <?php
 
-class Users_Admin_DefaultPresenter extends Admin_BasePresenter
+class Users_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 {
 	const ACL_RESOURCE = 'user';
 	const ACL_PRIVILEGE = 'admin';
@@ -17,12 +17,34 @@ class Users_Admin_DefaultPresenter extends Admin_BasePresenter
 		parent::beforeRender();
 		$this->template->title = $this->translate('Users'); // optional, shown as heading and title of html page
 		$this->template->description = $this->translate('Little piece of description for module Users'); // optional, describes functionality of module
+		$this->template->topHeading = ucfirst($this->getAction()) . ' User';
 		
-		if ($this->getAction() === 'add' or 'edit') {
-			$form = $this['itemForm'];
-//			if ($form->isSubmitted()) {
-				$this->template->users = $this->model->findAll(true);
-//			}
+		if ($this->getAction() === 'add' or $this->getAction() === 'edit') {
+			
+			$items = $this->model->findAll(false);
+			$this->model->filterByUsername($items, $this->q);
+			
+			$vp = $this['itemPaginator'];
+			$vp->selectItemsPerPage = array(8, 16, 24, 32, 40,);
+			$vp->itemsPerPageAsSelect = true;
+//			$vp->isResultsCountChangable = false;
+	 		$vp->setDefaultItemsPerPage($this->config->defaultItemsPerPage);
+	        $vp->paginator->itemCount = $items->count();
+	        $vp->itemString = 'per page';
+			$this->template->users = $items
+									->toDataSource()
+									->applyLimit($vp->paginator->itemsPerPage, $vp->paginator->offset)
+									->fetchAll();
+									
+			$this->model->bindRoles($this->template->users, true);
+											
+			// when paging refresh only items
+			if ($vp->paginated || $vp->itemsPerPageChanged) {
+				$this->invalidateControl('itemList');
+			}
+
+			$this->invalidateControl('topHeading');
+
 		}
 	}
 	
@@ -30,26 +52,18 @@ class Users_Admin_DefaultPresenter extends Admin_BasePresenter
 	
   	private function prepareRoles()
   	{
-  		return BaseModel::prepareSelect($this->model->findRoles(), 'User Role');
+  		return $this->model->findRoles();
+//  		return BaseModel::prepareSelect($this->model->findRoles(), 'User Role');
   	}
 
-	
-	/********************* view default *********************/
-	
-	
-	public function renderDefault()
-	{
-//		$this->template->items = $this->model->getAll($this->lang);
-	}
-	
 
 	/********************* views add & edit *********************/
-
-
-	public function renderEdit($id = 0)
+	
+	
+	public function actionEdit($id = 0)
 	{
 		$form = $this['itemForm'];
-		$form['save']->caption = 'Edit';
+		$form['save']->caption = 'Edit User';
 		if (!$form->isSubmitted()) {
 			$row = $this->model->find($id);
 			if (!$row) {
@@ -59,7 +73,6 @@ class Users_Admin_DefaultPresenter extends Admin_BasePresenter
 //			if ($row->user_levels_id <= $this->userIdentity->user_levels_id) {
 //				throw new OperationNotAllowedException('You don\'t have rights to edit this user. Contact superadmin for granting higher permissions.');
 //			}
-			
 			$form->setDefaults($row);
 			$this->invalidateControl('itemForm');
 		}
@@ -75,11 +88,21 @@ class Users_Admin_DefaultPresenter extends Admin_BasePresenter
 	{
 		$form = new MyAppForm;
 		$form->enableAjax();
-		
+
 		if (!is_null($this->getTranslator())) {
 			$form->setTranslator($this->getTranslator());
 		}
+
+		$form->getRenderer()->wrappers['label']['requiredsuffix'] = " *";
 		
+		$form->addText('username', 'User Name')
+            ->addRule($form::FILLED)
+            ->addRule($form::MIN_LENGTH, NULL, 3)
+            ->addRule($form::MAX_LENGTH, NULL, 30)
+            ->getControlPrototype()
+				->data('nette-check-url', $this->link('checkAvailability!', array('__NAME__', 'user')))
+				->class[] = 'checkAvailability';
+	   
 		$form->addText('firstname', 'First Name')
             ->addRule($form::FILLED)
             ->addRule($form::MIN_LENGTH, NULL, 2)
@@ -90,12 +113,6 @@ class Users_Admin_DefaultPresenter extends Admin_BasePresenter
             ->addRule($form::MIN_LENGTH, NULL, 2)
             ->addRule($form::MAX_LENGTH, NULL, 70);
 
-        $form->addText('username', 'User Name')
-            ->addRule($form::FILLED)
-            ->addRule($form::MIN_LENGTH, NULL, 3)
-            ->addRule($form::MAX_LENGTH, NULL, 30);
-	   
-            
         if ($this->getAction() === 'add') {
         	$form->addPassword('password', 'Password')
 	            ->addRule($form::FILLED)
@@ -126,12 +143,24 @@ class Users_Admin_DefaultPresenter extends Admin_BasePresenter
 	            ->addRule($form::MAX_LENGTH, NULL, 60);
 	
 //	    $form->addSelect('user_levels_id', 'Role', $this->prepareRoles())->skipFirst()
-	    $form->addMultiSelect('roles', 'Role', $this->prepareRoles(), 6)->skipFirst()
-	            ->addRule($form::FILLED);
+	    $form->addMultiSelect('roles', 'Role', $this->prepareRoles(), 6)
+//    		->skipFirst()
+            ->addRule($form::FILLED);
 
-		$form->addSubmit('save', 'Add');
-		$form->addSubmit('cancel', 'Cancel')->setValidationScope(NULL);
+		$form->addSubmit('save', 'Add User')
+			->getControlPrototype()->class[] = 'ok-button';
+
+		$_this = $this;
+		$form->addSubmit('cancel', 'Cancel')
+			->setValidationScope(NULL)
+			->getControlPrototype()->class[] = 'cancel-button';
+		$form['cancel']
+			->onClick[] = function() use($_this) {
+				$_this->refresh(null, 'add', array(), true);
+			};
+			
 		$form->onSubmit[] = callback($this, 'itemFormSubmitted');
+//		$form['save']->onClick[] = callback($this, 'itemFormSubmitted');
 		
 		return $form;
 	}
@@ -169,9 +198,7 @@ class Users_Admin_DefaultPresenter extends Admin_BasePresenter
 		}
 
 		$form->resetValues();
-//		$this->refresh('usersList', 'default');
-		$this->refresh(null, 'default');
-//		$this->redirect('default');
+		$this->refresh(null, 'add');
 	}
 
 	
@@ -196,4 +223,18 @@ class Users_Admin_DefaultPresenter extends Admin_BasePresenter
 
 	    $this->flashMessage('E-mail has been sent to provided e-mail address.', self::FLASH_MESSAGE_SUCCESS);
   	}
+  	
+  	
+  	
+	public function handleDelete($id)
+	{
+		if ($this->user->isAllowed('user', 'delete')) {
+			$this->model->delete($id);
+			$this->flashMessage('User deleted', self::FLASH_MESSAGE_SUCCESS);
+		} else {
+			$this->flashMessage(NOT_ALLOWED, self::FLASH_MESSAGE_ERROR);
+		}
+
+		$this->refresh('itemList', 'this');
+	}
 }

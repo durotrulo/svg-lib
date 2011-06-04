@@ -80,22 +80,17 @@ dibi::connect(Environment::getConfig("database"));
 //$router = $application->getRouter();
 $routes = array();
 
-/* MENU ITEMS */
-//Route::addStyle('id');
-//Route::setStyleProperty('id', Route::FILTER_TABLE, array(
-//        'help' => '1',
-//));
-//$routes[] = new Route('[<lang [a-z]{2}>/]<id>/', array(
-//	'module' => 'RichText:Front',
-//	'presenter' => 'Default',
-//	'action' => 'detail',
-//	'id' => null,
-//));
+/* Help section */
+$routes[] = new Route('help', array(
+	'module' => 'RichText:Front',
+	'presenter' => 'Default',
+	'action' => 'detail',
+	'id' => 1,
+));
 
 $application->addRoutes($routes);
 
 FormMacros::register();
-
 
 														/***** ***** **
 														 *	Debug Bar *

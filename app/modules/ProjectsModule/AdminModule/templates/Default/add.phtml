@@ -1,8 +1,54 @@
-@{block #content2}
+@{block #content}
+<div class="projects-admin">
+	<div class="top-heading green" n:snippet="topHeading"><h1>{$topHeading}</h1></div>
+	
+	<div class="bg_lightgreen">
+	{snippet itemForm 'div class="add-projectUser-form add-project-form th-align_r form-el-padding"'}
+		{control itemForm}
+		<!--<br>
+		<hr>
+		<p class="align_c">* = required fields</p>-->
+	{/snippet}
+	</div>
 
-<div class="menu">
-{snippet itemForm}
-	{control itemForm}
-{/snippet}
+	<div class="top-heading blue"><h1>Recent Projects</h1></div>
+	<div class="recent-projectUser">
+	{snippet searchForm}
+		{control searchForm}
+		<a id="searchFormClearer" href="{link clearSearchForm!}" class="ajax" title="clear search"></a>
+	{/snippet}
+	
+	{snippet itemList}
+	{if isset($projects) and count($projects) > 0}
+		<br>
+		<table class="blue-colored width_100 projectUser-list">
+			<thead>
+				<tr>
+					<th class="align_l">Project Name</th>
+					<th>Completed</th>
+					<th>Type</th>
+					<th>Content</th>
+					<th>Edit</th>
+					<th>Delete</th>
+				</tr>
+			</thead>
+		
+			<tbody>
+				<tr n:foreach="$projects AS $project">
+					<td class="project-name align_l">{$project->name}</td>
+					<td>{$project->completedFormatted}</td>
+					<td>{$project->type}</td>
+					<td>{=$project->vectorFilesCount + $project->bitmapFilesCount} files</td>
+					<td><a class="ajax edit-icon" href="{link edit $project->id}"></a></td>
+					<td><a n:if="intval($project->id) !== ProjectsModel::GENERAL_PROJECT_ID" class="ajax del-icon" data-nette-confirm="%delete%" data-nette-confirm2="Are you sure?" href="{link delete! $project->id}"></a></td>
+				</tr>
+			</tbody>
+		</table>
+		{control itemPaginator false, step2}
+	{else}
+		<div class="infoMsg">No project in system yet.</div>
+	{/if}
+	{/snippet}
+	</div>
+
 </div>
-

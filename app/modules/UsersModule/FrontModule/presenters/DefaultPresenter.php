@@ -14,7 +14,16 @@ class Users_Front_DefaultPresenter extends Front_BasePresenter
 	protected function beforeRender()
 	{
 		parent::beforeRender();
-		$this->setLayout('simpleLayout');
+
+		$this->setRenderSections(array(
+			self::RENDER_SECTION_FILEUPLOAD => false,
+			self::RENDER_SECTION_FILTERS => false,
+			self::RENDER_SECTION_OPTIONS => false,		
+		));
+		
+		$this->template->isAdminModule = true;
+
+//		$this->setLayout('simpleLayout');
 	}
 	
 	
@@ -64,7 +73,9 @@ class Users_Front_DefaultPresenter extends Front_BasePresenter
 		$form->addPassword("currentPassword", "Stávajúce heslo", 60)
 				->addRule(Form::FILLED);
 
-		$form->addSubmit('save', 'Nastav');
+		$form->addSubmit('save', 'Save')
+			->getControlPrototype()->class[] = 'ok-button';
+
 		$form->onSubmit[] = callback($this, 'save');
 		
 		/*
@@ -106,6 +117,8 @@ class Users_Front_DefaultPresenter extends Front_BasePresenter
 		if (!is_null($this->getTranslator())) {
 			$form->setTranslator($this->getTranslator());
 		}
+
+		$form->getRenderer()->wrappers['label']['requiredsuffix'] = " *";
 		
 		$form->addText('firstname', 'First Name')
             ->addRule(Form::FILLED)
@@ -146,7 +159,9 @@ class Users_Front_DefaultPresenter extends Front_BasePresenter
 				->addConditionOn($form['password'], Form::FILLED)
 					->addRule(Form::FILLED);
 
-		$form->addSubmit('save', 'Nastav');
+		$form->addSubmit('save', 'Save')
+			->getControlPrototype()->class[] = 'ok-button';
+
 		$form->onSubmit[] = callback($this, 'save');
 		
 		return $form;

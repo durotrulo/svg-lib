@@ -11,6 +11,11 @@ abstract class BasePresenter extends Presenter
 	const FLASH_MESSAGE_ERROR = 'error';
 	const FLASH_MESSAGE_SUCCESS = 'success';
 	
+	/* sections to be rendered in @layout.phtml - common for admin and front */
+	const RENDER_SECTION_FILEUPLOAD = 'fileUpload';
+	const RENDER_SECTION_FILTERS = 'filters';
+	const RENDER_SECTION_OPTIONS = 'options';
+	
 	/** @var mixed User|NULL  */
 	protected $user = NULL;
 
@@ -163,6 +168,23 @@ abstract class BasePresenter extends Presenter
 		return $tpl;
 	}
 	
+	/**
+	 * set sections to be rendered
+	 *
+	 * @param array
+	 */
+	protected function setRenderSections($sections = array())
+	{
+		$defaults = array(
+			self::RENDER_SECTION_FILEUPLOAD => true,
+			self::RENDER_SECTION_FILTERS => false,
+			self::RENDER_SECTION_OPTIONS => true,
+		);
+
+		$this->template->renderSections = array_merge($defaults, $sections);
+	}
+	
+	
 	protected function beforeRender()
 	{
 		parent::beforeRender();
@@ -178,6 +200,8 @@ abstract class BasePresenter extends Presenter
 		}
 		
 		$this->loadWebModule('FlashMsgsWebModule', Environment::getConfig('webmodules')->flashMessages->skin);
+		
+		$this->setRenderSections();
 	}
 	
 		
@@ -293,7 +317,7 @@ abstract class BasePresenter extends Presenter
 			$list[] = "$appDir$reversedModulePath/templates/@$layout.phtml";
 		}
 		
-//		dump($path);
+//		dump($paths);
 //		dump($list);die();
         return array_merge($paths, $list);
     }
@@ -481,6 +505,11 @@ abstract class BasePresenter extends Presenter
 	}
 	
 
+		
+	protected function createComponentItemPaginator($name)
+	{
+		return new VisualPaginator($this, $name);
+	}
 																			/***** ***** **
 																			 *	WEBLOADER *
 																			****** ***** **/

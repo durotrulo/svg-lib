@@ -102,7 +102,11 @@ class Acl_Admin_PermissionPresenter extends Acl_Admin_BasePresenter
     public function addEditOnFormSubmitted(AppForm $form) { // Permission form submitted
         $id = $this->getParam('id');
         $values = $form->getValues();
-        // add
+                            	
+     	if ($values['assertion_id']=='0') {
+        	$values['assertion_id'] = NULL;
+     	}
+       // add
         if (!$id) {
             $error = FALSE;
             dibi::begin();
@@ -114,7 +118,6 @@ class Acl_Admin_PermissionPresenter extends Acl_Admin_BasePresenter
                                 $resou = NULL;
                             if ($privi=='0')
                                 $privi = NULL;
-                           	settype($values['assertion_id'], 'int');
                             dibi::query('INSERT INTO ['.TABLE_ACL.'] (role_id, privilege_id, resource_id, assertion_id, access) VALUES (%i, %i, %i, %iN, %b);', $role, $privi, $resou, $values['assertion_id'], $values['access']);
                         }
                     }
@@ -136,6 +139,7 @@ class Acl_Admin_PermissionPresenter extends Acl_Admin_BasePresenter
         else { // edit
             try {
                 dibi::query('UPDATE ['.TABLE_ACL.'] SET %a WHERE id=%i;', $values, $id);
+//                dibi::query('UPDATE ['.TABLE_ACL.'] SET (role_id, privilege_id, resource_id, assertion_id, access) VALUES (%i, %i, %i, %iN, %b) WHERE id=%i;', $role, $privi, $resou, $values['assertion_id'], $values['access'], $id);
                 $this->flashMessage('Permission was successfully edited.', 'ok');
                 if (ACL_CACHING) {
                     unset($this->cache['gui_acl']); // invalidate cache

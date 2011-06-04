@@ -1,57 +1,9 @@
 /*todo: nastylovat univerzalneho admina*/
 
-body {
-	width: 990px;
-	background-color: #ccccff;
-	margin: 0 auto 50px;
-	color:black;
-}
-
-div#container {
-	padding:10px;	
-	background-color: #fff;
-}
-
-#content {
-	clear: both;
-	text-align:left;
-	background:none;
-}
-
-#footer {
-	clear: both;
-}
-
-#admin {
-	overflow:hidden;
-}
-
-.heading {
-	font-size:20px;
-	margin-top:20px;
-}
-
-.description {
-	margin-bottom:20px;
-	padding-bottom:10px;
-	border-bottom:1px solid lightgray;
-}
-
 ul li {
 	margin: 2px;
 }
 
-ul, .admin-menu {
-	list-style: none;
-	list-style-type: none;
-	list-style-image: none;
-
-}
-
-.admin-menu li {
-	display: block;
-	float: left;
-}
 
 table table {
 	margin-left:30px;
@@ -64,12 +16,10 @@ td, th {
 }
 th {
 	text-align:left;
-	width:20%;
+	/*width:20%;*/
 }
 
 caption {font-style:italic;font-weight:bold;}
-
-table {width:98%;}
 
 span.cke_skin_kama {margin:10px 0;}
 
@@ -102,18 +52,21 @@ form {
 }
 
 table {
-	margin: 0;
+	margin: 0 auto;
+	/*width:98%;*/
 }
 
-	table.gray-colored {
+	table.blue-colored {
 		margin:15px 0;
 	}
-		table.gray-colored th {
-			background-color:#cccccc;
+		table.blue-colored th {
+			background-color:#CCE8F8;
+			color:#000;
+			font-weight: bold;
 		}
 
-		table.gray-colored tr:nth-child(2n+1) td {
-			background-color:#edf3ef;
+		table.blue-colored tr:nth-child(2n+1) td {
+			background-color:#EBF6FC;
 		}
 
 div.title {
@@ -143,3 +96,130 @@ small {font-size:70%;}
 form small {
 	display: inline-block;
 }
+
+
+	/****************************************/
+	/* PROJECTS			     			   	*/
+	/****************************************/
+.projects-admin p {
+	color:#000;
+}	
+
+.add-projectUser-form, 
+.recent-projectUser,
+.settings form
+ {
+	width:80%;
+	margin:25px auto 40px;
+}
+
+	.add-projectUser-form table {
+		width:100%;
+	}
+
+		.add-projectUser-form tr {
+			line-height: 40px;
+		}
+			.add-projectUser-form th {
+				white-space: nowrap;
+			 	width: 200px;
+			}
+		
+			.add-projectUser-form .date {
+				width:170px;
+			}
+			.add-projectUser-form select {
+				width:180px;
+			}
+		
+			.add-projectUser-form .button {
+				margin:10px 10px 0 0;
+			}
+	
+	
+	
+.recent-projectUser table {
+	border:0;
+	border-collapse:collapse;
+}
+
+	.projectUser-name {
+		color:#000;
+		font-weight: bold;
+		width:350px;
+	}
+	.users-admin .projectUser-name {
+		width:auto;
+	}
+	
+	.recent-projectUser table.projectUser td,
+	.recent-projectUser table.projectUser th {
+		border:1px solid #999;
+		text-align:center;
+	}
+	
+	#frm-searchForm {
+		display:inline-block;
+	}
+	#searchFormClearer {
+		top:-5px;
+		left:-37px;
+	}
+	
+.th-align_r th {
+	text-align:right;
+}
+
+#frmitemForm-type-1 {
+	margin-left: 50px;
+}
+
+
+
+
+.edit-icon {
+	background:url('../images/icons-content.png') no-repeat -153px -3px;
+	width:20px;
+	height:20px;
+	display:inline-block;
+}
+
+.del-icon {
+	background:url('../images/icons-content.png') no-repeat -329px -3px;
+	width:20px;
+	height:20px;
+	display:inline-block;
+}
+
+.recent-projectUser .edit-icon,
+.recent-projectUser .del-icon {
+	margin-top:3px;
+}
+
+/*
+.date {
+	background:url('../images/icons-content.png') no-repeat -329px -3px;
+}
+*/
+
+
+
+
+
+
+
+.available,
+.not-available {
+	line-height: 30px;
+	color:#333;
+	font-size:12px;
+	padding-left:35px;
+	/*background:url('../images/icons-content.png') no-repeat -329px -3px;*/
+	background:url('../images/smiles.png') no-repeat 15px 7px;
+}
+
+.not-available {
+	background-position: 15px -25px;
+}
+
+
