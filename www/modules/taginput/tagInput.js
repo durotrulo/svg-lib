@@ -1,5 +1,9 @@
 var Nette = Nette || {};
 
+var lastValue = '';
+var request = null;
+var keyDown = false;
+
 $.fn.updateValue = function() {
 	$(this).val($(this).parent().getValues().join(', '));
 
@@ -283,7 +287,6 @@ function initTagInput()
 		}
 	});
 
-	var keyDown = false;
 	// must be * kvoli focusnutym span.tagom, inak by stacil na kontajneri chytat
 	$('*').keydown(function(e) {
 //	$('.tag-control-container *').keydown(function(e) {
@@ -449,23 +452,24 @@ function initTagInput()
 		}
 	});
 
-	var lastValue = '';
-	var request = null;
 //	$('.tag-control-helper').keyup(function() {
 	$('.tag-control-helper').live('keyup', function() {
-		if ($(this).val() === lastValue) {
+		var $this = $(this);
+		if ($this.val() === lastValue) {
 			return true;
+//			return false;
 		}
-		lastValue = $(this).val();
-		
-		if ($(this).getCaret() >= 2) {
-			var $control = $(this);
-			var uri = $(this).siblings('.tag-control').attr('data-tag-suggest').replace('%25__filter%25', $control.val());
-//			json = $.getJSON(uri, null, function(json) {
+		lastValue = $this.val();
+
+		if ($this.getCaret() >= 2) {
+			var $control = $this;
+			var uri = $this.siblings('.tag-control').attr('data-tag-suggest').replace('%25__filter%25', $control.val());
 			if (request !== null) {
 				request.abort();
 			}
+			
 			request = $.getJSON(uri, null, function(request) {
+				lastValue = '';
 				$control.siblings('.tag-suggest').hide();
 				var $container = $control.siblings('.tag-suggest').children('ul');
 				$container.children('li').remove();
@@ -486,7 +490,7 @@ function initTagInput()
 				});
 			});
 		} else {
-			$(this).siblings('.tag-suggest').hide();
+			$this.siblings('.tag-suggest').hide();
 		}
 	});
 

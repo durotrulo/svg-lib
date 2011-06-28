@@ -12,8 +12,8 @@
     text-align:left;
     
     position:relative;
-    overflow:hidden;
 	/*
+    overflow:hidden;
 	background: #FFF; 
 	padding: 3px; 
 	width: 300px; 
@@ -41,6 +41,11 @@
 /*	position: absolute;
     	margin-top: 30%;
     	*/
+}
+
+
+.tagsCommonSelect .tag-value {
+	display:none;
 }
 
 .tag-control-container .tag-value span {
@@ -135,7 +140,8 @@
 
 /* FILE DETAIL VIEW */
 
-.bindTagContainer {
+.bindTagContainer,
+.description-container .trigger-editable {
 	display:inline-block;
 	float: right;
 	margin-right: 10px;
@@ -171,6 +177,16 @@
 			display:block;
 		}
 
+		
+.description-container .editable {
+	padding-bottom:30px;
+	
+}
+
+.description-container .editable textarea {
+	min-height:3em;
+	width: 100% !important;
+}
 /* FILE DETAIL VIEW END*/
 
 

@@ -8,9 +8,8 @@
  *
  **}
 
-{block #title}Projects{/block}
-
-
+@{extends ../../../../../templates/@layout.phtml}
+ 
 {block #options}
 	<span class="bold resultsCount">{$itemsCount} results found</span>
 	<span class="orderby">
@@ -38,41 +37,43 @@
 {/block}
 
 
-@{block #itemList}
+@{block #content}
 
-{*snippet itemList*}
-	{if $itemsCount > 0}
-	<div class="projects">
-		{if $renderMode === $presenter::RENDER_MODE_THUMBNAILS}
-		<div class="itemList">
-			<div class="item" n:foreach="$items as $project">
-				<span class="project-name">{$project->name}</span>
-				<a href="{link detail $project->id}">
-					<img src="{$basePath}/{$projectsModel->getPreviewPath($project->id)}">
-				</a>
-				<div class="project-info">
-					{$project->vectorFilesCount} Vector Files |
-					{$project->bitmapFilesCount} Images
+<div class="cols-2-layout">
+	<div class="top-heading blue">
+		<h1>@{include #title}</h1>
+		<span class="right-link">
+			<a class="ajax ok-button" href="{link list}">Back to projects display</a>
+		</span>
+	</div>
+	
+	<div class="left-box">
+		<div class="margin-all">
+		{snippet projectList}
+			<div>
+				<div class="letter-filter" n:inner-foreach="array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z') AS $letter">
+					<a href="{link this 'firstLetter'=>$letter}" {ifCurrent}class="active"{/if}>{$letter}</a>
+					{if $letter === 'm'}<br>{/if}
 				</div>
+				<a href="{link this firstLetter=>null}">Show all</a>
 			</div>
-			<div class="clear"></div>
+			{if count($projectList) > 0}
+			<div class="projects">
+				<div class="projectList">
+					<div class="" n:foreach="$projectList as $project">
+						<a href="{link detail $project->id}" {ifCurrent}class="active"{/if}>{$project->name}</a>
+					</div>
+				</div>
+			</div>		
+			{else}
+				<div class="infoMsg">No projects found</div>
+			{/if}
+		{/snippet}
 		</div>
-		{elseif $renderMode === $presenter::RENDER_MODE_LIST}
-			<table class="width_100 grid">
-				<tbody>
-					<tr n:foreach="$items as $project">
-						<td>{$project->name}</td>
-						<td>{$project->completedFormatted}</td>
-						<td>{$project->vectorFilesCount} Vector Files</td>
-						<td>{$project->bitmapFilesCount} Images</td>
-					</tr>
-				</tbody>
-			</table>
-		{/if}
-	</div>		
-		{control itemPaginator false, step}
-		<div class="clear"></div>
-	{else}
-		<div class="infoMsg">No results found</div>
-	{/if}
-{*/snippet*}
+	</div>
+	
+	{snippet itemList 'div class="right-box"'}
+		@{include #itemList}
+	{/snippet}
+	<div class="clear"></div>
+</div>

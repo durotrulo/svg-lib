@@ -35,6 +35,10 @@ abstract class Front_BasePresenter extends BasePresenter
 		parent::beforeRender();
 		$this->template->isHomepage = false;
 		$this->template->isAdminModule = false;
+		
+		
+		$this->template->maxUploadedFilesCount = Environment::getConfig('upload')->maxUploadedFilesCount;
+		
 	}
 	
 	

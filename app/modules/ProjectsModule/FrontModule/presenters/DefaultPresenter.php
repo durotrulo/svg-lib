@@ -10,6 +10,12 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 	/** @persistent */
 	public $renderMode;
 	
+	/** 
+	 * @var char(1) first letter for filtering projects
+	 * @persistent
+	 */
+	public $firstLetter;
+	
 	protected $_allowedRenderModes = array(
 		self::RENDER_MODE_LIST,
 		self::RENDER_MODE_THUMBNAILS,
@@ -50,6 +56,11 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 		}
 		Environment::getHttpResponse()->setCookie(self::COOKIE_NAME_RENDER_MODE, $this->renderMode, Tools::YEAR);
 		
+		// trim to length === 1
+		if (!empty($this->firstLetter)) {
+			$this->firstLetter = substr($this->firstLetter, 0, 1);
+		}
+		
 		$this->model = $this->projectsModel;
 	}
 
@@ -57,6 +68,31 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 	protected function beforeRender()
 	{
 		parent::beforeRender();
+
+		$this->setRenderSections(array(
+			self::RENDER_SECTION_FILTERS => true,
+		));
+		
+		
+		
+		// list projects to panel (and content if on project display)
+//		$this->items = $this->model->findAll();
+////		try {
+//			$this->model->filter($this->items, $this->filter)
+//						->filter($this->items, ProjectsModel::FILTER_FIRST_LETTER, $this->firstLetter)
+//						->filterByNameOrSubtitle($this->items, $this->q)
+////						->filterByComplexity($this->items, $this->complexity)
+//						->order($this->items, $this->orderby, $this->sorting);
+//		
+		
+		$projectList = $this->model->findAll();
+//		try {
+			$this->model->filter($projectList, $this->filter)
+						->filter($projectList, ProjectsModel::FILTER_FIRST_LETTER, $this->firstLetter)
+						->filterByNameOrSubtitle($projectList, $this->q)
+//						->filterByComplexity($projectList, $this->complexity)
+						->order($projectList, $this->orderby, $this->sorting);
+		$this->template->projectList = $projectList;
 
 		$this->template->projectsModel = $this->projectsModel;
 		$this->template->renderMode = $this->renderMode;
@@ -86,11 +122,15 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 	}
 	
 	
+	// list projects
 	public function actionList()
 	{
+		/*
+		*/
 		$this->items = $this->model->findAll();
 //		try {
 			$this->model->filter($this->items, $this->filter)
+						->filter($this->items, ProjectsModel::FILTER_FIRST_LETTER, $this->firstLetter)
 						->filterByNameOrSubtitle($this->items, $this->q)
 //						->filterByComplexity($this->items, $this->complexity)
 						->order($this->items, $this->orderby, $this->sorting);
@@ -107,13 +147,15 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 	}
 	
 
+	
 	public function actionDetail($id)
 	{
 		$this->project = $this->model->find($id);
 		if (!$this->project) {
 			throw new BadRequestException('Project does not exist');
 		}
-		
+
+		// list files
 		$this->items = $this->filesModel->findAll();
 		try {
 			$this->filesModel//->filter($this->items, $this->filter)

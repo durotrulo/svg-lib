@@ -46,6 +46,11 @@ class FilesModel extends BaseModel
 	/** @var int height of small-sized preview image */
 	const SMALL_H = 85;
 	
+	/** @var int width of site-wide image (top level) */
+	const SITEWIDE_W = 600;
+
+	/** @var int height of site-wide image (top level) */
+	const SITEWIDE_H = null;
 	
 	const FILTER_BY_VECTOR = 'vector';
 	const FILTER_BY_BITMAP = 'bitmap';
@@ -383,6 +388,22 @@ class FilesModel extends BaseModel
 	
 	
 	/**
+	 * get file description
+	 *
+	 * @param int
+	 * @return string
+	 */
+	public function getDesc($fileId)
+	{
+		return dibi::select('description')
+					->from(self::TABLE)
+					->where('id = %i', $fileId)
+					->fetchSingle();
+	}
+	
+	
+	
+	/**
 	 * get tags bound to file
 	 *
 	 * @param int
@@ -540,6 +561,10 @@ class FilesModel extends BaseModel
 			$dirname . self::SIZE_SMALL . '/',
 //					$dirname . 'detail/',
 		);
+		
+		foreach ($filepath as $path) {
+			Basic::mkdir($path);
+		}
 		
 		// process thumbnails
 		switch ($data['suffix']) {

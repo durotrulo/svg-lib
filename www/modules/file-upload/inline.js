@@ -1,4 +1,4 @@
-function getCloneHtml(selector)
+function getHtmlClone(selector)
 {
 	return $('<div>').append($(selector).clone().removeAttr('id')).remove().html();
 }
@@ -47,33 +47,76 @@ var fileUploads = {
     	this.updateFilesInfo();
     }
 };
+
+
+//function initCommonControls(origProjectsIdSelector, origTagsSelector, origComplexityIdSelector)
+function initCommonControls()
+{
+	var filesHeader = $('#files .files-header');
+	filesHeader.html(
+		'<td>File name</td>' + 
+		'<td class="projectCommonSelect">' + getHtmlClone(origProjectsIdSelector) + '</td>' + 
+		'<td class="tagsCommonSelect">' + getHtmlClone(origTagsSelector) + '</td>' + 
+		'<td class="complexityCommonSelect">' + getHtmlClone(origComplexityIdSelector) + '</td>' + 
+		'<td>Top level file</td>'
+	);
 	
-/*global $ */
-$(function () {
-//	$.error = myConsole.error;
+	// set common project for selected files
+	filesHeader.find('.projectCommonSelect select').livequery('change', function(e){
+		$('.fileUpload-item ' + projectsIdSelector).val($(this).val());
+	});
 	
-	var isUploadInProgress = false;
+	// set common complexity for selected files
+	filesHeader.find('.complexityCommonSelect select').livequery('change', function(e){
+		$('.fileUpload-item ' + complexityIdSelector).val($(this).val());
+	});
+}
 	
+
 	var origProjectsIdSelector = '#frmfileUploadForm-projects_id';
 	var origComplexityIdSelector = '#frmfileUploadForm-complexity_id';
 	var origTagsSelector = '#frmfileUploadForm-tags';
+	var origTopFileSelector = '#frmfileUploadForm-is_top_file';
 	var projectsIdSelector = '.project-select';
 	var complexityIdSelector = '.complexity-select';
 	var tagsSelector = '.tags-input';
 	var tagsValSelector = '.tag-value';
-	
-	// when selecting multiple files they should be associated to the same project
-	$(projectsIdSelector).livequery('change', function(e){
-		$(projectsIdSelector).val($(this).val());
+	var topFileSelector = '.top-file-select';
+
+
+
+/*global $ */
+$(function () {
+//	$.error = myConsole.error;
+
+	// nice checkboxes for top level files
+//    $(".top-file-select :checkbox").livequery(function() {
+    $(".top-file-select").livequery(function() {
+    	$(this).iphoneStyle();
+    });
+
+    // submit form after each tag selected
+	$('.tagsCommonSelect span.tag-value span').livequery(function() {
+		var $this = $(this);
+		var tagValue = $this.parent();
+		$('.tag-control-helper')
+			.not(tagValue.parent().find('.tag-control-helper'))
+			.val($this.textNodes().eq(0).text())
+			.change();
+		tagValue.empty();
 	});
+
+	var isUploadInProgress = false;
 	
+	initCommonControls();
+
 	var fileUploadForm = $('#frm-fileUploadForm');
 	$('<div class="upload-button">Browse or drag-and-drop</div>').appendTo(fileUploadForm);
 	
 	var fileUploadFooter = $('.fileUpload-footer');
 	
     fileUploadForm.fileUploadUI({
-    	maxFilesCount: 20, // pridane na kontrolu
+    	maxFilesCount: maxUploadedFilesCount, // max number of files to be uploaded on one go, defined in config.ini
     	previewAsCanvas: false,
 //    	previewAsCanvas: true,
     	imageTypes: /^image\/(gif|jpeg|png|svg|svg\+xml)$/,
@@ -89,9 +132,10 @@ $(function () {
                 '<td class="file_upload_preview"> <span class="file_upload_cancel"><button class="ui-state-default ui-corner-all" title="Cancel">' +
 	                '<span class="ui-icon ui-icon-cancel">Cancel<\/span>' +
 	                '<\/button>&nbsp;&nbsp;&nbsp;</span> <span class="filename">' + files[index].name + '</span> <span>' + formatFileSize(files[index].size) + '</span><br><\/td>' +
-                '<td class="file_upload_project_id">Project:<br>' + getCloneHtml(origProjectsIdSelector) + '<\/td>' +
-                '<td class="file_upload_tags">Tags:<br>' + getCloneHtml(origTagsSelector) + '<\/td>' +
-                '<td class="file_upload_complexity_id">Complexity:<br>' + getCloneHtml(origComplexityIdSelector) + '<\/td>' +
+                '<td class="file_upload_project_id">' + getHtmlClone(origProjectsIdSelector) + '<\/td>' +
+                '<td class="file_upload_tags">' + getHtmlClone(origTagsSelector) + '<\/td>' +
+                '<td class="file_upload_complexity_id">' + getHtmlClone(origComplexityIdSelector) + '<\/td>' +
+                '<td class="file_upload_is_top_file">' + getHtmlClone(origTopFileSelector) + '<\/td>' +
                 '<td class="file_upload_progress"><div><\/div><\/td>' +
                 '<td class="file_upload_start invisible">' +
                 '<button class="ui-state-default ui-corner-all" title="Start Upload">' +
@@ -108,12 +152,14 @@ $(function () {
 				$.doTimeout(100, function() {
 					if ( isUploadInProgress === false ) {
 			  			isUploadInProgress = true;
-				  		
+				  		log(handler.uploadRow.find(topFileSelector).attr('checked'));
 				  		// put data to original form to allow Nette validation
 			            $(projectsIdSelector, handler.uploadForm).val(handler.uploadRow.find(projectsIdSelector).val());
 		            	$(complexityIdSelector, handler.uploadForm).val(handler.uploadRow.find(complexityIdSelector).val());
 		            	$(tagsSelector, handler.uploadForm).val(handler.uploadRow.find(tagsSelector).val());
 		            	$(tagsValSelector, handler.uploadForm).html(handler.uploadRow.find(tagsValSelector).html());
+//		            	$(topFileSelector, handler.uploadForm).val(handler.uploadRow.find(topFileSelector).val());
+		            	$(topFileSelector, handler.uploadForm).attr('checked', !!handler.uploadRow.find(topFileSelector).attr('checked'));
 				  		
 				  		if (Nette.validateForm(handler.uploadForm.context)) {
 				  			// show progress bar
@@ -153,6 +199,10 @@ $(function () {
 	    	if (index >= this.maxFilesCount || files2upload >= this.maxFilesCount) {
 		    	$.error('You can upload max. ' + this.maxFilesCount + ' file(s).');
 	    		return false;
+	    	}
+	    	
+	    	if (files2upload === 0) {
+	    		
 	    	}
 	    	
 //	    	log(handler);

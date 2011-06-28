@@ -84,10 +84,12 @@ $(function() {
 window.myConsole={
 	"error": function() {
 		if (debug && isset(window.console)) {
-			window.console.error.apply(window.console,arguments);
+			window.console.error.apply(window.console, arguments);
+		// custom user message
 		} else {
 			var errorMsg = arguments[0];
-			alert(errorMsg);
+//			alert(errorMsg);
+			$.Nette.showError(errorMsg);
 		}
 	}
 };
@@ -108,8 +110,7 @@ function log(msg)
 	
 	// In the first line I am using 'window.x' instead of just 'x'. This works because all variables are also defines as properties of the window object. 
 	// 'x === undefined' will only work if the variable has actually been declared with 'var x' (but not assigned a value). Therefore it is safer to use 'window.x' which will not result in an error if the variable hasn't been declared.
-	if(window.console) 
-	{
+	if(window.console) {
 		console.log(msg);
 	} else if (window.opera && window.opera.postError) {
 		window.opera.postError(msg);

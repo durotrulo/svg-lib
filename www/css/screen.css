@@ -387,14 +387,22 @@ form ul.error li {
 .fileUploadArea {
 	display:none;
 	color:#5d7d58;
-	margin: 15px 0;
+	/*margin: 15px 0;*/
 	
-	background: #b5d0b0;
+	/*background: #b5d0b0;
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#c7dbc2', endColorstr='#a7c9a2');
 	background:-webkit-gradient(linear, 50% 0%, 50% 100%, from(#c7dbc2), to(#a7c9a2));
 	background: -moz-linear-gradient(top,  #c7dbc2,  #a7c9a2);
+	*/
+		background: #AED483;
 }
-
+	.fileUploadArea .files-header {
+		color:#000;
+	}
+	form > div.top > div > div span {height:auto;}
+.switch a {display:block; width:100px; height:38px; background:#eee; }
+.switch a.on {background:#07d317 ;}
+.switch a.off {background: #ed0a10 ;}
 .fileUpload-header {
 	background: #b5d0b0;
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#c7dbc2', endColorstr='#a7c9a2');
@@ -411,11 +419,15 @@ form ul.error li {
 	}
 
 .fileUpload-footer {
+	/*
 	background: #b7d2b2;
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#c8dbc3', endColorstr='#a8c9a3');
 	background:-webkit-gradient(linear, 50% 0%, 50% 100%, from(#c8dbc3), to(#a8c9a3));
 	background: -moz-linear-gradient(top,  #c8dbc3,  #a8c9a3);
+	*/
+		background: #AED483;
 
+	border-top:1px solid #969b95;
 	padding:10px 20px;
 	line-height: 2.5em;
 	display:none;
@@ -423,10 +435,11 @@ form ul.error li {
 
 .fileUploadArea #files {
 	width:100%;
+	border-top: 1px solid #969B95;
 }
 
 .fileUpload-item {
-	background: #d3e4d1;
+	background: #EFF6E6;
 }
 
 	.fileUpload-item td {
@@ -435,7 +448,7 @@ form ul.error li {
 	}
 
 	.fileUpload-item:nth-child(2n+1) {
-		background: #edf4ed;
+		background: #cee6b6;
 	}
 	
 	td.file_upload_preview {
@@ -527,12 +540,37 @@ form ul.error li {
 				right:5px;
 			}
 			
+			.item .top-left {
+				top:13px;
+				left:5px;
+			}
+			
+				.filetype {
+					background-color: #CCCCCC;
+				    color: white;
+				    font-size: 14px;
+				    font-weight: bold;
+				    padding: 2px 8px;
+				    margin:0 10px;
+				    text-transform: uppercase;
+				    position: static !important;
+				}
+
+				.item .downloads {
+					position: static !important;
+				}
+			
 		.item .show-on-hover {
 			display:none;
 		}
 			
 			.item:hover .show-on-hover {
 				display:inline-block;
+			}
+			
+			/* small thumbnails show only image */
+			.thumbSize-small .item:hover .show-on-hover {
+				display:none;
 			}
 			
 		/*.item*/ .download-link {
@@ -614,9 +652,10 @@ form ul.error li {
 	}
 	
 	#file-detail-modal .downloads {
-		position:absolute;
+		/*position:absolute;
 			top:3px;
 			left:5px;
+		*/
 		font-size: 12px;
 	}
 	
@@ -630,8 +669,8 @@ form ul.error li {
    		position:relative;
    		min-height:30px;
    	}
-   	
-   	#file-detail-modal .tags-heading {
+
+   	.file-detail-heading {
    		border-top: 1px solid #999;
    		border-bottom: 1px solid #999;
    		color:#000;
@@ -640,6 +679,9 @@ form ul.error li {
 		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e7e7e7', endColorstr='#f2f2f2');
 		background:-webkit-gradient(linear, 50% 0%, 50% 100%, from(#e7e7e7), to(#f2f2f2));
 		background: -moz-linear-gradient(top,  #e7e7e7,  #f2f2f2);
+   	
+   	}
+   	#file-detail-modal .tags-heading {
    	}
    	
    	
@@ -856,10 +898,12 @@ a.active {
 	background-color:#AED483;
 }
 
-.lightboxes {
+.cols-2-layout {
 	background: url('../images/bg_left-box.gif') repeat-y left top;
 }
-	.top-heading .share-link {
+	/*.top-heading .share-link,*/
+	.top-heading .right-link
+	 {
 		float: right;
 	    line-height: 35px;
 	    margin-right: 20px;
@@ -877,15 +921,27 @@ a.active {
 		margin-left:125px;
 	}
 
-.lightboxes .left-box {
-	width:240px;
+.cols-2-layout .left-box {
+	padding: 10px 20px;
+    width: 212px;
 	float:left;
 	font-size:12px;
 }
-	.lightboxes .left-box .margin-all {
+	.cols-2-layout .left-box .margin-all {
 		margin:10px;
 	}
 	
+	.letter-filter {
+		text-transform:uppercase;
+	}
+		.letter-filter a {
+			color:#a1a1a1;
+			text-decoration:none;
+		}
+			.letter-filter a.active {
+				color:#333;
+			}
+		
 	.left-box .lb-owner {
 		width: 92%;
 	}
@@ -926,8 +982,9 @@ a.active {
 
 
 
-.lightboxes .right-box {
+.cols-2-layout .right-box {
 	float:left;
+	width:756px;
 }
 
 

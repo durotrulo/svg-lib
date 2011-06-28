@@ -10,7 +10,6 @@
  **}
 
 {capture $head}
-{control js '../modules/jeditable/jquery.jeditable.js', '../modules/jeditable/init.js'}
 <script src="{$basePath}/modules/colorbox/jquery.colorbox.js"></script>
 <script>
 	// generate up-to-date link with every snippet redraw
@@ -55,7 +54,7 @@
 
 @{block #content}
 
-<div class="lightboxes">
+<div class="lightboxes cols-2-layout">
 	<div class="top-heading blue">
 		<h1>Lightboxes</h1>
 		{snippet lb-name 'h2'}
@@ -64,7 +63,7 @@
 			{/if}
 		{/snippet}
 
-		{snippet sharelink 'span class="share-link"'}
+		{snippet sharelink 'span class="right-link"'}
 			{ifset $lightbox}
 			<a class="ajax ok-button" rel="nohistory" href="{link share! $lightbox->id}">Share</a>
 			{/if}

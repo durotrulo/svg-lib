@@ -198,7 +198,7 @@ abstract class BaseModel extends Object
 	 * @param string|NULL prompt option
 	 * @return array
 	 */
-	public static function prepareSelectTree($options, $level = 1, $firstValue = NULL)
+	public static function prepareSelectTree($options, $level = 1, $firstValue = NULL, $usePhrase = false)
 	{
 		$ret = array();
 		foreach ($options as $k => $item) {
@@ -210,7 +210,7 @@ abstract class BaseModel extends Object
 		}
 		
 		if (!is_null($firstValue) && $level === 1) {
-			return self::prepareSelect($ret, $firstValue);
+			return self::prepareSelect($ret, $firstValue, $usePhrase);
 		} else {
 			return $ret;
 		}

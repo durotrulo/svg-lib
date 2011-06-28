@@ -2,6 +2,7 @@
 	{* generate up-to-date link with every snippet redraw *}
 	<script>
 	 	var linkGetTags = {link getTags! __ID__};
+	 	var linkGetFileDesc = {link getDesc! __ID__};
 	 	// overwrite link defined in headFiles.phtml - update with every snippet redraw
 	 	linkReloadItemList = {plink reloadItemList!};
 	</script>
@@ -11,7 +12,10 @@
 		<div class="itemList thumbSize-{$thumbSize}">
 			<div class="item" n:foreach="$items as $item">
 			{*include '@thumb.phtml' 'item' => $item, 'thumbSize' => $thumbSize*}
-				<span class="top-right show-on-hover">{$item->downloads} downloads</span>
+				<span class="top-left show-on-hover">
+					<span class="filetype">{$item->suffix}</span>
+					<span class="downloads">{$item->downloads} downloads</span>
+				</span>
 				<span class="invisible itemId">{$item->id}</span>
 				<a href="{$basePath}/{$control->model->getPreviewPath($item->projects_id, 'large', $item->filename, true)}" rel="images">
 					<img src="{$basePath}/{$control->model->getPreviewPath($item->projects_id, $thumbSize, $item->filename, true)}">
@@ -28,20 +32,31 @@
 		
 		<div class="invisible">
 			<div id="file-detail-modal">
-				<span class="downloads">__itemDownloads__ downloads</span>
+				<span class="filetype"></span>
+				<span class="downloads"></span>
 				<img src="">
+				
 				<div class="actions-container">
-					<a href="{link download! __itemid__}" title="Download" class="download-link"></a>
+					<a href="" title="Download" class="download-link"></a>
 					<span class="ib add2lightbox"></span>
 				</div>
+				
 				<div class="tags-container">
-					<div class="tags-heading">Tags:<span id="tagSpinner" class="spinner"></span>
+					<div class="tags-heading file-detail-heading">Tags:<span id="tagSpinner" class="spinner"></span>
 						<div class="bindTagContainer">
 							<span class="pointer addTagPrompt">Add Tag</span>
 							{control bindTagForm}
 						</div>
 					</div>
 					<div class="file-detail-taglist"></div>
+				</div>
+				
+				<div class="description-container">
+					<div class="desc-heading file-detail-heading">
+						Description:<span id="descSpinner" class="spinner"></span>
+						<span class="trigger-editable pointer">Edit</span>
+					</div>
+					<p class="editable" data-editable-type="textarea" data-editable-submit="OK" data-editable-name="{$control->getName()}-desc" data-editable-process-url="{link editFileDesc! __ID__}"></p>
 				</div>
 			</div>
 		</div>

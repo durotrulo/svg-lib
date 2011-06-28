@@ -16,6 +16,7 @@ class ProjectsModel extends BaseModel
 	
 	const FILTER_COMPLETED = 'completed';
 	const FILTER_IN_PROGRESS = 'in-progress';
+	const FILTER_FIRST_LETTER = 'first-letter';
 	
 	const ORDER_BY_NAME = 'name';
 	const ORDER_BY_DATE = 'date';
@@ -166,19 +167,27 @@ class ProjectsModel extends BaseModel
 	 *
 	 * @param DibiFluent
 	 * @param string|null
+	 * @param mixed
 	 * @return $this
 	 */
-	public function filter(&$items, $filter)
+	public function filter(&$items, $filter, $filterVal = null)
 	{
 		switch ($filter) {
 			case null:
 				break;
+				
 			case self::FILTER_COMPLETED:
 				$items->where('completed IS NOT NULL');
 				break;
 		
 			case self::FILTER_IN_PROGRESS:
 				$items->where('completed IS NULL');
+				break;
+				
+			case self::FILTER_FIRST_LETTER:
+				if (!empty($filterVal)) {
+					$items->where('name LIKE %s', "$filterVal%");
+				}
 				break;
 				
 			default:

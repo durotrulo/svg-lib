@@ -177,14 +177,14 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 			->getControlPrototype()
 			->multiple(true);
 		
-//		$form->addSelect('projects_id', 'Project Name', BaseModel::prepareSelect($this->projectsModel->fetchPairs()))
-//	    		->skipFirst()
-		$form->addSelect('projects_id', 'Project Name', ($this->projectsModel->fetchPairs()))
+		$form->addSelect('projects_id', 'Project Name', BaseModel::prepareSelect($this->projectsModel->fetchPairs(), 'Choose project', true))
+	    		->skipFirst()
+//		$form->addSelect('projects_id', 'Project Name', ($this->projectsModel->fetchPairs()))
 	            ->addRule(Form::FILLED)
 	            ->getControlPrototype()
 	            	->class('project-select');
 	            
-	    $complexity = BaseModel::prepareSelectTree($this->complexityModel->getTree(), 1);
+	    $complexity = BaseModel::prepareSelectTree($this->complexityModel->getTree(), 1, 'Choose complexity', true);
 		$form->addSelect('complexity_id', 'Complexity', $complexity)
 	    		->skipFirst()
 	            ->addRule(Form::FILLED)
@@ -198,6 +198,10 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 			->getControlPrototype()
             	->class('tags-input');
 			
+        $form->addCheckbox('is_top_file', 'Top level file')
+        	->getControlPrototype()
+            	->class('top-file-select');
+        
 		$form->addSubmit('save', 'Upload');
 		$presenter = $this;
 		$form->onSubmit[] = function(MyAppForm $form) use ($presenter) {

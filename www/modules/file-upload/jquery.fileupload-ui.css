@@ -83,7 +83,9 @@
 }
 
 .file_upload_progress .ui-progressbar-value {
-  background: url(pbar-ani.gif);
+ 	/* background: url(pbar-ani.gif);*/
+    background: url('../modules/file-upload/pbar-ani.gif'); /* url relative to webtemp */
+
 }
 
 .file_upload_progress div {
@@ -100,11 +102,13 @@
 
 .fileUpload-item td {
 	vertical-align:top;
+	border-right: 1px solid #969B95;
 }
 
 .file_upload_project_id, 
 .file_upload_tags, 
 .file_upload_complexity_id,
+.file_upload_is_top_file,
 .file_upload_progress {
 	padding-top:6% !important;
 }

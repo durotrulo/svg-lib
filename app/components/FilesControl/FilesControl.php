@@ -209,6 +209,45 @@ class FilesControl extends BaseControl
 		$this->presenter->terminate();
 	}
 	
+		
+	/**
+	 * load file description and send to client
+	 *
+	 * @param int
+	 */
+	public function handleGetDesc($fileId)
+	{
+		$this->presenter->payload->desc = nl2br($this->model->getDesc($fileId));
+		$this->presenter->terminate();
+	}
+	
+	
+	/**
+	 * edit lightbox name using jEditable on frontend
+	 * prints updated name and exits
+	 *
+	 * @param int lightbox id
+	 * @param string new lightbox's name
+	 * @return void
+	 */
+	public function handleEditFileDesc($id, $desc)
+	{
+		if ($this->user->isAllowed(new FileResource($id), 'edit_description')) {
+			try {
+				$this->model->update($id, array(
+					'description' => $desc,
+				));
+				echo nl2br($desc);
+			} catch (DibiDriverException $e) {
+				throw $e;
+				echo OPERATION_FAILED;
+			}
+		} else {
+			echo NOT_ALLOWED;
+		}
+		$this->presenter->terminate();
+	}
+	
 
 	/**
 	 * set thumb size for files - no js fallback
@@ -427,6 +466,5 @@ class FilesControl extends BaseControl
 		return new VisualPaginator($this, $name);
 	}
 	
-	
-	
+
 }

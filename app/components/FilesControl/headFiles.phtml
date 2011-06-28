@@ -3,6 +3,9 @@
 	// generate link and update it on every snippet redraw in itemList.phtml
  	var linkReloadItemList = {link reloadItemList!};
 
+ 	$('.editable textarea').livequery('resize', function() {
+ 		$.colorbox.resize();
+ 	});
  	
  	// @see http://colorpowered.com/colorbox/
  	$(function() {
@@ -23,15 +26,31 @@
 					var item = el.parent('.item');
 					fileDetailModal.find('img').attr('src', el.attr('href'));
 					fileDetailModal.find('a.download-link').attr('href', item.find('a.download-link').attr('href'));
-					fileDetailModal.find('.downloads').text(item.find('.top-right').text());
+					fileDetailModal.find('.downloads').text(item.find('.downloads').text());
+					fileDetailModal.find('.filetype').text(item.find('.filetype').text());
 					fileDetailModal.find('.add2lightbox').html(item.find('.add2lightbox').html());
 					
 					var taglist = fileDetailModal.find('.file-detail-taglist');
-					var spinner = taglist.prevAll('.tags-heading').find('.spinner').show();
+					var tagSpinner = taglist.prevAll('.tags-heading').find('.spinner').show();
+					var descSpinner = fileDetailModal.find('#descSpinner').show();
 
 					initTagInput();
 	
 					var itemId = el.prev('.itemId').text();
+
+					// set correct link for description edit
+					// whole element must be replaced by self due to editable events binding
+					var editable = fileDetailModal.find('.description-container .editable');
+					editable.attr('data-editable-process-url', editable.attr('data-editable-process-url').replace('__ID__', itemId));
+					var editableClone = editable.clone();
+					editable.replaceWith(editableClone);
+
+					$.getJSON(linkGetFileDesc.replace('__ID__', itemId), function(data) {
+						fileDetailModal.find('p.editable').html(data['desc']);
+					  	descSpinner.hide();
+					  	$.colorbox.resize();
+					});
+					
 				 	$.getJSON(linkGetTags.replace('__ID__', itemId), function(data) {
 				 		// set file id for tag binding
 				 		$('#frmbindTagForm-fileId').val(itemId);
@@ -43,7 +62,7 @@
 							    html: items.join('')
 						  	})
 					  	);
-					  	spinner.hide();
+					  	tagSpinner.hide();
 					  	$.colorbox.resize();
 					});
 					

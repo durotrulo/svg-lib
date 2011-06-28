@@ -119,8 +119,8 @@ abstract class BasePresenter extends Presenter
 	        if (defined('ACL_CACHING') and ACL_CACHING) {
 	            $this->cache = Environment::getCache();
 	            if (!isset($this->cache['gui_acl'])) {
-	                $this->cache->save('gui_acl', new Acl(), array(
-	                    'files' => array(APP_DIR.'/config.ini'),
+	                $this->cache->save('gui_acl', new Acl(), array (
+	                    'files' => array(APP_DIR . '/config.ini'),
 	                ));
 	            }
 	            $this->user->setAuthorizationHandler($this->cache['gui_acl']);

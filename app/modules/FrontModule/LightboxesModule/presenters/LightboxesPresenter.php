@@ -213,8 +213,12 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 	public function handleEditName($id, $name)
 	{
 		if ($this->user->isAllowed(new LightboxResource($id), 'edit')) {
-			$this->model->updateName($id, $name);
-			echo $name;
+			try {
+				$this->model->updateName($id, $name);
+				echo $name;
+			} catch (DibiDriverException $e) {
+				echo OPERATION_FAILED;
+			}
 		} else {
 			echo NOT_ALLOWED;
 		}
