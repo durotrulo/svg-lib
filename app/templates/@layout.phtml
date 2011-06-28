@@ -227,7 +227,10 @@
 				<!--FILE UPLOAD END-->
 				{/if}
 				
-				@{include #content}
+				{*@{include #content}*}
+				{snippet content}
+					{include #content}
+				{/snippet}
 			</div>
 		</div>
 		

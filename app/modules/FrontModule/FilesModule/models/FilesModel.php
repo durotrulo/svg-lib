@@ -47,7 +47,7 @@ class FilesModel extends BaseModel
 	const SMALL_H = 85;
 	
 	/** @var int width of site-wide image (top level) */
-	const SITEWIDE_W = 600;
+	const SITEWIDE_W = 380;
 
 	/** @var int height of site-wide image (top level) */
 	const SITEWIDE_H = null;
@@ -55,6 +55,8 @@ class FilesModel extends BaseModel
 	const FILTER_BY_VECTOR = 'vector';
 	const FILTER_BY_BITMAP = 'bitmap';
 	const FILTER_BY_INSPIRATION = 'inspiration';
+
+	const FILTER_BY_PROJECT = 'project';
 	
 	const ORDER_BY_NAME = 'name';
 	const ORDER_BY_DATE = 'date';
@@ -63,6 +65,7 @@ class FilesModel extends BaseModel
 	const SIZE_SMALL = 'small';
 	const SIZE_MEDIUM = 'medium';
 	const SIZE_LARGE = 'large';
+	const SIZE_SITEWIDE = 'sitewide'; // top level file
 	
 	/** @dbsync #complexity.id */
 	const COMPLEXITY_INSPIRATION_ID = 9;
@@ -115,9 +118,10 @@ class FilesModel extends BaseModel
 	 *
 	 * @param DibiFluent
 	 * @param string|null
+	 * @param mixed [optional] filter value
 	 * @return $this
 	 */
-	public function filter(&$items, $filter)
+	public function filter(&$items, $filter, $filterVal = null)
 	{
 		switch ($filter) {
 			case null:
@@ -129,6 +133,10 @@ class FilesModel extends BaseModel
 		
 			case self::FILTER_BY_INSPIRATION:
 				$items->where('complexity_id = %i', self::COMPLEXITY_INSPIRATION_ID);
+				break;
+				
+			case self::FILTER_BY_PROJECT:
+				$this->filterByProject($items, $filterVal);
 				break;
 				
 			default:
@@ -559,6 +567,7 @@ class FilesModel extends BaseModel
 			$dirname . self::SIZE_LARGE . '/',
 			$dirname . self::SIZE_MEDIUM . '/',
 			$dirname . self::SIZE_SMALL . '/',
+			$dirname . self::SIZE_SITEWIDE . '/',
 //					$dirname . 'detail/',
 		);
 		
@@ -577,11 +586,14 @@ class FilesModel extends BaseModel
 		
 				$file2 = clone $file;
 				$file3 = clone $file;
-//				$file4 = clone $file;
 				ImageUploadModel::savePreview($filepath[0], $file, self::LARGE_W, self::LARGE_H, true, $data['filename']);
 				ImageUploadModel::savePreview($filepath[1], $file2, self::MEDIUM_W, self::MEDIUM_H, true, $data['filename']);
 				ImageUploadModel::savePreview($filepath[2], $file3, self::SMALL_W, self::SMALL_H, true, $data['filename']);
-//				ImageUploadModel::savePreview($filepath[3], $file4, self::DETAIL_W, self::DETAIL_H, true, $data['filename']);
+				
+				if ($data['is_top_file']) {
+					$file4 = clone $file;
+					ImageUploadModel::savePreview($filepath[3], $file4, self::SITEWIDE_W, self::SITEWIDE_H, false, $data['filename']);
+				}
 				break;
 				
 			case 'pdf': // intentionally no break
@@ -605,8 +617,13 @@ class FilesModel extends BaseModel
 				$this->saveImagickPreview($im, $filepath[0] . $data['filename'], $suffix, self::LARGE_W, self::LARGE_H);
 				$this->saveImagickPreview($im2, $filepath[1] . $data['filename'], $suffix, self::MEDIUM_W, self::MEDIUM_H);
 				$this->saveImagickPreview($im3, $filepath[2] . $data['filename'], $suffix, self::SMALL_W, self::SMALL_H);
-//				$this->saveImagickPreview($im4, $filepath[3] . $data['filename'], $suffix, self::DETAIL_W, self::DETAIL_H);
 				
+				
+				if ($data['is_top_file']) {
+					$im4 = clone $im;
+					$this->saveImagickPreview($im4, $filepath[3] . $data['filename'], $suffix, self::SITEWIDE_W, self::SITEWIDE_H);
+				}
+
 				break;
 				
 			// just save uploaded file and copy it to all dirs - no need to resize, it is scalable ;)
@@ -617,6 +634,10 @@ class FilesModel extends BaseModel
 				copy($orig_dirname . '/' . $data['filename'], $filepath[1] . $data['filename']);
 				copy($orig_dirname . '/' . $data['filename'], $filepath[2] . $data['filename']);
 		
+				if ($data['is_top_file']) {
+					copy($orig_dirname . '/' . $data['filename'], $filepath[3] . $data['filename']);
+				}
+				
 				break;
 				
 			default:

@@ -2,13 +2,12 @@
  * @param DibiRow array $items
  * @param int $itemsCount
  * @param ProjectsModel $projectsModel
- * @param string renderMode [one of Projects_Front_DefaultPresenter::$_allowedRenderModes]
  *
  *
  *
  **}
 
-{block #title}Projects{/block}
+@{block #title}Projects{/block}
 
 
 {block #options}
@@ -29,12 +28,6 @@
 		<a href="{link this filter=>ProjectsModel::FILTER_COMPLETED}" {attr class('ajax', true) class('active', $presenter->filter === ProjectsModel::FILTER_COMPLETED)}>Completed</a> |
 		<a href="{link this filter=>ProjectsModel::FILTER_IN_PROGRESS}" {attr class('ajax', true) class('active', $presenter->filter === ProjectsModel::FILTER_IN_PROGRESS)}>In Progress</a>
 	</span>
-	
-	<span class="renderMode">
-		<span class="bold">Show</span>
-		<a href="{link this renderMode=>$presenter::RENDER_MODE_THUMBNAILS}" {attr class('ajax', true) class('active', $renderMode === $presenter::RENDER_MODE_THUMBNAILS)}>Thumbnails</a>
-		<a href="{link this renderMode=>$presenter::RENDER_MODE_LIST}" {attr class('ajax', true) class('active', $renderMode === $presenter::RENDER_MODE_LIST)}>List</a>
-	</span>
 {/block}
 
 
@@ -42,37 +35,33 @@
 
 {*snippet itemList*}
 	{if $itemsCount > 0}
-	<div class="projects">
-		{if $renderMode === $presenter::RENDER_MODE_THUMBNAILS}
+	<div class="projectList">
 		<div class="itemList">
 			<div class="item" n:foreach="$items as $project">
-				<span class="project-name">{$project->name}</span>
-				<a href="{link detail $project->id}">
+				<a class="img-link ajax" href="{link detail $project->id}">
 					<img src="{$basePath}/{$projectsModel->getPreviewPath($project->id)}">
 				</a>
 				<div class="project-info">
-					{$project->vectorFilesCount} Vector Files |
-					{$project->bitmapFilesCount} Images
+					<div class="project-name">{$project->name}</div>
+					<div class="project-subtitle">{$project->subtitle}</div>
+					<div class="completed">Completed: {$project->completedFormatted}</div>
+					<select onchange="jump2related({link detail __ID__}, $(this).val());">
+						<option>Related projects</option>
+						<option n:foreach="$project->related as $k=>$rp" value="{$k}">{$rp}</option>
+					</select>
+					<div class="project-files-count">
+						<span class="vectorCount">{$project->vectorFilesCount} Vector Files</span>
+						<span class="bitmapCount">{$project->bitmapFilesCount} Bitmap Files</span>
+					</div>
+					{dump $project}
 				</div>
+				<div class="clear"></div>
 			</div>
-			<div class="clear"></div>
 		</div>
-		{elseif $renderMode === $presenter::RENDER_MODE_LIST}
-			<table class="width_100 grid">
-				<tbody>
-					<tr n:foreach="$items as $project">
-						<td>{$project->name}</td>
-						<td>{$project->completedFormatted}</td>
-						<td>{$project->vectorFilesCount} Vector Files</td>
-						<td>{$project->bitmapFilesCount} Images</td>
-					</tr>
-				</tbody>
-			</table>
-		{/if}
 	</div>		
-		{control itemPaginator false, step}
-		<div class="clear"></div>
+	{control itemPaginator false, step}
+	<div class="clear"></div>
 	{else}
-		<div class="infoMsg">No results found</div>
+	<div class="infoMsg">No results found</div>
 	{/if}
 {*/snippet*}

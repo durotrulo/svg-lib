@@ -1,5 +1,5 @@
 body {
-	font: 16px/1.5 "Trebuchet MS", "Geneva CE", lucida, sans-serif;
+	font: 16px/1.5 "Lucida Grande", "Trebuchet MS", "Geneva CE", lucida, sans-serif;
 	/*font: 16px/1.5 Helvetica, arial, sans-serif;*/
 	color: #999;
 	background-color: #e0e2e3;
@@ -484,41 +484,94 @@ form ul.error li {
 	display: inline-block; /* aby border bol len nad fotkami (ak nie su na cely riadok) */
 }
 
-.projects .itemList {
-	display:block;
+.right-box .itemList {
 	border:0;
-    padding: 0 15px;
 }
 
-	.projects .project-info {
+.projectList .itemList {
+	display:block;
+	border:0;
+    /*padding: 0 15px;*/
+    padding:0;
+}
+
+	.projectList .project-info {
 		float:left;
 	}
 
-	.projects .itemList .item {
+	.projectList .itemList .item {
+		/*
 		border: 1px solid #ccc;
 	    margin: 20px 20px 20px 30px;
+		*/
+		border-right:0;
+	    float:none;
+	    padding: 0 15px;
 	 /*   padding: 20px 20px 0;*/
 	}
 
-		.projects .itemList .item img {
-			margin: 20px;
-			display: block;
+	
+	
+		.projectList .itemList .item .img-link {
+			float:left;
 		}
+			.projectList .itemList .item img {
+				margin: 20px;
+				display: block;
+			}
 
-		.projects .item .project-info {
-			border-top:1px solid #ccc;
+		.projectList .item .project-info {
 			padding-left:20px;
+			float:left;
+			position:relative;
+			height: 260px;
+			width:250px;
+    		margin-top: 20px;
 		}
-		
-		.projects .project-name {
-			position:absolute;
-			    top: -14px;
-				left:20px;
-			background: white;
-		    color: #444;
-		    font-size: 18px;
-		    padding: 0 5px;
-		}
+			
+			.projectList .item span {
+				position:static;
+			}
+			
+			.projectList .project-name {
+			    color: #444;
+			    font-size: 22px;
+    			font-weight: bold;
+			}
+			
+			.projectList .project-subtitle {
+			    color: #444;
+			    font-size: 16px;
+			    font-weight: bold;
+			    margin-top: -5px;
+		   	}
+
+		   	.projectList .completed {
+		   		font-size:11px;
+		   		color:#b3b3b3;
+		   		line-height: 24px;
+    			margin-bottom: 10px;
+		   	}
+			
+			.project-files-count {
+				position:absolute;
+				bottom:0px;
+				left:0;
+			}
+				
+				.projectList .vectorCount,
+				.projectList .bitmapCount {
+					display:inline-block;
+					margin-right: 15px;
+    				padding-left: 27px;
+				}
+				.projectList .vectorCount {
+					background: transparent url(../images/projects-icon_count_vectors.png) left top no-repeat;
+				}
+				.projectList .bitmapCount {
+					background: transparent url(../images/projects-icon_count_bitmaps.png) left top no-repeat;
+				}
+
 
 	.item {
 		border-right:1px solid #999;
@@ -899,8 +952,18 @@ a.active {
 }
 
 .cols-2-layout {
-	background: url('../images/bg_left-box.gif') repeat-y left top;
+	background: url('../images/bg_left-box.gif') repeat-y 251px top;
 }
+
+	.cols-2-layout .itemList.thumbSize-medium .item:nth-child(4n) {
+		border-right:1px solid #999999;
+		width:251px;
+	}
+	.cols-2-layout .itemList.thumbSize-medium .item:nth-child(3n) {
+		border-right:0;
+		width:252px;
+	}
+	
 	/*.top-heading .share-link,*/
 	.top-heading .right-link
 	 {
@@ -931,12 +994,21 @@ a.active {
 		margin:10px;
 	}
 	
+	.left-box .projectList a {
+		color:#0070BB;
+		display: block;
+	    margin: 5px 0;
+	}
+	
 	.letter-filter {
 		text-transform:uppercase;
 	}
 		.letter-filter a {
 			color:#a1a1a1;
 			text-decoration:none;
+			display:inline-block;
+			width:10px;
+			text-align: center;
 		}
 			.letter-filter a.active {
 				color:#333;
@@ -981,12 +1053,40 @@ a.active {
 		}
 
 
+.editable textarea {
+	min-height:3em;
+}
 
 .cols-2-layout .right-box {
 	float:left;
 	width:756px;
 }
 
+	.topfile {
+		background-color:#f2f2f2;
+		border-bottom:1px solid #979797;
+		padding:15px;
+	}
+	
+		.topfile .toggler {
+			float:right;
+			cursor:pointer;
+		}
+	
+		.topfile .left {
+			width:465px;
+		}
+			.topfile .filename {
+				color:#000;
+				display:block;
+			}
+			.topfile .left img {
+				margin:15px 45px;
+			}
+
+		.topfile .right {
+			width:260px;
+		}
 
 
 .ok-button,

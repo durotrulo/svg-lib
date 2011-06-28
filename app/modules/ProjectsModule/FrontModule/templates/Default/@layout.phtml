@@ -2,7 +2,6 @@
  * @param DibiRow array $items
  * @param int $itemsCount
  * @param ProjectsModel $projectsModel
- * @param string renderMode [one of Projects_Front_DefaultPresenter::$_allowedRenderModes]
  *
  *
  *
@@ -28,41 +27,35 @@
 		<a href="{link this filter=>ProjectsModel::FILTER_COMPLETED}" {attr class('ajax', true) class('active', $presenter->filter === ProjectsModel::FILTER_COMPLETED)}>Completed</a> |
 		<a href="{link this filter=>ProjectsModel::FILTER_IN_PROGRESS}" {attr class('ajax', true) class('active', $presenter->filter === ProjectsModel::FILTER_IN_PROGRESS)}>In Progress</a>
 	</span>
-	
-	<span class="renderMode">
-		<span class="bold">Show</span>
-		<a href="{link this renderMode=>$presenter::RENDER_MODE_THUMBNAILS}" {attr class('ajax', true) class('active', $renderMode === $presenter::RENDER_MODE_THUMBNAILS)}>Thumbnails</a>
-		<a href="{link this renderMode=>$presenter::RENDER_MODE_LIST}" {attr class('ajax', true) class('active', $renderMode === $presenter::RENDER_MODE_LIST)}>List</a>
-	</span>
 {/block}
 
 
 @{block #content}
 
 <div class="cols-2-layout">
+	{snippet top-heading}
 	<div class="top-heading blue">
-		<h1>@{include #title}</h1>
-		<span class="right-link">
+		<h1>{include #title}</h1>
+		<span class="right-link" n:if="!empty($isProjectDetail)">
 			<a class="ajax ok-button" href="{link list}">Back to projects display</a>
 		</span>
 	</div>
+	{/snippet}
 	
 	<div class="left-box">
 		<div class="margin-all">
 		{snippet projectList}
 			<div>
 				<div class="letter-filter" n:inner-foreach="array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z') AS $letter">
-					<a href="{link this 'firstLetter'=>$letter}" {ifCurrent}class="active"{/if}>{$letter}</a>
+					<a href="{link this 'firstLetter'=>$letter}" class="ajax{ifCurrent} active{/if}">{$letter}</a>
 					{if $letter === 'm'}<br>{/if}
 				</div>
-				<a href="{link this firstLetter=>null}">Show all</a>
+				<a class="ajax" href="{link this firstLetter=>null}">Show all</a>
 			</div>
 			{if count($projectList) > 0}
 			<div class="projects">
 				<div class="projectList">
-					<div class="" n:foreach="$projectList as $project">
-						<a href="{link detail $project->id}" {ifCurrent}class="active"{/if}>{$project->name}</a>
-					</div>
+					<a href="{link detail $project->id}" class="ajax{ifCurrent} active{/if}" n:foreach="$projectList as $project">{$project->name}</a>
 				</div>
 			</div>		
 			{else}
@@ -73,7 +66,9 @@
 	</div>
 	
 	{snippet itemList 'div class="right-box"'}
+		<div class="projects">
 		@{include #itemList}
+		</div>
 	{/snippet}
 	<div class="clear"></div>
 </div>

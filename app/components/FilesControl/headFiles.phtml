@@ -1,7 +1,9 @@
 <script src="{$basePath}/modules/colorbox/jquery.colorbox.js"></script>
 <script>
+	// PRESENTER links
 	// generate link and update it on every snippet redraw in itemList.phtml
  	var linkReloadItemList = {link reloadItemList!};
+ 	var linkEditFileDesc = {link editFileDesc! __ID__}
 
  	$('.editable textarea').livequery('resize', function() {
  		$.colorbox.resize();
@@ -41,7 +43,7 @@
 					// set correct link for description edit
 					// whole element must be replaced by self due to editable events binding
 					var editable = fileDetailModal.find('.description-container .editable');
-					editable.attr('data-editable-process-url', editable.attr('data-editable-process-url').replace('__ID__', itemId));
+					editable.attr('data-editable-process-url', linkEditFileDesc.replace('__ID__', itemId));
 					var editableClone = editable.clone();
 					editable.replaceWith(editableClone);
 

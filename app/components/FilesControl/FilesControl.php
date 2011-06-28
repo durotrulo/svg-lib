@@ -139,7 +139,8 @@ class FilesControl extends BaseControl
 	 */
 	public function loadItems()
 	{
-		$this->items = $this->model->findAll();
+		$this->items = $this->model->findAll()
+									->where('is_top_file = 0');
 		try {
 			$this->model->filter($this->items, $this->presenter->filter)
 						->filterByTag($this->items, $this->presenter->q)
@@ -152,6 +153,22 @@ class FilesControl extends BaseControl
 		
 		$this->template->itemsCount = $this->itemsCount = $this->items->count();
 		$this->template->thumbSize = Environment::getHttpRequest()->getCookie(self::COOKIE_THUMBSIZE) ? Environment::getHttpRequest()->getCookie(self::COOKIE_THUMBSIZE) : FilesModel::SIZE_MEDIUM;
+	}
+	
+	
+	/**
+	 * apply additional filters
+	 *
+	 * @param array (filterName => filterValue)
+	 */
+	public function applyFilters($filters)
+	{
+		foreach ($filters as $filter => $filterVal) {
+			$this->model->filter($this->items, $filter, $filterVal);
+		}
+//		dump($this->items);
+
+		$this->template->itemsCount = $this->itemsCount = $this->items->count();
 	}
 	
 	
@@ -223,33 +240,6 @@ class FilesControl extends BaseControl
 	
 	
 	/**
-	 * edit lightbox name using jEditable on frontend
-	 * prints updated name and exits
-	 *
-	 * @param int lightbox id
-	 * @param string new lightbox's name
-	 * @return void
-	 */
-	public function handleEditFileDesc($id, $desc)
-	{
-		if ($this->user->isAllowed(new FileResource($id), 'edit_description')) {
-			try {
-				$this->model->update($id, array(
-					'description' => $desc,
-				));
-				echo nl2br($desc);
-			} catch (DibiDriverException $e) {
-				throw $e;
-				echo OPERATION_FAILED;
-			}
-		} else {
-			echo NOT_ALLOWED;
-		}
-		$this->presenter->terminate();
-	}
-	
-
-	/**
 	 * set thumb size for files - no js fallback
 	 */
 	public function handleSetThumbSize($size)
@@ -274,7 +264,7 @@ class FilesControl extends BaseControl
 		$form = $this["addFile2LightboxForm_$fileId"];
 		$form['files_id']->value = $fileId;
 		// keep challenge option (first) and add only user's own lightboxes that file is not in yet
-		$items = array($form['lightboxes_id']->items[0]) + $this->model->fetchOwnUnusedLightboxes($fileId);
+		$items = array($form['lightboxes_id']->items[-1]) + $this->model->fetchOwnUnusedLightboxes($fileId);
 		$form['lightboxes_id']->items = $items;
 	}
 	

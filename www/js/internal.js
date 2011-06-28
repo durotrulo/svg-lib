@@ -108,6 +108,18 @@ function toggleBindTagContainer(showForm)
 }
 
 
+/**
+ * simulate ajax click on select change to jump to related project
+ * @param string link to project detail
+ * @param int project ID
+ */
+function jump2related(projectDetailLink, projectId)
+{
+	projectDetailLink = projectDetailLink.replace('__ID__', projectId);
+	$('<a href="' + projectDetailLink + '" class="ajax"></a>').hide().appendTo('body').trigger('click').remove();
+}
+
+
 $(function() {
 	$.Nette.addDummyUpdateSnippet('#snippet--menu');
 	$.Nette.addCallback(fileDetailTags);
@@ -172,6 +184,27 @@ $(function() {
 	$('.toggler').livequery('click', function(e){
 		var $this = $(this);
 		$this.toggleClass('active');
+	});
+	
+	$('.topfile .toggler').live('click', function(e) {
+		var $this = $(this);
+		var content = $this.parent().siblings('.topfile-content');
+		var togglerSpan = $('span', this);
+		
+		var isVisible = content.css('display') !== 'none';
+		if (isVisible) {
+//			content.fadeTo('fast', 0, function(){
+			content.slideUp('normal', function(){
+				togglerSpan.text('Show')
+					.addClass('hide');
+			});
+		} else {
+//			content.fadeTo('fast', 1, function() {
+			content.slideDown('normal', function() {
+				togglerSpan.text('Hide')
+					.removeClass('hide');
+			});
+		}
 	});
 	
 	/* LIGHTBOXES */

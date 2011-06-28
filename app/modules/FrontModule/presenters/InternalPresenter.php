@@ -314,4 +314,30 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 //		$this->terminate();
 	}
 	
+	
+	/**
+	 * edit lightbox name using jEditable on frontend
+	 * prints updated name and exits
+	 *
+	 * @param int lightbox id
+	 * @param string new lightbox's name
+	 * @return void
+	 */
+	public function handleEditFileDesc($fileId, $desc)
+	{
+		if ($this->user->isAllowed(new FileResource($fileId), 'edit_description')) {
+			try {
+				$this->filesModel->update($fileId, array(
+					'description' => $desc,
+				));
+				echo nl2br($desc);
+			} catch (DibiDriverException $e) {
+				throw $e;
+				echo OPERATION_FAILED;
+			}
+		} else {
+			echo NOT_ALLOWED;
+		}
+		$this->terminate();
+	}
 }

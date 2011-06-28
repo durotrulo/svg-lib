@@ -4,6 +4,7 @@ $(function() {
  		$this.editable($this.data('editableProcessUrl'), {
 	    	indicator 	: 'Saving...',
 //	        tooltip   	: 'Click to edit...',
+	        placeholder	: '',
 	        name		: $this.data('editableName'),
 	        id			: 'elementId',
 	        style		: 'inherit',

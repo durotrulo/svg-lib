@@ -185,7 +185,8 @@ abstract class BaseModel extends Object
 	public static function prepareSelect($options, $firstValue = '', $usePhrase = false)
 	{
 		$item = $usePhrase ? $firstValue : "Select $firstValue";
-		return array($item) + $options;
+//		return array($item) + $options;
+		return array('-1'=>$item) + $options;
 	}
 	
 	

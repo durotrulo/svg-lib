@@ -65,6 +65,17 @@ class ProjectsModel extends BaseModel
 	
 	
 	
+	public function getTopFiles($projectId)
+	{
+		return dibi::select('id, filename, description')
+					->from(self::FILES_TABLE)
+					->where('projects_id = %i', $projectId)
+					->where('is_top_file = 1')
+					->fetchAll();
+	}
+	
+	
+	
 	/**
 	 * check if projectname is available
 	 *
@@ -364,20 +375,28 @@ class ProjectsModel extends BaseModel
 	public function getRelatedProjects($id)
 	{
 		return dibi::query('
-			SELECT projects_id
-			FROM %n
+			SELECT projects_id AS id, name
+			FROM %n AS rp
+			LEFT JOIN %n AS p
+				ON rp.projects_id = p.id
 			WHERE projects_id2 = %i
 			
 			UNION
 			
-			SELECT projects_id2
-			FROM %n
+			SELECT projects_id2 AS id, name
+			FROM %n AS rp
+			LEFT JOIN %n AS p
+				ON rp.projects_id2 = p.id
 			WHERE projects_id = %i
 		', self::RELATED_PROJECTS_TABLE,
+			self::PROJECTS_TABLE,
 			$id,
 			self::RELATED_PROJECTS_TABLE,
+			self::PROJECTS_TABLE,
 			$id
-		);
+		)
+		->fetchPairs('id', 'name');
+//		->fetchAll();
 			
 			select('id, name')
 			->from(self::TABLE)

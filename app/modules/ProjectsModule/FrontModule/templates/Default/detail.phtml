@@ -2,13 +2,18 @@
  * @param DibiRow array $items
  * @param int $itemsCount
  * @param ProjectsModel $projectsModel
- * @param string renderMode [one of Projects_Front_DefaultPresenter::$_allowedRenderModes]
  *
  *
  *
  **}
 
-{block #title}Project {$project->name}{/block}
+@{capture $head}
+	@{include $filesControl->getHeadFilesTplPath()}
+@{/capture}
+
+
+ 
+@{block #title}Project {$project->name}{/block}
 
 {block #options}
 {*
@@ -30,62 +35,35 @@
 		<a href="{link this filter=>ProjectsModel::FILTER_IN_PROGRESS}" {attr class('ajax', true) class('active', $presenter->filter === ProjectsModel::FILTER_IN_PROGRESS)}>In Progress</a>
 	</span>
 	
-	<span class="renderMode">
-		<span class="bold">Show</span>
-		<a href="{link this renderMode=>$presenter::RENDER_MODE_THUMBNAILS}" {attr class('ajax', true) class('active', $renderMode === $presenter::RENDER_MODE_THUMBNAILS)}>Thumbnails</a>
-		<a href="{link this renderMode=>$presenter::RENDER_MODE_LIST}" {attr class('ajax', true) class('active', $renderMode === $presenter::RENDER_MODE_LIST)}>List</a>
-	</span>
 *}
 {/block}
 
-@{block #content}
+@{block #itemList}
 
-{snippet itemList}
-	<div class="projects">
-		<div class="itemList">
-			<div class="item">
-				<span class="project-name">{$project->name}</span>
-				<img src="{$basePath}/{$projectsModel->getPreviewPath($project->id)}">
-				<div class="project-info">
-					{$project->vectorFilesCount} Vector Files |
-					{$project->bitmapFilesCount} Images
+{*snippet itemList*}
+	<div class="topfile" n:foreach="$project->topFiles as $file">
+		<div class="topfile-head">
+			<span class="toggler"><span>Show</span></span>
+			<span class="filename">{$file->filename}</span>
+		</div>
+		<div class="topfile-content">
+			<div class="left">
+				<img src="{$basePath}/{$control->filesModel->getPreviewPath($project->id, FilesModel::SIZE_SITEWIDE, $file->filename, true)}">
+			</div>
+			<div class="right">
+				<div>Tags</div>
+				<div>Description: 
+					<span class="trigger-editable pointer">Edit</span>
+					<p class="editable" data-editable-type="textarea" data-editable-submit="OK" data-editable-name="desc" data-editable-process-url="{link editFileDesc! $file->id}">{$file->description}</p>
 				</div>
 			</div>
-			
-			<div class="project-info">
-				<h1>{$project->name}</h1>
-				<span>{= is_null($project->completed) ? 'In Progress' : TemplateHelpers::date($project->completed)}</span>
-				<span>RELATED PROJECTS?</span>
-				<a href="{link downloadAll! $project->id}">Download all files (zip)</a>
-			</div>
-			
 			<div class="clear"></div>
 		</div>
-		
-		<div class="itemList thumbSize-{$thumbSize}">
-			<div>
-			FILES
-<!--				skopirovane zatial iba z files->list -->
-				<div class="item" n:foreach="$project->files as $item">
-					<span class="top-right show-on-hover">{$item->downloads} downloads</span>
-					<a href="{$basePath}/{$presenter->filesModel->getPreviewPath($item->projects_id, 'large', $item->filename, true)}" rel="images">
-						<img src="{$basePath}/{$presenter->filesModel->getPreviewPath($item->projects_id, $thumbSize, $item->filename, true)}">
-					</a>
-					<a href="{link download! $item->id}" title="Download" class="download-link show-on-hover"></a>
-					{*
-					{? $presenter->prepareAddFile2LightboxForm($item->id)}
-					<span class="ib add2lightbox show-on-hover">{control addFile2LightboxForm_$item->id}</span>
-					*}
-
-				</div>
-
-				<div class="clear"></div>
-			</div>
-		</div>
-
-		<div class="clear"></div>
-
 	</div>
-	{control itemPaginator false, step}
+	
+	@{$filesControl->renderList()}
+
 	<div class="clear"></div>
-{/snippet}
+	<a href="{link downloadAll! $project->id}">Download all files (zip)</a>
+
+{*/snippet*}
