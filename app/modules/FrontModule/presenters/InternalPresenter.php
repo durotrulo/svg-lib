@@ -264,7 +264,7 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 			
 			
 		$form->addSubmit('search', 'Search')
-			->getControlPrototype()->class('noJS noJS-tr');
+			->getControlPrototype()->class('noJS invisible');
 
 		$_this = $this;
 		$form->onSubmit[] = function(MyAppForm $form) use (&$_this) {

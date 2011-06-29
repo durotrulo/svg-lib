@@ -164,7 +164,11 @@
 			@{if $renderSections['filters']}
 			<div class="filters-pannel">
 				{snippet searchForm, 'div class="ib"'}
-					{control searchForm}
+					{*control searchForm*}
+					{form searchForm}
+						{input q}
+						{input search}
+					{/form}
 					<a id="searchFormClearer" href="{link clearSearchForm!}" class="ajax" title="clear search"></a>
 				{/snippet}
 				
