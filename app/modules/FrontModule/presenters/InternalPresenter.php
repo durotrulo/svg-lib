@@ -292,7 +292,8 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 	
 	public function handleReloadItemList()
 	{
-		$this->refresh('itemList', 'this');
+//		$this->refresh('itemList', 'this');
+		$this->refresh('content', 'this');
 	}
 	
 	

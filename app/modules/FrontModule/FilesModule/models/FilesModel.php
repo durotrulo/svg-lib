@@ -413,7 +413,7 @@ class FilesModel extends BaseModel
 	
 	/**
 	 * get tags bound to file
-	 *
+	 *@todo: clean
 	 * @param int
 	 * @return DibiRow array
 	 */
@@ -441,6 +441,43 @@ class FilesModel extends BaseModel
 //			)->fetchAll()
 //		);
 //		die();
+
+//		dump(
+		return dibi::select(
+				'f2t.tags_id AS id, 
+				t.name, 
+				r.key_name AS userLevel,
+				r.id as role_id
+				'
+				)
+				->from(self::FILES_2_TAGS_TABLE)
+					->as('f2t')
+				->leftJoin(self::ACL_ROLES_TABLE)	// roles of user who tagged given file
+					->as('r')
+					->on('
+					r.id IN (
+						SELECT role_id
+						FROM %n
+						WHERE user_id IN (
+							SELECT tagged_by
+							FROM %n
+							WHERE files_id = %i AND tags_id = t.id
+						)
+					)
+				',	self::ACL_USERS_2_ROLES_TABLE,
+					self::FILES_2_TAGS_TABLE,
+					$fileId
+				)
+				->innerJoin(self::TAGS_TABLE)
+					->as('t')
+					->on('t.id = f2t.tags_id')
+				->where('f2t.files_id = %i', $fileId)
+				->orderBy('role_id DESC') #zaujima ma rola s vyssim id - teda napr. designer viac ako superadmin, kvoli ofarbeniu tagov
+//				->test()
+				->fetchAssoc('id');
+//				->fetchAll()
+//		);die();
+/*
 		dump(
 			dibi::select('f2t.tags_id AS id, t.name, r.key_name
 				 AS userLevel'
@@ -454,6 +491,7 @@ class FilesModel extends BaseModel
 					->as('t')
 					->on('t.id = f2t.tags_id')
 				->where('f2t.files_id = %i', $fileId)
+				// roles of user who tagged given file
 				->where('
 					r.id IN (
 						SELECT role_id
@@ -465,8 +503,9 @@ class FilesModel extends BaseModel
 						)
 					)
 					ORDER BY id DESC
-				', 		self::ACL_USERS_2_ROLES_TABLE,
-						self::FILES_2_TAGS_TABLE,$fileId
+				',	self::ACL_USERS_2_ROLES_TABLE,
+					self::FILES_2_TAGS_TABLE,
+					$fileId
 				)
 //				->test()
 				->fetchAll()
@@ -499,6 +538,7 @@ class FilesModel extends BaseModel
 					->on('t.id = f2t.tags_id')
 				->where('f2t.files_id = %i', $fileId)
 				->fetchAll();
+				*/
 	}
 	
 	

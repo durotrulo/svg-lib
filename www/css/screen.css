@@ -149,6 +149,7 @@ form ul.error li {
 		.options-pannel span.toggler {
 			display: inline-block;
 		    width: 77px;
+		    padding-left: 15px;
 		}
 		
 		
@@ -206,7 +207,7 @@ form ul.error li {
 
 	.thumbsizeControl,
 	.renderMode {
-		 margin-left: 50px;
+		 margin-left: 40px;
 	 }
 	 
 		.thumbsizeControl a {
