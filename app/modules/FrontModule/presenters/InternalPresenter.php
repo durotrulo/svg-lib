@@ -252,6 +252,108 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 		return $form;
 	}
 
+
+	/**
+	 * factory for bind tag 2 file form
+	 */
+	protected function createComponentBindTagForm($name)
+	{
+		return $this->getBindTagFormComponent($this, $name);
+	}
+
+	
+	/**
+	 * factory for bind tag 2 file form [common for FilesControl and presenter]
+	 * called by createComponentBindTagForm(name)
+	 */
+	public function getBindTagFormComponent($parent, $name)
+	{
+		$form = new MyAppForm($parent, $name);
+		$form->enableAjax();
+		$form->setErrorsAsFlashMessages();
+		$form->setCustomRenderer($form::RENDER_MODE_INLINE_BLOCK);
+		$form->getElementPrototype()
+			->data('nette-spinner', '#tagSpinner')
+			->class[] = 'bindTagForm';
+		
+		if (!is_null($this->presenter->getTranslator())) {
+			$form->setTranslator($this->presenter->getTranslator());
+		}
+		
+		$form->addTag('tags', 'Tags', $this->getTagsModel()->fetchPairs())
+		 	->addRule(Form::FILLED, 'Enter Tags!')
+		 	->addRule(MyTagInput::UNIQUE, 'Tags must be unique!')
+			->getControlPrototype()
+            	->class('tags-input');
+			
+        $form->addHidden('fileId');
+		$form->addSubmit('save', 'Add');
+		$_this = $this;
+		$form->onSubmit[] = function(MyAppForm $form) use ($_this) {
+			try {
+				if ($form['save']->isSubmittedBy()) {
+					$values = $form->getValues();
+
+					$fileId = $values['fileId'];
+					if ($_this->user->isAllowed(new FileResource($fileId), 'bind_tag')) {
+					
+						$tags = $values['tags'];
+						unset($values['tags']);
+	
+						// insert new tags to DB and $tags
+						$newTags = $form['tags']->getNewTags();
+						if ($newTags) {
+							foreach ($newTags as $k => $tag) {
+								$insertId = $_this->tagsModel->insert(array('name' => $tag));
+								$tags[$insertId] = $tag;
+								unset($tags[$k]); // unset temporary index of new tag
+							}
+						}
+						
+						// attach tags
+						$_this->filesModel->bindTags($fileId, array_keys($tags));
+						
+						$_this->flashMessage('Tag added', $_this::FLASH_MESSAGE_SUCCESS);
+	
+						// format inserted tags for jQuery processing
+						$insertedTags = array();
+						$usersModel = new UsersModel();
+						foreach ($tags as $k => $tag) {
+							$insertedTags[] = array(
+								'id' => $k,
+								'name' => $tag, 
+								'userLevel' => $usersModel->getRolesForTag(),
+							);
+						}
+						$_this->presenter->payload->actions[] = 'addTag';
+						$_this->presenter->payload->tags = $insertedTags;
+						$_this->presenter->payload->fileId = $fileId;
+
+					} else {
+						$_this->flashMessage(NOT_ALLOWED, $_this::FLASH_MESSAGE_ERROR);
+					}
+				}
+			} catch (DibiDriverException $e) {
+				// duplicate entry
+				if ($e->getCode() === 1062) {
+					$_this->flashMessage("ERROR: " . $e->getMessage(), $_this::FLASH_MESSAGE_ERROR);
+				} else {
+					$_this->flashMessage("ERROR: cannot save data!", $_this::FLASH_MESSAGE_ERROR);
+				}
+				// keep prefilled data, do not refresh page
+				return false;
+			}
+		
+			$form->resetValues();
+			$_this->refresh('flashes'); // do not redraw snippets, just for redirection in non-js
+//			$_this->refresh(array('flashes', 'bindTagForm')); // do not redraw snippets, just for redirection in non-js
+	
+//			$_this->refresh(null, 'this');
+		};
+
+		return $form;
+	}
+	
 	
 	protected function createComponentSearchForm($name)
 	{
@@ -292,8 +394,8 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 	
 	public function handleReloadItemList()
 	{
-//		$this->refresh('itemList', 'this');
-		$this->refresh('content', 'this');
+		$this->refresh('itemList', 'this');
+//		$this->refresh('content', 'this');
 	}
 	
 	
@@ -339,6 +441,18 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 		} else {
 			echo NOT_ALLOWED;
 		}
+		$this->terminate();
+	}
+	
+	
+	/**
+	 * load tags bound to file ($fileId) and send to client
+	 *
+	 * @param int
+	 */
+	public function handleGetTags($fileId)
+	{
+		$this->payload->tags = $this->filesModel->getTags($fileId);
 		$this->terminate();
 	}
 }

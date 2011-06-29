@@ -173,11 +173,11 @@
 				{/snippet}
 				
 				{snippet menu, 'div class="filter-menu ib"'}
-				<a href="{link :Front:Files:list filter=>null}" class="ajax{ifCurrent} active{/if}">All</a>
-				<a href="{link :Front:Files:list filter=>FilesModel::FILTER_BY_VECTOR}" class="ajax{ifCurrent} active{/if}">Vector</a>
-				<a href="{link :Front:Files:list filter=>FilesModel::FILTER_BY_BITMAP}" class="ajax{ifCurrent} active{/if}">Bitmap</a>
-				<a href="{link :Front:Files:list filter=>FilesModel::FILTER_BY_INSPIRATION}" class="ajax{ifCurrent} active{/if}">Inspiration</a>
-				<a href="{link :Projects:Front:Default:list filter=>null}" class="ajax{ifCurrent} active{/if}">Projects</a>
+				<a href="{link :Front:Files:list filter=>null}" class="{ifCurrent} active{/if}">All</a>
+				<a href="{link :Front:Files:list filter=>FilesModel::FILTER_BY_VECTOR}" class="{ifCurrent} active{/if}">Vector</a>
+				<a href="{link :Front:Files:list filter=>FilesModel::FILTER_BY_BITMAP}" class="{ifCurrent} active{/if}">Bitmap</a>
+				<a href="{link :Front:Files:list filter=>FilesModel::FILTER_BY_INSPIRATION}" class="{ifCurrent} active{/if}">Inspiration</a>
+				<a href="{link :Projects:Front:Default:list filter=>null}" class="{ifCurrent :Projects:Front:Default:*} active{/if}">Projects</a>
 				{/snippet}
 			</div>
 			@{/if}
@@ -231,10 +231,11 @@
 				<!--FILE UPLOAD END-->
 				{/if}
 				
-				{*@{include #content}*}
-				{snippet content}
+				{**}
+				@{include #content}
+				{*snippet content}
 					{include #content}
-				{/snippet}
+				{/snippet*}
 			</div>
 		</div>
 		

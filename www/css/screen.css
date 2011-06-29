@@ -1,5 +1,6 @@
 body {
-	font: 16px/1.5 "Lucida Grande", "Trebuchet MS", "Geneva CE", lucida, sans-serif;
+	/*font: 16px/1.5 "Lucida Grande", "Trebuchet MS", "Geneva CE", lucida, sans-serif;*/
+	font: 14px/1.4 "Lucida Grande", "Trebuchet MS", "Geneva CE", lucida, sans-serif;
 	/*font: 16px/1.5 Helvetica, arial, sans-serif;*/
 	color: #999;
 	background-color: #e0e2e3;
@@ -207,7 +208,7 @@ form ul.error li {
 
 	.thumbsizeControl,
 	.renderMode {
-		 margin-left: 40px;
+		 margin-left: 37px;
 	 }
 	 
 		.thumbsizeControl a {
@@ -745,6 +746,10 @@ form ul.error li {
    		padding-left:10px;
    		width:100%;
    	}
+   		.addTagPrompt {
+   			background:transparent url(../images/projects-icon_add.png) left center no-repeat;
+   			padding-left:20px;
+   		}
    		
    	   	/*
    	   	.tags-container .tag-control-container {
@@ -784,13 +789,13 @@ form ul.error li {
    	   	
    		.file-detail-taglist li a {
 			/*background:#B3B3B3 url('../images/button-cancel.png') no-repeat 95% center;*/
-			background:url('../images/button-cancel.png') no-repeat center center;
-			display:inline-block;
-			width:19px;
-			height:19px;
-			position: relative;
-    			top: 3px;
-				left: 8px;
+			background: url("../images/button-cancel.png") no-repeat scroll center center transparent;
+		    display: inline-block;
+		    height: 15px;
+		    position: relative;
+			    top: 2px;
+			    left: 9px;
+		    width: 15px;
 		}
    			.file-detail-taglist li a:hover {
 				/*background-color:#797B7B;*/
@@ -1000,8 +1005,16 @@ a.active {
 		color:#0070BB;
 		display: block;
 	    margin: 5px 0;
+	    text-decoration:none;
 	}
-	
+		.left-box .projectList a:hover {
+		    text-decoration:underline;
+		}
+		.left-box .projectList a.active {
+			background-color:transparent;
+			color:#000;
+		}
+		
 	.letter-filter {
 		text-transform:uppercase;
 	}
@@ -1104,6 +1117,7 @@ a.active {
 				color:#000;
 				display:block;
 				cursor: move;
+				font-size: 14px;
 			}
 			.topfile .left img {
 				margin:15px 45px;
@@ -1116,14 +1130,22 @@ a.active {
 			.topfile-content .trigger-editable {
 				float:right;
 			}
+			
+			.topfile .bindTagForm label {
+	   			display:none;
+	   		}
 
 
 .ok-button,
 .cancel-button {
-	font: bold 13px "Lucida Grande";
+	border: 0 none;
+    font-size: 11px;
+    letter-spacing: 0.2px;
+    padding: 3px 40px 4px 11px !important;
+    text-decoration: none;
+    word-spacing: 1px;
+    
 	color:white;
-	text-transform:uppercase;
-	padding: 5px 40px 5px 5px !important;
 	border:0;	
 	-moz-border-radius-topleft: 10px;
 	-moz-border-radius-topright:10px;
@@ -1141,7 +1163,8 @@ a.active {
 
 .ok-button {
 	/*background:#39B54A url('../images/admin-icons.png');*/
-	background:#39B54A url('../images/button-arrow.png') no-repeat 95% center;
+	/*background:#39B54A url('../images/button-arrow.png') no-repeat 95% center;*/
+	background:#39B54A url('../images/button-arrow.png') no-repeat 98% center;
 }
 .ok-button:hover {
 	background-color:#00984E;

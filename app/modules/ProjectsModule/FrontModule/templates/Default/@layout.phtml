@@ -9,6 +9,50 @@
 
 @{extends ../../../../../templates/@layout.phtml}
  
+{* HEAD FILES FOR DETAIL VIEW PLACED HERE DUE TO INABILITY TO LOAD IT DIRECTLY IN DETAIL VIA AJAX *}
+{capture $head}
+	{include $filesControl->getHeadFilesTplPath()}
+
+	<script>
+		var linkSortTopFiles = {link sortTopFiles!};
+
+		var linkGetTags = {link getTags! __ID__};
+
+		$('.topfile').livequery(function() {
+			var $this = $(this),
+				taglist = $this.find('.file-detail-taglist'),
+				tagSpinner = taglist.prevAll('.tags-heading').find('.spinner').show(),
+				itemId = $this.attr('id').substr(8);
+				
+
+			initTagInput();
+			toggleBindTagContainer($this.find('.bindTagContainer'), false);
+
+			$.getJSON(linkGetTags.replace('__ID__', itemId), function(data) {
+		 		// set file id for tag binding
+		 		$this.find('#frmbindTagForm-fileId').val(itemId);
+		 		
+		 		// render bound tags
+				var items = buildTagList(data['tags'], itemId);
+			  	taglist.html(
+				  	$('<ul/>', {
+					    html: items.join('')
+				  	})
+			  	);
+			  	tagSpinner.hide();
+			});
+			
+			// submit form after each tag selected
+			$this.find('span.tag-value span').livequery(function() {
+				$this.find('.bindTagForm').submit();
+				// empty chosen tags
+				$this.find('.tag-value').empty();
+//				fileDetailModal.find('.tag-control-helper').focus();
+			});
+		});
+	</script>
+{/capture}
+
 {block #options}
 	<span class="bold resultsCount">{$itemsCount} results found</span>
 	<span class="orderby">
@@ -47,7 +91,8 @@
 		{snippet projectList}
 			<div>
 				<div class="letter-filter" n:inner-foreach="array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z') AS $letter">
-					<a href="{link this 'firstLetter'=>$letter}" class="ajax{ifCurrent} active{/if}">{$letter}</a>
+				{*<a href="{link this 'firstLetter'=>$letter}" class="ajax{ifCurrent} active{/if}">{$letter}</a>*}
+					<a href="{link setFirstLetter! $letter}" class="ajax{ifCurrent this 'firstLetter'=>$letter} active{/if}">{$letter}</a>
 					{if $letter === 'm'}<br>{/if}
 				</div>
 				<a class="ajax" href="{link this firstLetter=>null}">Show all</a>

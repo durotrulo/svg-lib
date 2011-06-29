@@ -140,7 +140,7 @@
 
 /* FILE DETAIL VIEW */
 
-.bindTagContainer,
+#file-detail-modal .bindTagContainer,
 .description-container .trigger-editable {
 	display:inline-block;
 	float: right;

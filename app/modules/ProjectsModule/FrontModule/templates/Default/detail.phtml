@@ -6,15 +6,6 @@
  *
  *
  **}
-
-@{capture $head}
-	@{include $filesControl->getHeadFilesTplPath()}
-	<script>
-		var linkSortTopFiles = {link sortTopFiles!};
-	</script>
-@{/capture}
-
-
  
 @{block #title}Project {$project->name}{/block}
 
@@ -55,11 +46,21 @@
 					<img src="{$basePath}/{$control->filesModel->getPreviewPath($project->id, FilesModel::SIZE_SITEWIDE, $file->filename, true)}">
 				</div>
 				<div class="right">
-					<div>Add a Tag</div>
+					<div class="tags-container">
+						<div class="tags-heading">
+							<div class="bindTagContainer">
+								<span class="pointer addTagPrompt">Add Tag</span>
+								<span class="spinner"></span>
+								{control bindTagForm}
+							</div>
+						</div>
+						<div class="file-detail-taglist"></div>
+					</div>
+					
 					<div>
 						<span class="toggler toggler-right"><span class="description">Description: </span></span>
 						<span class="trigger-editable pointer">Edit</span>
-						<p class="editable toggler-content" data-editable-type="textarea" data-editable-submit="OK" data-editable-name="desc" data-editable-process-url="{link editFileDesc! $file->id}">{$file->description}</p>
+						<p class="editable toggler-content" data-editable-type="textarea" data-editable-submit="OK" data-editable-name="desc" data-editable-process-url="{link editFileDesc! $file->id}">{!$file->description|nl2br}</p>
 					</div>
 				</div>
 				<div class="clear"></div>

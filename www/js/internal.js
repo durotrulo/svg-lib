@@ -19,6 +19,10 @@ function fileDetailTags(payload, textStatus, jqXHR)
 	
 				case 'addTag':
 					var taglist = $('#file-detail-modal .file-detail-taglist ul');
+					if (empty(taglist)) {
+						taglist = $('#topfile_' + payload.fileId + ' .file-detail-taglist ul');
+					}
+					log(taglist);
 					var tag = buildTagListItem(payload.tags[0], payload.fileId);
 					$(tag).opacityHide().appendTo(taglist).opacityFadeIn();
 
@@ -91,9 +95,9 @@ function getTaglistItemValues(taglist)
  * toggle visibility of 'Add Tag' prompt and form for adding tags (binding to files)
  * @param bool show form?
  */
-function toggleBindTagContainer(showForm)
+function toggleBindTagContainer(container, showForm)
 {
-	var container = $('.bindTagContainer');
+//	var container = $('.bindTagContainer');
 	var prompt = container.find('span');
 	var form = container.find('form');
 	if (showForm) {
@@ -168,7 +172,7 @@ $(function() {
 	
 	/* FILE DETAIL VIEW */
 	$('.bindTagContainer span.addTagPrompt').livequery('click', function(e) {
-		toggleBindTagContainer(true);
+		toggleBindTagContainer($(this).parent(), true);
 	});
 	/* FILE DETAIL VIEW END */
 	

@@ -73,7 +73,6 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 		
 		/*
 */
-
 		if (!$this->isControlInvalid()) {
 			$this->invalidateControl();
 		}
@@ -96,6 +95,9 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 //			$this->flashMessage($e->getMessage(), self::FLASH_MESSAGE_ERROR);
 //			$this->refresh('flashes', 'this', array('q' => null));
 //		}
+
+		$this->template->filesControl = $this['filesControl'];
+
 	}
 	
 	
@@ -176,6 +178,19 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 		$sortableModel->saveOrder($sortedItems);
 		$this->flashMessage('Items order saved', self::FLASH_MESSAGE_SUCCESS);
 		$this->refresh('none');
+	}
+	
+	
+	public function handleSetFirstLetter($fl)
+	{
+		$this->firstLetter = $fl;
+		if ($this->getAction() === 'detail') {
+//			$this->validateControl('itemList');
+//			$this->refresh('projectList', 'this', array(), true);
+			$this->refresh('projectList');
+		} else {
+			$this->refresh(array('projectList', 'itemList'), 'this', array(), true);
+		}
 	}
 	
 }
