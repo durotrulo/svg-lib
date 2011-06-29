@@ -252,7 +252,7 @@ function loadOptionsVisibility()
 {
 	if ($.cookie("optionsVisible") === 'true') {
 		var options = $('.options');
-		setOptionsVisibility(options, options.find('.toggler span'));
+		setOptionsVisibility(options, options.prev('.toggler').find('span'));
 	}
 }
 
