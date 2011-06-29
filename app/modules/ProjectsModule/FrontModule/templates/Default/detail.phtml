@@ -9,6 +9,9 @@
 
 @{capture $head}
 	@{include $filesControl->getHeadFilesTplPath()}
+	<script>
+		var linkSortTopFiles = {link sortTopFiles!};
+	</script>
 @{/capture}
 
 
@@ -41,27 +44,28 @@
 @{block #itemList}
 
 {*snippet itemList*}
-	<div class="topfile" n:foreach="$project->topFiles as $file">
-		<div class="topfile-head">
-			<span class="toggler toggler-right active"><span>Hide</span></span>
-			<span class="filename">{$file->filename}</span>
-		</div>
-		<div class="topfile-content">
-			<div class="left">
-				<img src="{$basePath}/{$control->filesModel->getPreviewPath($project->id, FilesModel::SIZE_SITEWIDE, $file->filename, true)}">
+	<div class="sortable">
+		<div id="topfile_{$file->id}" class="topfile" n:foreach="$project->topFiles as $file">
+			<div class="topfile-head">
+				<span class="toggler toggler-right active"><span>Hide</span></span>
+				<span class="filename">{$file->filename}</span>
 			</div>
-			<div class="right">
-				<div>Add a Tag</div>
-				<div>
-					<span class="toggler toggler-right"><span class="description">Description: </span></span>
-					<span class="trigger-editable pointer">Edit</span>
-					<p class="editable toggler-content" data-editable-type="textarea" data-editable-submit="OK" data-editable-name="desc" data-editable-process-url="{link editFileDesc! $file->id}">{$file->description}</p>
+			<div class="topfile-content">
+				<div class="left">
+					<img src="{$basePath}/{$control->filesModel->getPreviewPath($project->id, FilesModel::SIZE_SITEWIDE, $file->filename, true)}">
 				</div>
+				<div class="right">
+					<div>Add a Tag</div>
+					<div>
+						<span class="toggler toggler-right"><span class="description">Description: </span></span>
+						<span class="trigger-editable pointer">Edit</span>
+						<p class="editable toggler-content" data-editable-type="textarea" data-editable-submit="OK" data-editable-name="desc" data-editable-process-url="{link editFileDesc! $file->id}">{$file->description}</p>
+					</div>
+				</div>
+				<div class="clear"></div>
 			</div>
-			<div class="clear"></div>
 		</div>
 	</div>
-	
 	@{$filesControl->renderList()}
 
 	<div class="clear"></div>

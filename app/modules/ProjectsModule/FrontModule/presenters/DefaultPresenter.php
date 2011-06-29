@@ -164,4 +164,18 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 		$files = $this->getFilesModel()->findAll();
 	}
 	
+	
+	/**
+	 * save order after sorting topfiles
+	 *
+	 */
+	public function handleSortTopFiles($topfile)
+	{
+		$sortedItems = $topfile;
+		$sortableModel = new SortableModel(BaseModel::FILES_TABLE, 'id', 'top_file_order');
+		$sortableModel->saveOrder($sortedItems);
+		$this->flashMessage('Items order saved', self::FLASH_MESSAGE_SUCCESS);
+		$this->refresh('none');
+	}
+	
 }

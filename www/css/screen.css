@@ -1092,7 +1092,7 @@ a.active {
 			display:inline-block;
 			
 		}
-		.topfile .toggler {
+		.topfile-head .toggler {
 			float:right;
 		}
 	
@@ -1102,6 +1102,7 @@ a.active {
 			.topfile .filename {
 				color:#000;
 				display:block;
+				cursor: move;
 			}
 			.topfile .left img {
 				margin:15px 45px;
@@ -1110,6 +1111,10 @@ a.active {
 		.topfile .right {
 			width:260px;
 		}
+		
+			.topfile-content .trigger-editable {
+				float:right;
+			}
 
 
 .ok-button,

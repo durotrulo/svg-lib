@@ -71,6 +71,7 @@ class ProjectsModel extends BaseModel
 					->from(self::FILES_TABLE)
 					->where('projects_id = %i', $projectId)
 					->where('is_top_file = 1')
+					->orderBy('top_file_order ASC')
 					->fetchAll();
 	}
 	
