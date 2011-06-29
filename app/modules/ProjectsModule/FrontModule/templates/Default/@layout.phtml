@@ -19,6 +19,11 @@
 		var linkGetTags = {link getTags! __ID__};
 
 		$('.topfile').livequery(function() {
+			// when sorting, divs have no ID, no need to setup anything
+			if (empty($(this).attr('id'))) {
+				return;
+			};
+
 			var $this = $(this),
 				taglist = $this.find('.file-detail-taglist'),
 				tagSpinner = taglist.prevAll('.tags-heading').find('.spinner').show(),

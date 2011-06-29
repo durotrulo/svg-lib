@@ -22,7 +22,6 @@ function fileDetailTags(payload, textStatus, jqXHR)
 					if (empty(taglist)) {
 						taglist = $('#topfile_' + payload.fileId + ' .file-detail-taglist ul');
 					}
-					log(taglist);
 					var tag = buildTagListItem(payload.tags[0], payload.fileId);
 					$(tag).opacityHide().appendTo(taglist).opacityFadeIn();
 
