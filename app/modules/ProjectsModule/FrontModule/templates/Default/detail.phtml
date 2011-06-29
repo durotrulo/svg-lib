@@ -43,7 +43,7 @@
 {*snippet itemList*}
 	<div class="topfile" n:foreach="$project->topFiles as $file">
 		<div class="topfile-head">
-			<span class="toggler"><span>Show</span></span>
+			<span class="toggler toggler-right active"><span>Hide</span></span>
 			<span class="filename">{$file->filename}</span>
 		</div>
 		<div class="topfile-content">
@@ -51,10 +51,11 @@
 				<img src="{$basePath}/{$control->filesModel->getPreviewPath($project->id, FilesModel::SIZE_SITEWIDE, $file->filename, true)}">
 			</div>
 			<div class="right">
-				<div>Tags</div>
-				<div>Description: 
+				<div>Add a Tag</div>
+				<div>
+					<span class="toggler toggler-right"><span class="description">Description: </span></span>
 					<span class="trigger-editable pointer">Edit</span>
-					<p class="editable" data-editable-type="textarea" data-editable-submit="OK" data-editable-name="desc" data-editable-process-url="{link editFileDesc! $file->id}">{$file->description}</p>
+					<p class="editable toggler-content" data-editable-type="textarea" data-editable-submit="OK" data-editable-name="desc" data-editable-process-url="{link editFileDesc! $file->id}">{$file->description}</p>
 				</div>
 			</div>
 			<div class="clear"></div>

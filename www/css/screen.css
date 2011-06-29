@@ -151,6 +151,7 @@ form ul.error li {
 		    width: 77px;
 		}
 		
+		
 	.options-pannel div {
 		/*display:none;*/
 	}
@@ -1057,6 +1058,23 @@ a.active {
 	min-height:3em;
 }
 
+/* TOGGLER */
+.toggler {
+	background:transparent url(../images/arrow_down.png) left center no-repeat;
+	cursor:pointer;
+}
+	.toggler.active {
+		background-image:url(../images/arrow_up.png);
+	}
+.toggler-left {
+	padding-left:20px;
+}
+.toggler-right {
+	padding-right:20px;
+	background-position:right center;
+}
+/* TOGGLER END*/
+
 .cols-2-layout .right-box {
 	float:left;
 	width:756px;
@@ -1068,9 +1086,14 @@ a.active {
 		padding:15px;
 	}
 	
+		.topfile .description {
+			background:transparent url(../images/projects-icon_info.png) left center no-repeat;
+			padding-left:20px;
+			display:inline-block;
+			
+		}
 		.topfile .toggler {
 			float:right;
-			cursor:pointer;
 		}
 	
 		.topfile .left {

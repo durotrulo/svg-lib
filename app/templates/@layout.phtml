@@ -39,7 +39,7 @@
 	<!--	History.js END-->
 
 	
-	{control js 'jquery.livequery.js', 'jquery.nette.js', 'netteForms.js', 'jquery.placeholder.min.js', 'jquery.cookie.js', 'internal.js', 'common.js', 'js.js'}
+	{control js 'jquery.livequery.js', 'jquery.nette.js', 'netteForms.js', 'jquery.placeholder.min.js', 'jquery.cookie.js', '../modules/jToggler/jToggler.js', 'internal.js', 'common.js', 'js.js'}
 	{control css 'reset.css', 'general.css', 'screen.css'}
 
 	
@@ -123,6 +123,7 @@
 		{ifset $maxUploadedFilesCount}
 		var maxUploadedFilesCount = {$maxUploadedFilesCount}; // max number of files to be uploaded on one go
 		{/if}
+		
 	</script>
 	
 </head>
@@ -180,7 +181,7 @@
 			
 			@{if $renderSections['options']}
 			<div class="options-pannel">
-				<span class="toggler"><span>Show</span> Options</span>
+				<span class="toggler toggler-left"><span>Show</span> Options</span>
 				<div class="options">
 				{snippet options}
 				{include #options}
