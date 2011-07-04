@@ -4,44 +4,48 @@
  * @param FilesModel $filesModel
  * @param string $thumbSize [one of FilesModel::sizes]
  * @param DibiRow $lb lightbox
+ * @param DibiRow $lightboxes all lightboxes owned by $presenter->ownerIds
  *
  *
  *
  **}
 
 {capture $head}
-<script src="{$basePath}/modules/colorbox/jquery.colorbox.js"></script>
-<script>
-	// generate up-to-date link with every snippet redraw
- 	var linkReloadItemList = {link reloadItemList!};
- 	
- 	// @see http://colorpowered.com/colorbox/
- 	$(function() {
-		$("a[rel='images']").livequery( function () {
-		 	var fileDetailModal = $('#file-detail-modal');
-	//	 	var linkReloadItemList = {link reloadItemList!};
-			$(this).colorbox({
-				inline: true, 
-				href: "#file-detail-modal",
-				onLoad: function() {
-					var el = $(this);
-					var item = el.parent('.item');
-					fileDetailModal.find('img').attr('src', el.attr('href'));
-					fileDetailModal.find('a.download-link').attr('href', item.find('a.download-link').attr('href'));
-					fileDetailModal.find('.downloads').text(item.find('.top-right').text());
-					fileDetailModal.find('.add2lightbox').html(item.find('.add2lightbox').html());
-				},
-				// reload itemlist to have up-to-date info (files could have been added 2 lightbox or downloaded)
-				onCleanup: function() {
-					$.get(linkReloadItemList);
-				}
-			}, function () { 
-				// callback
-			})
+	{include $filesControl->getHeadFilesTplPath()}
+{*
+	<script src="{$basePath}/modules/colorbox/jquery.colorbox.js"></script>
+	<script>
+		// generate up-to-date link with every snippet redraw
+	 	var linkReloadItemList = {link reloadItemList!};
+	 	
+	 	// @see http://colorpowered.com/colorbox/
+	 	$(function() {
+			$("a[rel='images']").livequery( function () {
+			 	var fileDetailModal = $('#file-detail-modal');
+		//	 	var linkReloadItemList = {link reloadItemList!};
+				$(this).colorbox({
+					inline: true, 
+					href: "#file-detail-modal",
+					onLoad: function() {
+						var el = $(this);
+						var item = el.parent('.item');
+						fileDetailModal.find('img').attr('src', el.attr('href'));
+						fileDetailModal.find('a.download-link').attr('href', item.find('a.download-link').attr('href'));
+						fileDetailModal.find('.downloads').text(item.find('.top-right').text());
+						fileDetailModal.find('.add2lightbox').html(item.find('.add2lightbox').html());
+					},
+					// reload itemlist to have up-to-date info (files could have been added 2 lightbox or downloaded)
+					onCleanup: function() {
+						$.get(linkReloadItemList);
+					}
+				}, function () { 
+					// callback
+				})
+			});
 		});
-	});
-</script>
-<link rel="stylesheet" href="{$basePath}/modules/colorbox/colorbox.css">
+	</script>
+	<link rel="stylesheet" href="{$basePath}/modules/colorbox/colorbox.css">
+*}
 {/capture}
  
 {block title}Lightboxes{/block}
@@ -73,58 +77,42 @@
 	<div class="left-box">
 		<div class="margin-all">
 		
-			
-			@{include '@lb-owners.phtml' lightboxes => $lightboxes, ownerId => $userId, ownerName => 'My Lightboxes', user => $user}
-
-			{*<a class="ajax toggler" rel="forceHistory" data-nette-toggleTarget="#snippet--lb_{$owner->id}" href="{link loadOwners! 'ownerId' => $owner->id}">User Lightboxes</a>*}
-			<span class="simple-toggler active" href="#" data-nette-toggleTarget=".user-lbs">User Lightboxes</span>
-			{*<div class="user-lbs" style="display:none;">*}
-			<div class="user-lbs">
-				@{foreach $lightboxOwners as $owner}
-					@{include '@lb-owners.phtml' lightboxes => $lightboxes, ownerId => $owner->id, ownerName => $owner->name, user => $user}
-				@{/foreach}
-			</div>
-			
-			<br>
-			<br>
-			
-			{snippet addLightboxForm}
-				{control addLightboxForm}
-			{/snippet}
+			@{ifset $lightboxes}
+				{* lightboxes of logged user *}
+				@{include '@lb-owners.phtml' lightboxes => $lightboxes, ownerId => $userId, ownerName => 'My Lightboxes', user => $user}
+				
+				{* other lightboxes *}
+				{*<a class="ajax toggler" rel="forceHistory" data-nette-toggle-target="#snippet--lb_{$owner->id}" href="{link loadOwners! 'ownerId' => $owner->id}">User Lightboxes</a>*}
+				<span class="simple-toggler toggler toggler-left active" data-nette-toggle-target=".user-lbs">User Lightboxes</span>
+				{*<div class="user-lbs" style="display:none;">*}
+				<div class="user-lbs">
+					@{foreach $lightboxOwners as $owner}
+						@{include '@lb-owners.phtml' lightboxes => $lightboxes, ownerId => $owner->id, ownerName => $owner->name, user => $user}
+					@{/foreach}
+				</div>
+				
+				<br>
+				<br>
+				
+				{snippet addLightboxForm}
+					{control addLightboxForm}
+				{/snippet}
+			@{/if}
 		</div>
 	</div>
 
 	{snippet itemList 'div class="right-box"'}
 	
-		{if isset($itemsCount) and $itemsCount > 0}
-		{var thumbSize 'medium'}	
-			<div class="itemList thumbSize-{$thumbSize}">
-				<div class="item" n:foreach="$items as $item">
-					<span class="top-right show-on-hover">{$item->downloads} downloads</span>
-					<a href="{$basePath}/{$presenter->filesModel->getPreviewPath($item->projects_id, 'large', $item->filename, true)}" rel="images">
-						<img src="{$basePath}/{$presenter->filesModel->getPreviewPath($item->projects_id, $thumbSize, $item->filename, true)}">
-					</a>
-					<a href="{link download! $item->id}" title="Download" class="download-link show-on-hover"></a>
-	
-				</div>
-				<div class="clear"></div>
-			</div>
-			{control itemPaginator false, step2}
-			<div class="clear"></div>
-			
-			<div class="invisible">
-				<div id="file-detail-modal">
-					<span class="downloads">__itemDownloads__ downloads</span>
-					<img src="">
-					<a href="{link download! __itemid__}" title="Download" class="download-link"></a>
-					<span class="ib add2lightbox"></span>
-				</div>
-			</div>
-			
-			
+		{* load files only if lightbox is selected *}
+		{if $presenter->getParam('id')}
+			{$filesControl->renderList($filesControl::MODE_LIGHTBOX, array('lightbox'=>$lightbox))}
 		{else}
-			<div class="infoMsg">No results found</div>
+			<p class="infoMsg">Choose lightbox in left pannel</p>
 		{/if}
+		
+		<div class="clear"></div>
+		{*<a href="{link downloadAll! $project->id}">Download all files (zip)</a>*}
+		
 	{/snippet}
 	
 	<div class="clear"></div>

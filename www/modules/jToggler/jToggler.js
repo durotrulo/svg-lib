@@ -36,7 +36,7 @@
 				activeClass	: 'active',
 				animType	: 'slide', // fade, slide
 				animSpeed	: 'normal', // slow, normal, fast
-				target		: this.attr('data-nette-toggleTarget') || this.parent().find('.toggler-content'),
+				target		: $(this.attr('data-nette-toggle-target')) || this.parent().find('.toggler-content'),
 				handle		: this.find('span'),
 				showLabel	: 'Show',
 				hideLabel	: 'Hide',

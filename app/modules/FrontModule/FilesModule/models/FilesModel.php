@@ -57,6 +57,7 @@ class FilesModel extends BaseModel
 	const FILTER_BY_INSPIRATION = 'inspiration';
 
 	const FILTER_BY_PROJECT = 'project';
+	const FILTER_BY_LIGHTBOX = 'lightbox';
 	
 	const ORDER_BY_NAME = 'name';
 	const ORDER_BY_DATE = 'date';
@@ -137,6 +138,10 @@ class FilesModel extends BaseModel
 				
 			case self::FILTER_BY_PROJECT:
 				$this->filterByProject($items, $filterVal);
+				break;
+				
+			case self::FILTER_BY_LIGHTBOX:
+				$this->filterByLightbox($items, $filterVal);
 				break;
 				
 			default:
@@ -318,15 +323,14 @@ class FilesModel extends BaseModel
 	
 	
 	/**
-	 * output file to download (and increment downloadCount and log action)
+	 * prepare file for download - increment downloadCount and log action
 	 * @todo overit, ze user moze subor stiahnut
 	 *
 	 * @param int #files.id
+	 * @return string filepath to original file
 	 */
-	public function download($id)
+	private function prepare4download($id)
 	{
-		$path = $this->getOriginalPath($id);
-		
 		$this->update($id, array(
 			'downloads%sql' => 'downloads + 1',
 		));
@@ -339,7 +343,46 @@ class FilesModel extends BaseModel
 			)
 		);
 		
-		parent::downloadFile($path);
+		return $this->getOriginalPath($id);
+	}
+	
+	
+	/**
+	 * output file for download
+	 *
+	 * @param array|int #files.id
+	 */
+	public function download($ids)
+	{
+		// output as .zip
+		if (is_array($ids)) {
+			$path = array();
+			
+			// create ZIP if not exists
+			$uniqueId = md5(join('-', $ids));
+			$zipPath = PUBLIC_DATA_DIR . '/files-zip/' . $uniqueId . '.zip';
+			if (!file_exists($zipPath)) {
+				Basic::mkdir(dirname($zipPath));
+				$zipper = new ZipArchive();
+				if ($zipper->open($zipPath, ZIPARCHIVE::CREATE) !== true) {
+				    exit("cannot open <$zipPath>\n");
+				}
+				
+				foreach ($ids as $id) {
+					$path = $this->prepare4download($id);
+					$zipper->addFile($path, basename($path));
+				}
+	
+				$zipper->close();
+			}
+
+			parent::downloadFile($zipPath, $uniqueId . '.zip', false);
+
+		// output single file
+		} else {
+			$path = $this->prepare4download($id);	
+			parent::downloadFile($path);
+		}
 	}
 	
 	
@@ -560,6 +603,33 @@ class FilesModel extends BaseModel
 			)
 		);
 	}
+	
+	
+	/**
+	 * remove files from given lightbox
+	 *
+	 * @param array of ids
+	 * @param int
+	 */
+	public function removeFromLightbox(array $fileIds, $lightboxId)
+	{
+		dibi::delete(self::FILES_2_LIGHTBOXES_TABLE)
+			->where('files_id IN (%iN)', $fileIds)
+			->where('lightboxes_id = %i', $lightboxId)
+			->execute();
+
+		foreach ($fileIds as $fileId) {
+			$this->logsModel->insert(
+				array(
+					'users_id' => $this->userId,
+					'files_id' => $fileId,
+					'lightboxes_id' => $lightboxId,
+					'action' => LogsModel::ACTION_UNBIND,
+				)
+			);
+		}
+	}
+	
 	
 	
 	/**

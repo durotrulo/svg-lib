@@ -62,6 +62,19 @@ class FilesControl extends BaseControl
 	private $tagsModel;
 	
 	
+	
+	const MODE_STANDARD = 'standard_mode';
+	const MODE_LIGHTBOX = 'lightbox_mode';
+	public $isAddToLbAllowed = true;
+	public $isDownloadAllowed = true;
+	public $isBulkActionAllowed = false;
+	public $isRemoveFromLbAllowed = false;
+	
+	
+	const BULK_ACTION_REMOVE_FROM_LB = 'remove_from_lightbox';
+	const BULK_ACTION_DOWNLOAD = 'download_files';
+	
+	
 	public function __construct(IComponentContainer $parent = NULL, $name = NULL)
 	{
 		parent::__construct($parent, $name);
@@ -172,10 +185,34 @@ class FilesControl extends BaseControl
 	}
 	
 	
+	private function setMode($mode)
+	{
+		switch ($mode) {
+			case self::MODE_LIGHTBOX:
+				$this->isAddToLbAllowed = false;
+				$this->isBulkActionAllowed = true;
+				$this->isDownloadAllowed = true;
+				$this->isRemoveFromLbAllowed = true;
+				$this->template->thumbSize = FilesModel::SIZE_MEDIUM;
+				break;
+				
+			case self::MODE_STANDARD: // @intentionally no break
+			default:
+				$this->isAddToLbAllowed = true;
+				$this->isBulkActionAllowed = false;
+				$this->isDownloadAllowed = true;
+				$this->isRemoveFromLbAllowed = false;
+				break;
+		}
+	}
+	
+	
 	/**
 	 * render item list
+	 * @param string render mode
+	 * @param array optional params to be injected to template
 	 */
-	public function renderList()
+	public function renderList($mode = self::MODE_STANDARD, $tplParams = array())
 	{
 		$tpl = $this->template;
 		$tpl->setFile(__DIR__ . '/itemList.phtml');
@@ -190,7 +227,11 @@ class FilesControl extends BaseControl
 							->toDataSource()
 							->applyLimit($vp->paginator->itemsPerPage, $vp->paginator->offset)
 							->fetchAll();
-										
+
+		$this->setMode($mode);
+		foreach ($tplParams as $k=>$v) {
+			$tpl->$k = $v;
+		}
 		// when paging refresh only items - DONE IN PRESENTER
 //		if ($vp->paginated && !$vp->itemsPerPageChanged) {
 //			$this->invalidateControl('itemList');
@@ -214,7 +255,50 @@ class FilesControl extends BaseControl
 		$file = $this->model->download($id);
 	}
 	
+	
+	/**
+	 * remove file from lightbox
+	 *
+	 * @param int
+	 * @param int
+	 */
+	public function handleRemoveFromLightbox($fileId, $lightboxId)
+	{
+		$this->handleBulkAction(self::BULK_ACTION_REMOVE_FROM_LB, $fileId, $lightboxId);
+	}
 
+	
+	public function handleBulkAction($action, $fileIds, $lightboxId)
+	{
+		$fileIds = explode('-', $fileIds);
+		try {
+			switch ($action) {
+				case self::BULK_ACTION_REMOVE_FROM_LB:
+	//				$this->model->removeFromLightbox($fileIds, $lightboxId);
+					$this->presenter->payload->actions = array(
+						array(
+							'name' => 'fileRemovedFromLb',
+							'itemIds' => $fileIds,
+						),
+					);
+					break;
+			
+				case self::BULK_ACTION_DOWNLOAD:
+					$this->model->download($fileIds);
+					break;
+					
+				default:
+					break;
+			}
+		} catch (DibiDriverException $e) {
+			$this->flashMessage($e->getMessage(), self::FLASH_MESSAGE_ERROR);
+			$this->refresh('flashes');
+		}
+
+		$this->presenter->terminate();
+	}
+	
+	
 	/**
 	 * load tags bound to file ($fileId) and send to client
 	 *

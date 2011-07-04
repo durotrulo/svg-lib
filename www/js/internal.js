@@ -191,12 +191,15 @@ $(function() {
 		});
 	});
 		
-	$('.simple-toggler').livequery('click', function(e){
-		var $this = $(this),
-			target = $($this.attr('data-nette-toggleTarget'));
-		target.slideToggle('slow', function() {
-			$this.toggleClass('active');
+	$('.simple-toggler').livequery(function() {
+		var $this = $(this);
+//			target = $($this.attr('data-nette-toggle-target'));
+		$this.jToggler({
+//			target: target
 		});
+//		target.slideToggle('slow', function() {
+//			$this.toggleClass('active');
+//		});
 	});
 	
 	
@@ -223,17 +226,21 @@ $(function() {
 	
 	$('.lb-owner a.toggler').livequery('click', function(e){
 		var $this = $(this),
-			snippet = $($this.attr('data-nette-toggleTarget'));
+			snippet = $($this.attr('data-nette-toggle-target'));
 		
 		// if content has been already loaded
 		if (snippet.html().length > 0) {
 			// hide
 			if (snippet.is(':visible')) {
-				snippet.slideUp();
+				snippet.slideUp(function() {
+					$this.removeClass('active');
+				});
 				
 			// show loaded content
 			} else {
-				snippet.slideDown();
+				snippet.slideDown(function() {
+					$this.addClass('active');
+				});
 			}
 			
 			// prevent ajax load

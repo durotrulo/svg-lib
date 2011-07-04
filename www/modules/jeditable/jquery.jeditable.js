@@ -78,7 +78,6 @@
         }
         
         var settings = $.extend({}, $.fn.editable.defaults, {target:target}, options);
-        
         /* setup some functions */
         var plugin   = $.editable.types[settings.type].plugin || function() { };
         var submit   = $.editable.types[settings.type].submit || function() { };

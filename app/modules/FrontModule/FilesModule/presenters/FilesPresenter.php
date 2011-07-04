@@ -40,7 +40,7 @@ class Front_FilesPresenter extends Front_InternalPresenter
 			self::RENDER_SECTION_FILTERS => true,
 		));
 		
-		 
+//		$this->setupFilesControl();
 		// init filesControl
 		$this->template->filesControl = $fileControl = $this['filesControl'];
 
@@ -51,7 +51,6 @@ class Front_FilesPresenter extends Front_InternalPresenter
 		} elseif (!$this->isControlInvalid()) {
 			$this->invalidateControl();
 		}
-
 	}
 	
 }

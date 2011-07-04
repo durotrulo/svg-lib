@@ -38,7 +38,7 @@ class SortableModel extends BaseModel implements ISortableModel {
 					->execute();
 			}
 			dibi::commit();
-		// rollback a vyhodim pre dalsie spracovanie vyssou vrstvou
+		// rollback and throw for latter processing by higher layer
 		} catch (DibiException $e) {
 	        dibi::rollback();
 	        throw $e;

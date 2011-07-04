@@ -61,4 +61,24 @@ abstract class Front_BasePresenter extends BasePresenter
 		$files = new FilesControl($this, $name);
 		return $files;
 	}
+	
+	
+//	/**
+//	 * set FilesControl template var and handle paging
+//	 * called from beforeRender()
+//	 *
+//	 */
+//	protected function setupFilesControl()
+//	{
+//		// init filesControl
+//		$this->template->filesControl = $fileControl = $this['filesControl'];
+//
+//		$vp = $fileControl['itemPaginator'];
+//		// when paging refresh only items
+//		if ($vp->paginated && !$vp->itemsPerPageChanged) {
+//			$this->invalidateControl('itemList');
+//		} elseif (!$this->isControlInvalid()) {
+//			$this->invalidateControl();
+//		}
+//	}
 }

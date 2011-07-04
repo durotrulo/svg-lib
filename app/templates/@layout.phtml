@@ -86,7 +86,7 @@
 
 		{if $renderSections['fileUpload']}
 		<script src="{$basePath}/modules/iphoneCheckbox/iphone-style-checkboxes.js"></script>
-		<link rel="stylesheet" href="{$basePath}/modules/iphoneCheckbox/style.css" type="text/css" media="screen" charset="utf-8" />
+		<link rel="stylesheet" href="{$basePath}/modules/iphoneCheckbox/style.css" type="text/css" media="screen" />
 		{/if}
 		
 		{* FILE UPLOAD + TAG INPUT + TIPSY *}
@@ -151,16 +151,12 @@
 		
 		<div id="container">
 		
-			{snippet flashes 'div class="flashes"'}
+			<div class="flashes">
+			{snippet flashes}
 				{foreach $flashes as $flash}<div class="flash {$flash->type}">{$flash->message}</div>{/foreach}
-				{* todo:remove
-				<div class="flash info">info msg really long long info msg really long long info msg really long long info msg really long long info msg really long long info msg really long long</div>
-				<div class="flash error">error</div>
-				<div class="flash success">success</div>
-				<div class="flash warning">warning</div>
-				*}
 			{/snippet}
-			
+			</div>
+
 			@{if $renderSections['filters']}
 			<div class="filters-pannel">
 				{snippet searchForm, 'div class="ib"'}

@@ -10,27 +10,69 @@
 	
 	{if $itemsCount > 0}
 	
-		<div class="itemList thumbSize-{$thumbSize}">
-			<div class="item" n:foreach="$items as $item">
-			{*include '@thumb.phtml' 'item' => $item, 'thumbSize' => $thumbSize*}
-				<span class="top-left show-on-hover">
-					<span class="filetype">{$item->suffix}</span>
-					<span class="downloads">{$item->downloads} downloads</span>
-				</span>
-				<span class="invisible itemId">{$item->id}</span>
-				<a href="{$basePath}/{$control->model->getPreviewPath($item->projects_id, 'large', $item->filename, true)}" rel="images">
-					<img src="{$basePath}/{$control->model->getPreviewPath($item->projects_id, $thumbSize, $item->filename, true)}">
-				</a>
-				<a href="{link download! $item->id}" title="Download" class="download-link show-on-hover"></a>
-				{? $control->prepareAddFile2LightboxForm($item->id)}
-				<span class="ib add2lightbox show-on-hover">{control addFile2LightboxForm_$item->id}</span>
-	
-			</div>
-			<div class="clear"></div>
-		</div>
-		{control itemPaginator false, step2}
-		<div class="clear"></div>
+		{if $control->isBulkActionAllowed}
+			<form id="files-list-form">
+		{/if}
 		
+			<div class="itemList thumbSize-{$thumbSize}">
+				<div class="item item-{$item->id}" n:foreach="$items as $item">
+					<span class="top-left show-on-hover">
+						<span class="filetype">{$item->suffix}</span>
+						<span class="downloads">{$item->downloads} downloads</span>
+					</span>
+					<span class="invisible itemId">{$item->id}</span>
+					<a href="{$basePath}/{$control->model->getPreviewPath($item->projects_id, 'large', $item->filename, true)}" rel="images">
+						<img src="{$basePath}/{$control->model->getPreviewPath($item->projects_id, $thumbSize, $item->filename, true)}">
+					</a>
+					<span class="bottom-left">
+						{if $control->isBulkActionAllowed}
+							<input type="checkbox" name="cb_file-{$item->id}">
+						{/if}
+						<a href="{link download! $item->id}" title="Download" class="download-link show-on-hover" n:if="$control->isDownloadAllowed"></a>
+					</span>
+						
+					<span class="bottom-right">
+						{if $control->isAddToLbAllowed}
+							{? $control->prepareAddFile2LightboxForm($item->id)}
+							<span class="ib add2lightbox show-on-hover">{control addFile2LightboxForm_$item->id}</span>
+						{/if}
+						<a href="{link removeFromLightbox! $item->id, $lightbox->id}" title="Remove from lightbox" class="ajax remove-link" data-nette-confirm="Are you sure?" n:if="$control->isRemoveFromLbAllowed">Remove</a>
+					</span>
+					
+				</div>
+				<div class="clear"></div>
+			</div>
+			{control itemPaginator false, step2}
+			<div class="clear"></div>
+			
+		{if $control->isBulkActionAllowed}
+			</form>
+			<input type="checkbox" id="select-all"> <label for="select-all">Select All</label>
+			 
+			<select name="bulk-action" id="bulk-action">
+				<option value="0">Action</option>
+				<option value="{link bulkAction! $control::BULK_ACTION_REMOVE_FROM_LB, __FILE_IDS__, $lightbox->id}" data-nette-confirm="Are you sure?" data-nette-use-ajax="true">Remove selected</option>
+				<option value="{link bulkAction! $control::BULK_ACTION_DOWNLOAD, __FILE_IDS__, $lightbox->id}">Download selected</option>
+			</select>
+	
+			Copy selected to lightbox:?
+			<select name="" id="">
+				<option value="test">lb1</option>
+				<option value="test">lb2</option>
+				<option value="test">atd</option>
+			</select>
+			
+			Add selected to client's package:
+			<select name="" id="">
+				<option value="test">cp1</option>
+				<option value="test">cp2</option>
+				<option value="test">cp3</option>
+				<option value="test">atd</option>
+			</select>
+		{/if}
+		
+		
+		{* FILE DETAIL *}
 		<div class="invisible">
 			<div id="file-detail-modal">
 				<span class="filetype"></span>
@@ -61,6 +103,7 @@
 				</div>
 			</div>
 		</div>
+		{* FILE DETAIL END *}
 		
 	{else}
 		<div class="infoMsg">No results found</div>

@@ -2,6 +2,7 @@
 
 class Front_LightboxesPresenter extends Front_InternalPresenter
 {
+	const OWNER_IDS_SEP = '-';
 	
 	/** 
 	 * @var int
@@ -39,7 +40,7 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 	{
 		//	aby mi to nevracalo pole s prazdnym retazcom
 		if (!empty($this->ownerIds)) {
-			$this->ownerIds_a = explode('-', $this->ownerIds);
+			$this->ownerIds_a = explode(self::OWNER_IDS_SEP, $this->ownerIds);
 		} else {
 			$this->ownerIds_a = array();
 		}
@@ -65,11 +66,16 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 
 			// vynulujem tag, aby som sa vyhol smycke, kedze zmena persistentneho parametra sposobuje redirect/reload
 //			$this->ownerId = 0;
-			$this->ownerIds = join('-', $this->ownerIds_a);
+			$this->ownerIds = join(self::OWNER_IDS_SEP, $this->ownerIds_a);
 		
 //			if ($this->isAjax()) {
 //				$this->invalidateControl();
 //			}
+		} else {
+			// if no ids set, set logged user's id at least
+			if (empty($this->ownerIds_a)) {
+				$this->ownerId = $this->userId;
+			}
 		}
 	}
 	
@@ -97,6 +103,7 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 		parent::beforeRender();
 //		$this->template->lightboxes = $this->model->findAll();
 		$this->template->lightboxOwners = $this->model->findOwners();
+
 	}
 	
 	
@@ -110,7 +117,7 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 	 * load lightboxes by owner
 	 * @internal 
 	 */
-	public function setTemplateLightboxes()
+	protected function setTemplateLightboxes()
 	{
 		if (!empty($this->ownerIds_a)) {
 			$lightboxes = array();
@@ -120,12 +127,8 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 			
 			$this->template->lightboxes = $lightboxes;
 		}
-//		if ($this->ownerId) {
-//			$this->template->lightboxes = array(
-//				$this->ownerId => $this->model->findByOwner($this->ownerId),
-//			);
-//		}
 	}
+
 	
 	/**
 	 * list lightbox's files
@@ -136,54 +139,32 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 	{
 		$this->setTemplateLightboxes();
 		
-		// load files
 		if ($id) {
-			
 			$this->template->lightbox = $lb = $this->model->find($id);
 			if ($lb === false) {
 				throw new BadRequestException('Lightbox does NOT exist!');
-			}
-			
-			
-			$this->items = $this->filesModel->findAll();
-			try {
-				$this->filesModel
-							->filterByLightbox($this->items, $id)
-	//						->filterByTag($this->items, $this->q)
-	//						->filterByComplexity($this->items, $this->complexity)
-							->order($this->items, $this->orderby, $this->sorting);
-			} catch (TagNotFound $e) {
-				$this->flashMessage($e->getMessage(), self::FLASH_MESSAGE_ERROR);
-				$this->refresh('flashes', 'this', array('q' => null));
 			}
 		}
 	}
 	
 	
-	public function renderList()
+	public function renderList($id)
 	{
-//		$this->template->thumbSize = Environment::getHttpRequest()->getCookie(self::COOKIE_THUMBSIZE) ? Environment::getHttpRequest()->getCookie(self::COOKIE_THUMBSIZE) : FilesModel::SIZE_MEDIUM;
-//
-
-		if ($this->items) {
-			$this->template->itemsCount = $itemsCount = $this->items->count();
-			$vp = $this['itemPaginator'];
-			$vp->selectItemsPerPage = array(1,8, 16, 24, 32, 40, 48, 56, 64);
-			$vp->itemsPerPageAsSelect = true;
-	 		$vp->setDefaultItemsPerPage($this->config->defaultItemsPerPage);
-	        $vp->paginator->itemCount = $itemsCount;
-	        $vp->itemString = 'per page';
-			$this->template->items = $this->items
-											->toDataSource()
-											->applyLimit($vp->paginator->itemsPerPage, $vp->paginator->offset)
-											->fetchAll();
-											
-	//		 when paging refresh only items
-			if ($vp->paginated && !$vp->itemsPerPageChanged) {
-				$this->invalidateControl('itemList');
-			} elseif (!$this->isControlInvalid()) {
-				$this->invalidateControl();
-			}
+		// init filesControl
+		$fileControl = $this['filesControl'];
+		$fileControl->applyFilters(
+			array(
+				FilesModel::FILTER_BY_LIGHTBOX => $id,
+			)
+		);
+		$this->template->filesControl = $fileControl;
+			
+		// when paging refresh only items
+		$vp = $fileControl['itemPaginator'];
+		if ($vp->paginated && !$vp->itemsPerPageChanged) {
+			$this->invalidateControl('itemList');
+		} elseif (!$this->isControlInvalid()) {
+			$this->invalidateControl();
 		}
 	}
 	
@@ -245,6 +226,11 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 	}
 	
 	
+	/**
+	 * factory for creating lightbox
+	 *
+	 * @return MyAppForm
+	 */
 	protected function createComponentAddLightboxForm()
 	{
 		$form = new MyAppForm;

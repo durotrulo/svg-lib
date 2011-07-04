@@ -2,3 +2,6 @@ www/webtemp/
 var/
 libs/Custom/HtmPurifier/standalone/HTMLPurifier/DefinitionCache/
 www/data/
+staging.ini
+deploy.ini
+git-deploy

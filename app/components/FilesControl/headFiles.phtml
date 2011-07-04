@@ -11,6 +11,78 @@
  	
  	// @see http://colorpowered.com/colorbox/
  	$(function() {
+ 		
+ 		/******			****
+ 		 ***** BULK ACTION ****
+ 		 *****  		****/
+		$.Nette.addCallback(function(payload, textStatus, jqXHR) {
+			if (payload.actions) {
+				for (var i in payload.actions) {
+					var action = payload.actions[i];
+					
+					if (action.name) {
+						switch (action.name)
+						{
+							case 'fileRemovedFromLb':
+								for (var j in action.itemIds) {
+									$.Nette.remove('.item-' + action.itemIds[j]);
+								}
+								$.Nette.showSuccess('File(s) removed from lightbox.');
+							break;
+						}
+					}
+				}
+			}
+		});
+		
+		$('#bulk-action').livequery('change', function() {
+ 			var $this = $(this),
+ 				selectedOption = $this.find(':selected'),
+ 				confirmMsg = selectedOption.attr('data-nette-confirm'),
+ 				useAjax = selectedOption.attr('data-nette-use-ajax'),
+ 				items = $('.itemList').find('input:checked'),
+ 				itemIds = [],
+ 				link;
+
+ 			// validation
+			if (empty(items)) {
+ 				$.Nette.showError('Select items first!');
+ 				$this.val(0);
+ 				return false;
+ 			}
+ 			
+ 			if (confirmMsg) {
+ 				if (!confirm(confirmMsg)) {
+  					$this.val(0);
+					return false;
+	 			}
+ 			}
+ 			
+ 			// construct link
+ 			$.each(items, function() {
+ 				itemIds.push($(this).attr('name').replace('cb_file-', ''));
+ 			});
+ 			link = $this.val().replace('__FILE_IDS__', itemIds.join('-'));
+ 			
+ 			// process link
+ 			if (useAjax) {
+	 			$.Nette.showSpinner();
+	 			$.get(link);
+ 			} else {
+ 				location.href = link;
+ 			}
+			
+		});
+		
+ 		$('#select-all').livequery('click', function() {
+ 			var $this = $(this);
+ 			$('#files-list-form :checkbox').attr('checked', !!$this.attr('checked'));
+ 		});
+ 		
+ 		
+ 		/******					****
+ 		 ***** COLORBOX FILE DETAIL***
+ 		 *****  				****/
 		$("a[rel='images']").livequery( function () {
 		 	var fileDetailModal = $('#file-detail-modal');
 //		 	var linkReloadItemList = {link reloadItemList!};

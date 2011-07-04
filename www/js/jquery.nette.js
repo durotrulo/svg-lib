@@ -207,6 +207,13 @@ jQuery.extend({
 					theme: 'info'
 				});
 			},
+			
+			showSuccess: function (msg)
+			{
+				this.jGrowl(msg, {
+					theme: 'success'
+				});
+			},
 		
 		/***********************************/
 		/* zobrazenie hlasok && jGrowl END */

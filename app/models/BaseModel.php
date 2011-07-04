@@ -186,7 +186,7 @@ abstract class BaseModel extends Object
 	{
 		$item = $usePhrase ? $firstValue : "Select $firstValue";
 //		return array($item) + $options;
-		return array('-1'=>$item) + $options;
+		return array('-1' => $item) + $options;
 	}
 	
 	

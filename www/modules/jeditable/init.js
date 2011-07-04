@@ -8,7 +8,7 @@ $(function() {
 	        name		: $this.data('editableName'),
 	        id			: 'elementId',
 	        style		: 'inherit',
-	        type    	: $this.data('editableType') || 'input',
+	        type    	: $this.data('editableType') || 'text',
 	        submit    	: $this.data('editableSubmit') || '',
 	        data: function(value, settings) {
 		      	/* Convert <br> to newline. */
