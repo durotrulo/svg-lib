@@ -975,6 +975,7 @@ a.active {
 
 .cols-2-layout {
 	background: url('../images/bg_left-box.gif') repeat-y 251px top;
+	padding-bottom: 20px;
 }
 
 	.cols-2-layout .itemList.thumbSize-medium .item:nth-child(4n) {

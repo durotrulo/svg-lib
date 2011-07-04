@@ -17,6 +17,8 @@ abstract class BaseModel extends Object
 	const ACTIVITY_LOG_TABLE = 'activity_log';
 	const LIGHTBOXES_TABLE = 'lightboxes';
 	const FILES_2_LIGHTBOXES_TABLE = 'files_2_lightboxes';
+	const CLIENT_PACKAGES_TABLE = 'client_packages';
+	const FILES_2_CLIENT_PACKAGES_TABLE = 'files_2_client_packages';
 	
 	const ACL_TABLE = TABLE_ACL;
 	const ACL_PRIVILEGES_TABLE = TABLE_PRIVILEGES;
@@ -26,6 +28,7 @@ abstract class BaseModel extends Object
 	const ACL_USERS_TABLE = TABLE_USERS;
 	const ACL_USERS_2_ROLES_TABLE = TABLE_USERS_ROLES;
 	
+	const DUPLICATE_ENTRY_CODE = 1062;
 	
 	protected $config;
 	

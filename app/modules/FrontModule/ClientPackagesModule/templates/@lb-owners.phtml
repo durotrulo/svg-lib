@@ -1,0 +1,24 @@
+{**
+ * @param DibiRow array $lightboxes
+ * @param int $ownerId
+ * @param string $ownerName
+ * @param Nette/Web/User $user
+ *
+ **}
+
+<div class="lb-owner">
+	<a class="ajax toggler-left toggler{if in_array($ownerId, $presenter->ownerIds_a)} active{/if}" rel="forceHistory" data-nette-toggle-target="#snippet--lb_{$ownerId}" href="{link loadLightboxesByOwner! 'ownerId' => $ownerId}">{$ownerName}</a>
+	{snippet lb_$ownerId 'ul'}
+		{if isset($lightboxes[$ownerId])}
+			{foreach $lightboxes[$ownerId] as $lb}
+				<li>
+					<a href="{link list $lb->id}" class="ajax editable{ifCurrent} active{/if}" data-editable-name="name" data-editable-process-url="{link editName! $lb->id}">{$lb->name}</a>
+					<span class="action-links">
+						<span class="trigger-editable pointer" n:if="$user->isAllowed(new LightboxResource($lb->id), 'edit')">e</span>
+						<a class="ajax delete" data-nette-confirm="%delete%" href="{link delete! $lb->id}" n:if="$user->isAllowed(new LightboxResource($lb->id), 'delete')">x</a>
+					</span>
+				</li>
+			{/foreach}
+		{/if}
+	{/snippet}
+</div>

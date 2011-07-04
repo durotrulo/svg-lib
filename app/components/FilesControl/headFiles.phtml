@@ -28,14 +28,18 @@
 									$.Nette.remove('.item-' + action.itemIds[j]);
 								}
 								$.Nette.showSuccess('File(s) removed from lightbox.');
-							break;
+								break;
+							
+							case 'fileCopied2CP':
+								$.Nette.showSuccess('File(s) copied to client package.');
+								break;
 						}
 					}
 				}
 			}
 		});
 		
-		$('#bulk-action').livequery('change', function() {
+		$('.bulk-action').livequery('change', function() {
  			var $this = $(this),
  				selectedOption = $this.find(':selected'),
  				confirmMsg = selectedOption.attr('data-nette-confirm'),
@@ -67,7 +71,13 @@
  			// process link
  			if (useAjax) {
 	 			$.Nette.showSpinner();
-	 			$.get(link);
+	 			$.get(link, function(data, textStatus, jqXHR) {
+	 				// reset
+	 				$('.bulk-action').val(0);
+	 				
+	 				// further processing
+	 				$.Nette.success(data, textStatus, jqXHR);
+	 			});
  			} else {
  				location.href = link;
  			}

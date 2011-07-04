@@ -1,21 +1,26 @@
 <?php
 
-class LightboxResource implements IResource
+/**
+ * Lightbox resource
+ *
+ */
+class LightboxResource extends BaseResource
 {
-    public $ownerId;
-
+	const ID = 'lightbox';
     
-    public function __construct($id)
+	
+	/**
+	 * get ownerId from DB
+	 *
+	 * @param int resourceId
+	 * @return int ownerId
+	 */
+    protected function getDependencies($id)
     {
-    	$this->ownerId = dibi::select('owner_id')
-    						->from(BaseModel::LIGHTBOXES_TABLE)
-    						->where('id = %i', $id)
-    						->fetchSingle();
-    }
+    	return dibi::select('owner_id')
+					->from(BaseModel::LIGHTBOXES_TABLE)
+					->where('id = %i', $id)
+					->fetchSingle();
+	}
     
-    
-    public function getResourceId()
-    {
-        return 'lightbox';
-    }
 }

@@ -1,10 +1,9 @@
 <?php
-class DesignerRole implements IRole
+/**
+ * Designer role
+ *
+ */
+class DesignerRole extends BaseRole
 {
-    public $id;
-
-    public function getRoleId()
-    {
-        return 'designer';
-    }
+	const ID = 'designer';
 }

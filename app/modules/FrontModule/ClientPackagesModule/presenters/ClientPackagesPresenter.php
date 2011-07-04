@@ -1,6 +1,6 @@
 <?php
 
-class Front_LightboxesPresenter extends Front_InternalPresenter
+class Front_ClientPackagesPresenter extends Front_InternalPresenter
 {
 	const OWNER_IDS_SEP = '-';
 	
@@ -113,23 +113,6 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 	}
 	
 	
-	/**
-	 * load lightboxes by owner
-	 * @internal 
-	 */
-	protected function setTemplateLightboxes()
-	{
-		if (!empty($this->ownerIds_a)) {
-			$lightboxes = array();
-			// @todo: possible performance bottleneck
-			foreach ($this->ownerIds_a as $ownerId) {
-				$lightboxes[$ownerId] = $this->model->findByOwner($ownerId);
-			}
-			
-			$this->template->lightboxes = $lightboxes;
-		}
-	}
-
 	
 	/**
 	 * list lightbox's files

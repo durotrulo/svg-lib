@@ -13,10 +13,23 @@
  */
 class FilesControl extends BaseControl
 {
-	/**
-	 * @var string name of cookie to store size of thumbnails
-	 */
+	/** @var string name of cookie to store size of thumbnails */
 	const COOKIE_THUMBSIZE = 'thumbSize';
+
+	/** @var string bulk action for selected items */
+	const BULK_ACTION_REMOVE_FROM_LB = 'remove_from_lightbox';
+
+	/** @var string bulk action for selected items */
+	const BULK_ACTION_DOWNLOAD = 'download_files';
+	
+	/** @var string bulk action for selected items - add files to client package */
+	const BULK_ACTION_ADD_2_CP = 'add_2_client_package';
+	
+	/** @var string render mode */
+	const MODE_STANDARD = 'standard_mode';
+
+	/** @var string render mode */
+	const MODE_LIGHTBOX = 'lightbox_mode';
 
 	/** 
 	 * @var string - one of _allowedOrderby
@@ -35,6 +48,18 @@ class FilesControl extends BaseControl
 	 * @persistent 
 	 */
 	public $complexity = FilesModel::COMPLEXITY_ALL_LEVELS_ID;
+
+	/** @var bool is adding files to lightbox allowed? */
+	public $isAddToLbAllowed = true;
+	
+	/** @var bool is download of files allowed? */
+	public $isDownloadAllowed = true;
+	
+	/** @var bool is bulk action allowed? */
+	public $isBulkActionAllowed = false;
+	
+	/** @var bool is removing files from lightbox allowed? */
+	public $isRemoveFromLbAllowed = false;
 
 	/**
 	 * allowed values of $this->orderby
@@ -58,21 +83,11 @@ class FilesControl extends BaseControl
 	/** @var LightboxesModel */
 	private $lightboxModel;
 
+	/** @var ClientPackagesModel */
+	private $clientPackagesModel;
+
 	/** @var TagsModel */
 	private $tagsModel;
-	
-	
-	
-	const MODE_STANDARD = 'standard_mode';
-	const MODE_LIGHTBOX = 'lightbox_mode';
-	public $isAddToLbAllowed = true;
-	public $isDownloadAllowed = true;
-	public $isBulkActionAllowed = false;
-	public $isRemoveFromLbAllowed = false;
-	
-	
-	const BULK_ACTION_REMOVE_FROM_LB = 'remove_from_lightbox';
-	const BULK_ACTION_DOWNLOAD = 'download_files';
 	
 	
 	public function __construct(IComponentContainer $parent = NULL, $name = NULL)
@@ -95,6 +110,15 @@ class FilesControl extends BaseControl
 	
 	
 	/**
+	 * getter
+	 */
+	public function getItems()
+	{
+		return $this->items;
+	}
+	
+	
+	/**
 	 * @return LightboxesModel
 	 */
 	public function getLightboxModel()
@@ -104,6 +128,19 @@ class FilesControl extends BaseControl
 		}
 		
 		return $this->lightboxModel;
+	}
+	
+	
+	/**
+	 * @return ClientPackagesModel
+	 */
+	public function getClientPackagesModel()
+	{
+		if (is_null($this->clientPackagesModel)) {
+			$this->clientPackagesModel = new ClientPackagesModel();
+		}
+		
+		return $this->clientPackagesModel;
 	}
 	
 	
@@ -232,6 +269,11 @@ class FilesControl extends BaseControl
 		foreach ($tplParams as $k=>$v) {
 			$tpl->$k = $v;
 		}
+		
+		if ($this->isBulkActionAllowed) {
+			$tpl->packages = BaseModel::prepareSelect($this->getClientPackagesModel()->fetchPairs(), 'Add selected to client package', true);
+		}
+		
 		// when paging refresh only items - DONE IN PRESENTER
 //		if ($vp->paginated && !$vp->itemsPerPageChanged) {
 //			$this->invalidateControl('itemList');
@@ -268,13 +310,20 @@ class FilesControl extends BaseControl
 	}
 
 	
-	public function handleBulkAction($action, $fileIds, $lightboxId)
+	/**
+	 * process bulk actions
+	 *
+	 * @param string
+	 * @param string (converted to array right away)
+	 * @param int lightboxId | clientPackageId
+	 */
+	public function handleBulkAction($action, $fileIds, $containerId)
 	{
 		$fileIds = explode('-', $fileIds);
 		try {
 			switch ($action) {
 				case self::BULK_ACTION_REMOVE_FROM_LB:
-	//				$this->model->removeFromLightbox($fileIds, $lightboxId);
+					$this->model->removeFromLightbox($fileIds, $containerId);
 					$this->presenter->payload->actions = array(
 						array(
 							'name' => 'fileRemovedFromLb',
@@ -285,6 +334,15 @@ class FilesControl extends BaseControl
 			
 				case self::BULK_ACTION_DOWNLOAD:
 					$this->model->download($fileIds);
+					break;
+					
+				case self::BULK_ACTION_ADD_2_CP:
+					$this->getClientPackagesModel()->insertFiles($fileIds, $containerId);
+					$this->presenter->payload->actions = array(
+						array(
+							'name' => 'fileCopied2CP',
+						),
+					);
 					break;
 					
 				default:
@@ -439,8 +497,8 @@ class FilesControl extends BaseControl
 
 		return $form;
 	}
-	
 
+	
 	/**
 	 * factory for bind tag 2 file form
 	 */

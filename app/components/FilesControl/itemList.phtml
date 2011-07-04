@@ -49,7 +49,7 @@
 			</form>
 			<input type="checkbox" id="select-all"> <label for="select-all">Select All</label>
 			 
-			<select name="bulk-action" id="bulk-action">
+			<select class="bulk-action" name="bulk-action" id="bulk-action">
 				<option value="0">Action</option>
 				<option value="{link bulkAction! $control::BULK_ACTION_REMOVE_FROM_LB, __FILE_IDS__, $lightbox->id}" data-nette-confirm="Are you sure?" data-nette-use-ajax="true">Remove selected</option>
 				<option value="{link bulkAction! $control::BULK_ACTION_DOWNLOAD, __FILE_IDS__, $lightbox->id}">Download selected</option>
@@ -62,12 +62,8 @@
 				<option value="test">atd</option>
 			</select>
 			
-			Add selected to client's package:
-			<select name="" id="">
-				<option value="test">cp1</option>
-				<option value="test">cp2</option>
-				<option value="test">cp3</option>
-				<option value="test">atd</option>
+			<select class="bulk-action" name="" id="">
+				<option value="{link bulkAction! $control::BULK_ACTION_ADD_2_CP, __FILE_IDS__, $k}" data-nette-confirm="Are you sure?" data-nette-use-ajax="true" n:foreach="$packages AS $k => $package">{$package}</option>
 			</select>
 		{/if}
 		

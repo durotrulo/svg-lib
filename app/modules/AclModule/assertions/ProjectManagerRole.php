@@ -1,10 +1,9 @@
 <?php
-class ProjectManagerRole implements IRole
+/**
+ * project manager role
+ *
+ */
+class ProjectManagerRole extends BaseRole
 {
-    public $id;
-
-    public function getRoleId()
-    {
-        return 'projectManager';
-    }
+	const ID = 'projectManager';
 }

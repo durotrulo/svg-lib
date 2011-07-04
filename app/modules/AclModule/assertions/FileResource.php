@@ -1,21 +1,26 @@
 <?php
 
-class FileResource implements IResource
+/**
+ * File resource
+ *
+ */
+class FileResource extends BaseResource
 {
-    public $ownerId;
-
+	const ID = 'file';
     
-    public function __construct($id)
+	
+	/**
+	 * get ownerId from DB
+	 *
+	 * @param int resourceId
+	 * @return int ownerId
+	 */
+    protected function getDependencies($id)
     {
-    	$this->ownerId = dibi::select('users_id')
-    						->from(BaseModel::FILES_TABLE)
-    						->where('id = %i', $id)
-    						->fetchSingle();
-    }
+    	return dibi::select('users_id')
+					->from(BaseModel::FILES_TABLE)
+					->where('id = %i', $id)
+					->fetchSingle();
+	}
     
-    
-    public function getResourceId()
-    {
-        return 'file';
-    }
 }
