@@ -397,11 +397,6 @@ class ProjectsModel extends BaseModel
 			$id
 		)
 		->fetchPairs('id', 'name');
-//		->fetchAll();
-			
-			select('id, name')
-			->from(self::TABLE)
-			->fetchPairs('id', 'name');
 	}
 	
 	

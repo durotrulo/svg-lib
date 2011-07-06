@@ -26,7 +26,6 @@
 				<tr>
 					<th class="align_l">Project Name</th>
 					<th>Completed</th>
-					<th>Type</th>
 					<th>Content</th>
 					<th>Edit</th>
 					<th>Delete</th>
@@ -37,7 +36,6 @@
 				<tr n:foreach="$projects AS $project">
 					<td class="project-name align_l">{$project->name}</td>
 					<td>{$project->completedFormatted}</td>
-					<td>{$project->type}</td>
 					<td>{=$project->vectorFilesCount + $project->bitmapFilesCount} files</td>
 					<td><a class="ajax edit-icon" href="{link edit $project->id}"></a></td>
 					<td><a n:if="intval($project->id) !== ProjectsModel::GENERAL_PROJECT_ID" class="ajax del-icon" data-nette-confirm="%delete%" data-nette-confirm2="Are you sure?" href="{link delete! $project->id}"></a></td>

@@ -75,7 +75,7 @@ class Projects_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 			if (!$row) {
 				throw new BadRequestException(RECORD_NOT_FOUND);
 			}
-			$row['related_projects'] = $this->model->getRelatedProjects($id)->fetchPairs();
+			$row['related_projects'] = $this->model->getRelatedProjects($id);
 			$form->setDefaults($row);
 			$this->invalidateControl('itemForm');
 		}
@@ -114,22 +114,18 @@ class Projects_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 	            ->addRule(Form::MIN_LENGTH, NULL, 2)
 	            ->addRule(Form::MAX_LENGTH, NULL, 70);
 
-	    $form->addRadioList('type', 'Type', array(
-		    	'client' => 'client', 
-		    	'internal' =>'internal',
-	    	))
-	    	->addRule(Form::FILLED);
-	    	
 		$form->addDatePicker('completed', 'Completed')
 			->getControlPrototype()->autocomplete('off');
 //		    ->addCondition(Form::FILLED)
 //			    ->addRule(Form::VALID, 'Entered date is not valid!');
 //
 	
+		/*
 	    $form->addSelect('manager_id', 'Manager', $this->getManagersSelect())
 	    		->skipFirst()
 	            ->addRule(Form::FILLED);
-
+		*/
+		
 	    $form->addMultiSelect('related_projects', 'Related Projects', $this->getRelatedProjectsSelect(), 8);
 
 	    //	photo is optional when editing
