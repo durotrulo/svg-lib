@@ -4,7 +4,7 @@
  * Lightbox resource
  *
  */
-class LightboxResource extends BaseResource
+class LightboxResource extends OwnedResource
 {
 	const ID = 'lightbox';
     

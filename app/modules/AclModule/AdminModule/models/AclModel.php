@@ -7,6 +7,7 @@
  */
 class AclModel extends BaseModel
 {
+	
     /**
      * Put in to array parents of specific role
      *
@@ -25,6 +26,8 @@ class AclModel extends BaseModel
             }
         }
     }
+    
+    
     /**
      * Return all roles hierarchically ordered
      *
@@ -35,6 +38,7 @@ class AclModel extends BaseModel
         $this->getParentRole(NULL, NULL, $roles);
         return $roles;
     }
+    
 
     /**
      * Put in to array parents of specific resource
@@ -55,6 +59,8 @@ class AclModel extends BaseModel
             }
         }
     }
+    
+    
     /**
      * Return all resources hierarchically ordered
      *
@@ -66,6 +72,7 @@ class AclModel extends BaseModel
         return $resources;
     }
 
+    
     /**
      * Return all rules of permissions
      * 
@@ -90,6 +97,7 @@ class AclModel extends BaseModel
          return $sql->fetchAll();
     }
 }
+
 
 /**
  * Acl object
@@ -132,6 +140,7 @@ class Acl extends Permission
      */
 	public function isAllowed($role = self::ALL, $resource = self::ALL, $privilege = self::ALL)
 	{
+		// set roleId to currently logged user's id for later assertions
 		$roleClassName = ucfirst($role) . "Role";
 		if (class_exists($roleClassName)) {
 			$role = new $roleClassName;

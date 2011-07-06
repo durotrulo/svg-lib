@@ -4,7 +4,7 @@
  * File resource
  *
  */
-class FileResource extends BaseResource
+class FileResource extends OwnedResource
 {
 	const ID = 'file';
     

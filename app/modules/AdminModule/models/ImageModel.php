@@ -1,24 +1,29 @@
 <?php
 
 /**
- * obstarava pracu s obrazkami
+ * Image handling model
  * 
  * @author Matus Matula
  */
 class ImageModel extends FileModel
 {
+	/** 
+	 * @var int percentage of final quality for image processing
+	 * 0..100 (for JPEG and PNG)
+	 */
 	protected static $quality = 85;
 
+
 	/**
-	 * spravi nahlad a ulozi do $dirname
+	 * make thumbnail of $img, store in $dirname as $filename
 	 *
 	 * @param Image $file
 	 * @param string $dirname
 	 * @param string
 	 * @param int $dest_w width to resize image
 	 * @param int $dest_h height to resize image
-	 * @param bool $useThumbnail [thumbnail | resize]
-	 * @return string used $filename
+	 * @param bool $useThumbnail [thumbnail : resize]
+	 * @return string filename as file was stored (potential dangerous chars replaced)
 	 * @throws NotImageException
 	 */
 	public static function savePreview($img, $dirname, $filename, $dest_w, $dest_h, $useThumbnail = true)
@@ -52,6 +57,15 @@ class ImageModel extends FileModel
 	}
 	
 	
+	/**
+	 * save $img in $dirname named $filename
+	 *
+	 * @param Image
+	 * @param string destination to store image to
+	 * @param string file name
+	 * @return string filename as file was stored (potential dangerous chars replaced)
+	 * @throws NotImageException
+	 */
 	public static function save($img, $dirname, $filename = null)
 	{
 		if (!$img instanceof Image) {
@@ -62,8 +76,9 @@ class ImageModel extends FileModel
 		Basic::mkdir($dirname);
 		
 		if (is_null($filename)) {
-			$filename = self::handleFilename($file->name);			
+			$filename = $img->name;
 		}
+		$filename = self::handleFilename($filename);
 		
 		$dest = $dirname . $filename;
 		
@@ -76,61 +91,8 @@ class ImageModel extends FileModel
 	}
 	
 	
-	protected static function makeThumbnail(&$img, $width, $height, $left = '50%', $top = '50%')
-	{
-		if (!$img instanceof Image) {
-			throw new NotImageException('Argument "$img" must be instance of Image, "' . get_class($img) . '" given.');
-		}
-		
-		// resize only if needed
-		if ($img->getWidth() > $width || $img->getHeight() > $height) {
-			$img->resize((int) $width, (int) $height, Image::FILL)
-				->crop($left, $top, (int) $width, (int) $height);
-		}
-	}
-	
-	/* TODO : remove if not used*/
-	/*
-	public static function savePhoto($dirname, $file, $filename) 
-	{
-		//	ak nezvoli foto, tak sa vratime..iba pri edite, pri add sa to kontroluje po odoslani formu
-		if (!$file instanceof HttpUploadedFile or empty($file->name)) {
-			return;
-		}
-
-		$presenter = Environment::getApplication()->getPresenter();
-
-		$dirname = Basic::addLastSlash($dirname);
-	       
-		Basic::mkdir($dirname);
-		Basic::mkdir($dirname . 'thumb');
-		
-		$dest = $dirname . $filename . '.jpg';
-		$dest_thumb = $dirname . 'thumb/' . $filename . '.jpg';
-		
-		
-		if (!$file->isImage()) {
-   			$presenter->flashMessage('Nahrať možete iba obrázky! Poslaný súbor: ' . $file->name, 'warning');
-   			return;
-        }
-        
-        $img = $file->toImage();
-        $img2 = clone $img;
-        
-        //	nahlad
-//		$img->thumbnail(self::NEWS_THUMB_W, self::NEWS_THUMB_H);
-		$img->resize(self::PHOTO_THUMB_W, self::PHOTO_THUMB_H)->sharpen();
-		$img->save($dest_thumb, self::$quality);
-		
-		//	big one
-		$img2->resize(self::PHOTO_W, self::PHOTO_H)->sharpen();
-		$img2->save($dest, self::$quality);
-	}
-	
-	*/
-	
 	/**
-	 * makes thumbnail and resizes big image storing them in $dirname as 'main.jpg'
+	 * make thumbnail and resize big image storing them in $dirname (and $dirname/thumb) as $filename
 	 *
 	 * @param Image
 	 * @param string
@@ -140,6 +102,7 @@ class ImageModel extends FileModel
 	 * @param int
 	 * @param bool makeThumbnail for big image or just resize proportionally?
 	 * @param string
+	 * @return void
 	 * @throws NotImageException
 	 */
 	public static function savePreviewWithThumb($img, $dirname, $thumb_w, $thumb_h, $big_w, $big_h, $useThumbForBig = false, $filename = 'main.jpg')
@@ -170,13 +133,36 @@ class ImageModel extends FileModel
 
 		$img2->save($dest, self::$quality);
 		
-		 // nahlad
         self::makeThumbnail($img, $thumb_w, $thumb_h);
 
         // PNG does not save alpha channel (transparency) by default, needs to be turned on explicitly
 		$img->saveAlpha(true);
 		$img->save($dest_thumb, self::$quality);
+	}
+	
+	
+	/**
+	 * make thumbnail of given image
+	 *
+	 * @param Image
+	 * @param int
+	 * @param int
+	 * @param mixed  x-offset in pixels or percent
+	 * @param mixed  y-offset in pixels or percent
+	 * @return void
+	 * @throws NotImageException
+	 */
+	protected static function makeThumbnail(&$img, $width, $height, $left = '50%', $top = '50%')
+	{
+		if (!$img instanceof Image) {
+			throw new NotImageException('Argument "$img" must be instance of Image, "' . get_class($img) . '" given.');
+		}
 		
+		// resize only if needed
+		if ($img->getWidth() > $width || $img->getHeight() > $height) {
+			$img->resize((int) $width, (int) $height, Image::FILL)
+				->crop($left, $top, (int) $width, (int) $height);
+		}
 	}
 
 }

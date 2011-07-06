@@ -3,26 +3,20 @@
 class CarouselModel extends ImageUploadModel
 {
 	
-	// todo: move to config.ini?
-	
-	/* to fit the player */
-//	const IMAGE_CAROUSEL_THUMB_W = 375;
-//	const IMAGE_CAROUSEL_THUMB_H = 200;
-
 	/* carousel thumbs */
 	const IMAGE_CAROUSEL_THUMB_W = 79;
 	const IMAGE_CAROUSEL_THUMB_H = 80;
 
 	/* to fit the player to full */
-//	const IMAGE_CAROUSEL_BIG_W = 465;
 	const IMAGE_CAROUSEL_BIG_W = NULL;
 	const IMAGE_CAROUSEL_BIG_H = 281;
+
 	
 	/**
-	 * vrati absolutnu cestu k velkemu obrazku carouselu
+	 * return absolute path to large-scaled image of carousel
 	 *
-	 * @param string $dirname
-	 * @param string $filename
+	 * @param string
+	 * @param string
 	 * @return string
 	 */
 	public static function getCarouselImageUri($dirname, $filename = '1.jpg')
@@ -34,10 +28,10 @@ class CarouselModel extends ImageUploadModel
 	
 	
 	/**
-	 * vrati absolutnu cestu k thumbnailu carouselu
+	 * return absolute path to thumb-scaled image of carousel
 	 *
-	 * @param string $dirname
-	 * @param string $filename
+	 * @param string
+	 * @param string
 	 * @return string
 	 */
 	public static function getCarouselThumbnailUri($dirname, $filename = '1.jpg')
@@ -49,10 +43,12 @@ class CarouselModel extends ImageUploadModel
 	
 	
 	/**
-	 * uklada obrazok aj s nahladom
+	 * store image together with thumb in $path as .jpg
 	 *
-	 * @param HttpUploadedFile $file
-	 * @param StdClass $fileinfo
+	 * @param HttpUploadedFile
+	 * @param string path to store file to
+	 * @param string base filename [without suffix]
+	 * @param int 0..100 quality of images (for PNG or JPEG)
 	 * @return void
 	 */
 	protected static function saveImage($img, $path, $filename, $quality = NULL)

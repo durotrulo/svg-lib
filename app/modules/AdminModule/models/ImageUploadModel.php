@@ -1,6 +1,6 @@
 <?php
 
-//class InvalidPhotoModeException extends Exception {};
+class NoFileUploadedException extends Exception {};
 
 
 /**
@@ -12,65 +12,85 @@
 class ImageUploadModel extends ImageModel
 {
 	/**
-	 * spravi nahlad a ulozi do $dirname
+	 * make thumbnail of $file and store in $dirname
 	 *
 	 * @param string
 	 * @param HttpUploadedFile
 	 * @param int width to resize image
 	 * @param int height to resize image
 	 * @param bool [thumbnail | resize]
-	 * @param string if null name is got from $file->name
-	 * @return string used
-	 * @throws NotImageException
+	 * @param string|NULL
+	 * @return string filename as file was stored (potential dangerous chars replaced)
 	 */
 	public static function savePreview($dirname, $file, $dest_w, $dest_h, $useThumbnail = true, $filename = null)
 	{
-		//	ak nezvoli foto, tak sa vratime..iba pri edite, pri add sa to kontroluje po odoslani formu
-		if (!$file instanceof HttpUploadedFile or empty($file->name)) {
-			return;
+		try {
+			$img = self::checkImage($file, $filename);
+		} catch (NoFileUploadedException $e) {
+			return null;
 		}
-
-		if (is_null($filename)) {
-			$filename = self::handleFilename($file->name);			
-		}
-		
-		if (!$file->isImage()) {
-			throw new NotImageException('Nahrať možete iba obrázky! Poslaný súbor: ' . $file->name);
-        }
-        
-        $img = $file->toImage();
         
         return parent::savePreview($img, $dirname, $filename, $dest_w, $dest_h, $useThumbnail);
 	}
 	
-	
-	
-	public static function save($file, $dirname, $filename = null)
+
+	/**
+	 * check if given file 
+	 * 	was uploaded
+	 *  is image
+	 * ensure valid filename
+	 *
+	 * @param HttpUploadedFile
+	 * @param string|NULL
+	 * @return Image|NULL
+	 * @throws NoFileUploadedException
+	 * @throws NotImageException
+	 */
+	protected static function checkImage($file, &$filename)
 	{
-		//	ak nezvoli foto, tak sa vratime..iba pri edite, pri add sa to kontroluje po odoslani formu
+		// return if no file given [may occur only when editing item otherwise it's controlled when submitting form]
 		if (!$file instanceof HttpUploadedFile or empty($file->name)) {
-			return;
+			throw new NoFileUploadedException();
 		}
 
 		if (is_null($filename)) {
-			$filename = self::handleFilename($file->name);			
+			$filename = $file->name;
 		}
+		$filename = self::handleFilename($filename);
 		
 		if (!$file->isImage()) {
-			throw new NotImageException('Nahrať možete iba obrázky! Poslaný súbor: ' . $file->name);
+			throw new NotImageException('Only images can be uploaded! File given: ' . $file->name);
         }
         
-        $img = $file->toImage();
+        return $file->toImage();
+	}
+	
+	
+	/**
+	 * save $file to $dirname as $filename
+	 *
+	 * @param string
+	 * @param string
+	 * @param string|NULL
+	 * @return string used file name (potential dangerous chars replaced)
+	 */
+	public static function save($file, $dirname, $filename = null)
+	{
+		try {
+			$img = self::checkImage($file, $filename);
+		} catch (NoFileUploadedException $e) {
+			return null;
+		}
         
    		return parent::save($img, $dirname, $filename);
 	}
 	
 	
 	/**
-	 * makes thumbnail and resizes images storing them in $dirname
+	 * make thumbnail and resize images storing them in $dirname
 	 *
-	 * @param string $dirname
-	 * @param HttpUploadedFile array $files
+	 * @param string
+	 * @param HttpUploadedFile array 
 	 * @param int
 	 * @param int
 	 * @param int
@@ -80,7 +100,6 @@ class ImageUploadModel extends ImageModel
 	 */
 	public static function saveImages($dirname, $files, $thumb_w, $thumb_h, $big_w, $big_h) 
 	{
-		//	ak nezvoli foto, tak sa vratime
 		if (count($files) == 0) {
 			return false;
 		}
@@ -93,7 +112,7 @@ class ImageUploadModel extends ImageModel
 		Basic::mkdir($dest_thumb);
 		
 		$uploaded = false;
-		// Přesumene uploadované soubory .. chyby su osetrene uz pri odoslani formulara pomocou MyAppForm a MyFileInput
+		// move uploaded files .. errors are handled in MyAppForm and MyFileInput already when form is submitted
         foreach($files AS $file){
             //	ak nezvoli subor, tak skusime dalsi
 			if (!$file instanceof HttpUploadedFile or $file->error === UPLOAD_ERR_NO_FILE) {
@@ -111,7 +130,6 @@ class ImageUploadModel extends ImageModel
 		  	$img = $file->toImage();
             $img2 = clone $img;
             
-            //	nahlad
             self::makeThumbnail($img, $thumb_w, $thumb_h);
 
             // PNG does not save alpha channel (transparency) by default, needs to be turned on explicitly
@@ -125,7 +143,7 @@ class ImageUploadModel extends ImageModel
 			$img2->saveAlpha(true);
 			$img2->save($dest_big . $filename, self::$quality);
 			
-			//	priznak, ze sme vobec daco nahrali
+			// flag we uploaded sth.
 			$uploaded = true;
         }
 		
@@ -174,8 +192,9 @@ class ImageUploadModel extends ImageModel
 	
 	*/
 	
+	
 	/**
-	 * makes thumbnail and resizes big image storing them in $dirname as 'main.jpg'
+	 * make thumbnail and resize big image storing them in $dirname (and $dirname/thumb) as $filename
 	 *
 	 * @param string
 	 * @param HttpUploadedFile
@@ -184,12 +203,12 @@ class ImageUploadModel extends ImageModel
 	 * @param int
 	 * @param int
 	 * @param bool makeThumbnail for big image or just resize proportionally?
-	 * @return bool have we uploaded sth?
+	 * @return void
 	 * @throws NotImageException
 	 */
 	public static function savePreviewWithThumb($dirname, $file, $thumb_w, $thumb_h, $big_w, $big_h, $useThumbForBig = false, $filename = 'main.jpg')
 	{
-		//	ak nezvoli foto, tak sa vratime..iba pri edite, pri add sa to kontroluje po odoslani formu
+		// return if no file given [may occur only when editing item otherwise it's controlled when submitting form]
 		if (!$file instanceof HttpUploadedFile or empty($file->name)) {
 			return;
 		}
@@ -207,7 +226,7 @@ class ImageUploadModel extends ImageModel
 	/**
 	 * returns uri to 'big' image
 	 * 
-	 * @param string|array moze byt aj pole 'adresarov'
+	 * @param string|array can be also array of dirnames (glued with '/')
 	 * @param string
 	 * @return string
 	 */
@@ -223,7 +242,7 @@ class ImageUploadModel extends ImageModel
 	/**
 	 * returns uri to 'thumbnailed' image
 	 * 
-	 * @param string|array moze byt aj pole 'adresarov'
+	 * @param string|array can be also array of dirnames (glued with '/')
 	 * @param string
 	 * @return string
 	 */

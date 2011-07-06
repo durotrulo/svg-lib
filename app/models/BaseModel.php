@@ -125,23 +125,23 @@ abstract class BaseModel extends Object
 //	const RECORD_NOT_FOUND = 'Pozadovany zaznam sa nenasiel'; // todo:remove?
 
 	/** @var DibiConnection */
-/*	protected $db;
+/*	protected $conn;
 
 	public function __construct()
 	{
-		$this->db = dibi::getConnection();
+		$this->conn = dibi::getConnection();
 	}
 	
 	
 	public function getInsertId() 
 	{
-		return $this->db->insertId();
+		return $this->conn->insertId();
 	}
 	
 
 	public function affectedRows()
 	{
-		return $this->db->getAffectedRows();
+		return $this->conn->getAffectedRows();
 	}
 	
 */	

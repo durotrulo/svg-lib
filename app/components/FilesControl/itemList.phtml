@@ -55,13 +55,6 @@
 				<option value="{link bulkAction! $control::BULK_ACTION_DOWNLOAD, __FILE_IDS__, $lightbox->id}">Download selected</option>
 			</select>
 	
-			Copy selected to lightbox:?
-			<select name="" id="">
-				<option value="test">lb1</option>
-				<option value="test">lb2</option>
-				<option value="test">atd</option>
-			</select>
-			
 			<select class="bulk-action" name="" id="">
 				<option value="{link bulkAction! $control::BULK_ACTION_ADD_2_CP, __FILE_IDS__, $k}" data-nette-confirm="Are you sure?" data-nette-use-ajax="true" n:foreach="$packages AS $k => $package">{$package}</option>
 			</select>
