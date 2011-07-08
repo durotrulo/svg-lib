@@ -19,7 +19,7 @@
 					<span class="top-left show-on-hover">
 						<span class="filetype">{$item->suffix}</span>
 						<span class="downloads">{$item->downloads} downloads</span>
-						<a href="{link delete! $item->id}" class="ajax remove-link" data-nette-confirm="Are you sure?" n:if="$control->isRemovalAllowed and $user->isAllowed(Acl::RESOURCE_FILE, Acl::PRIVILEGE_DELETE)">Remove</a>
+						<a href="{link delete! $item->id}" class="ajax remove-link" data-nette-confirm="Are you sure? File could be used in a client package or lightbox! This will delete file permanently!" n:if="$control->isRemovalAllowed and $user->isAllowed(Acl::RESOURCE_FILE, Acl::PRIVILEGE_DELETE)">Remove</a>
 						
 					</span>
 					<span class="invisible itemId">{$item->id}</span>

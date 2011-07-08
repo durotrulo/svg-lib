@@ -684,6 +684,69 @@ class FilesModel extends BaseModel
 	}
 	
 	
+	
+	/**
+	 * permanently delete file from DB and file system
+	 *
+	 * @param int fileId
+	 */
+	public function delete($id)
+	{
+		$file = $this->find($id);
+		parent::delete($id);
+		
+
+		// DELETE FROM FILESYSTEM
+		$filepath = $this->getFilePaths($file, true);
+		foreach ($filepath as $fp) {
+			FileModel::unlink($fp);
+		}
+		$bitmapAlternativePath = $this->getBitmapAlternative(array_pop($filepath));
+		FileModel::unlink($bitmapAlternativePath);
+
+		
+		$this->logsModel->insert(
+			array(
+				'users_id' => $this->userId,
+				'files_id' => $id,
+				'action' => LogsModel::ACTION_DELETE,
+			)
+		);
+		
+	}
+	
+	
+	/**
+	 * get all paths to file (all thumbs, topfileSize, original)
+	 *
+	 * @param DibiRow info about file
+	 * @param bool append filename to the path?
+	 * @return array
+	 */
+	protected function getFilePaths($data, $appendFilename = false)
+	{
+		$dirname = self::PATH . '/' . $data['projects_id'] . '/';
+		$orig_dirname = self::ORIG_PATH . '/' . $data['projects_id'] . '/';
+		
+		$filepath = array(
+			$dirname . self::SIZE_LARGE . '/',
+			$dirname . self::SIZE_MEDIUM . '/',
+			$dirname . self::SIZE_SMALL . '/',
+			$dirname . self::SIZE_SITEWIDE . '/',
+			$orig_dirname,
+//					$dirname . 'detail/',
+		);
+		
+		if ($appendFilename) {
+			foreach ($filepath as &$fp) {
+				$fp .= $data['filename'];
+			}
+		}
+		
+		return $filepath;
+	}
+	
+	
 	/**
 	 * saves uploaded files to FS and DB
 	 *
@@ -706,13 +769,15 @@ class FilesModel extends BaseModel
 
 		$data['type'] = $data['suffix'] === 'svg' ? 'vector' : 'bitmap';
 		
-		$filepath = array(
-			$dirname . self::SIZE_LARGE . '/',
-			$dirname . self::SIZE_MEDIUM . '/',
-			$dirname . self::SIZE_SMALL . '/',
-			$dirname . self::SIZE_SITEWIDE . '/',
-//					$dirname . 'detail/',
-		);
+		// first 4 items represents public filepaths
+		$filepath = array_slice($this->getFilePaths($data, false), 0, 4);
+//		$filepath = array(
+//			$dirname . self::SIZE_LARGE . '/',
+//			$dirname . self::SIZE_MEDIUM . '/',
+//			$dirname . self::SIZE_SMALL . '/',
+//			$dirname . self::SIZE_SITEWIDE . '/',
+////					$dirname . 'detail/',
+//		);
 		
 		foreach ($filepath as $path) {
 			Basic::mkdir($path);
@@ -797,7 +862,18 @@ class FilesModel extends BaseModel
 		unset($data['file']);
 
 		$data['users_id'] = $this->getUserId();
-		return parent::insert($data);
+		$fileId = parent::insert($data);
+		
+		$this->logsModel->insert(
+			array(
+				'users_id' => $this->userId,
+				'files_id' => $fileId,
+				'action' => LogsModel::ACTION_CREATE,
+			)
+		);
+		
+		
+		return $fileId;
 	}
 	
 	

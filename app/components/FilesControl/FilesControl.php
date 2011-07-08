@@ -414,6 +414,19 @@ class FilesControl extends BaseControl
 	
 	
 	/**
+	 * delete file permanently from system
+	 *
+	 * @param int
+	 */
+	public function handleDelete($fileId)
+	{
+		$this->model->delete($fileId);
+		$this->flashMessage('File deleted', self::FLASH_MESSAGE_SUCCESS);
+		$this->refresh('this');
+	}
+	
+	
+	/**
 	 * fill addFile2LightboxForm values
 	 * called on every file in list
 	 *

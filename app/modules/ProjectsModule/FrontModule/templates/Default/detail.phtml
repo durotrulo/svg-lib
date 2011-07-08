@@ -73,7 +73,7 @@
 			</div>
 		</div>
 	</div>
-	@{$filesControl->renderList()}
+	@{$filesControl->renderList(FilesControl::MODE_PROJECT)}
 
 	<div class="clear"></div>
 	{*<a href="{link downloadAll! $project->id}">Download all files (zip)</a>*}
