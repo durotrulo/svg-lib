@@ -193,7 +193,7 @@ class Front_ClientPackagesPresenter extends Front_InternalPresenter
 	 */
 	public function handleEditName($id, $name)
 	{
-		if ($this->user->isAllowed(new LightboxResource($id), 'edit')) {
+		if ($this->user->isAllowed(new LightboxResource($id), Acl::PRIVILEGE_EDIT)) {
 			try {
 				$this->model->updateName($id, $name);
 				echo $name;
@@ -210,7 +210,7 @@ class Front_ClientPackagesPresenter extends Front_InternalPresenter
 	public function handleDelete($id)
 	{
 		try {
-			if ($this->user->isAllowed(new LightboxResource($id), 'delete')) {
+			if ($this->user->isAllowed(new LightboxResource($id), Acl::PRIVILEGE_DELETE)) {
 				$this->model->delete($id);
 				$this->flashMessage('Lightbox deleted.', self::FLASH_MESSAGE_SUCCESS);
 			} else {

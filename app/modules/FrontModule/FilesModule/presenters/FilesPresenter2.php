@@ -30,9 +30,6 @@ class Front_FilesPresenter extends Front_InternalPresenter
 
 //		$this->model = new FilesModel();
 		$this->model = $this->filesModel;
-		
-		// todo: solve imagick svg conversion on png
-//		FilesModel::imagickTest();
 	}
 	
 	
@@ -43,7 +40,7 @@ class Front_FilesPresenter extends Front_InternalPresenter
 			self::RENDER_SECTION_FILTERS => true,
 		));
 		
-//		$this->setupFilesControl();
+		 
 		// init filesControl
 		$this->template->filesControl = $fileControl = $this['filesControl'];
 
@@ -54,6 +51,7 @@ class Front_FilesPresenter extends Front_InternalPresenter
 		} elseif (!$this->isControlInvalid()) {
 			$this->invalidateControl();
 		}
+
 	}
 	
 }

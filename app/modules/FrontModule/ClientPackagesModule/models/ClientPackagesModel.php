@@ -97,6 +97,31 @@ class ClientPackagesModel extends BaseModel
 	
 	
 	/**
+	 * copy all project files to client package
+	 *
+	 * @param int
+	 * @param int
+	 */
+	public function copyProject2CP($projectId, $cpId)
+	{
+		$fileIds = dibi::select('id')
+						->from(self::FILES_TABLE)
+						->where('projects_id = %i', $projectId)
+						->fetchAll();
+					
+		$this->insertFiles($fileIds, $cpId);
+		$this->logsModel->insert(
+			array(
+				'users_id' => $this->userId,
+				'projects_id' => $projectId,
+				'client_packages_id' => $cpId,
+				'action' => LogsModel::ACTION_ASSOCIATE,
+			)
+		);
+	}
+	
+	
+	/**
 	 * insert files to client package
 	 *
 	 * @param array

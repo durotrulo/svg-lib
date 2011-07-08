@@ -5,5 +5,5 @@
  */
 class DesignerRole extends BaseRole
 {
-	const ID = 'designer';
+	const ID = Acl::ROLE_DESIGNER;
 }

@@ -42,6 +42,9 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 	/** @var FilesModel */
 	private $filesModel;
 	
+	/** @var ClientPackagesModel */
+	private $clientPackagesModel;
+	
 	/** @var LightboxesModel */
 	private $lightboxModel;
 	
@@ -71,6 +74,19 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 		}
 		
 		return $this->filesModel;
+	}
+	
+	
+	/**
+	 * @return ClientPackagesModel
+	 */
+	public function getClientPackagesModel()
+	{
+		if (is_null($this->clientPackagesModel)) {
+			$this->clientPackagesModel = new ClientPackagesModel();
+		}
+		
+		return $this->clientPackagesModel;
 	}
 	
 	
@@ -295,7 +311,7 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 					$values = $form->getValues();
 
 					$fileId = $values['fileId'];
-					if ($_this->user->isAllowed(new FileResource($fileId), 'bind_tag')) {
+					if ($_this->user->isAllowed(new FileResource($fileId), Acl::PRIVILEGE_BIND_TAG)) {
 					
 						$tags = $values['tags'];
 						unset($values['tags']);
@@ -401,7 +417,7 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 	
 	public function handleUnbindTag($fileId, $tagId)
 	{
-		if ($this->user->isAllowed(new FileResource($fileId), 'unbind_tag')) {
+		if ($this->user->isAllowed(new FileResource($fileId), Acl::PRIVILEGE_UNBIND_TAG)) {
 			try {
 				$this->getFilesModel()->unbindTag($fileId, $tagId);
 				$this->payload->tagId = $tagId;
@@ -428,7 +444,7 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 	 */
 	public function handleEditFileDesc($fileId, $desc)
 	{
-		if ($this->user->isAllowed(new FileResource($fileId), 'edit_description')) {
+		if ($this->user->isAllowed(new FileResource($fileId), Acl::PRIVILEGE_EDIT_DESCRIPTION)) {
 			try {
 				$this->filesModel->update($fileId, array(
 					'description' => $desc,
@@ -454,5 +470,17 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 	{
 		$this->payload->tags = $this->filesModel->getTags($fileId);
 		$this->terminate();
+	}
+	
+
+	/**
+	 * download file
+	 *
+	 * @param int
+	 * @param bool download bitmap alternative to svg files?
+	 */
+	public function handleDownloadFile($fileId, $useBitmap = false)
+	{
+		$this->filesModel->download($id, $useBitmap);
 	}
 }

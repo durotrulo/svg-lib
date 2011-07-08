@@ -15,8 +15,6 @@ class Projects_AdminModule extends AdminModule
 	public static function register()
 	{
 		parent::registerModule(__CLASS__);
-		// todo: vyriesit viac konfigov
-//		Environment::loadConfig(__DIR__ . '/config.ini');
 	}
 
 }

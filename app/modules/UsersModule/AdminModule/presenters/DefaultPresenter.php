@@ -147,6 +147,8 @@ class Users_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 //    		->skipFirst()
             ->addRule($form::FILLED);
 
+        $form->addCheckbox('send_email', 'Send notification email');
+        
 		$form->addSubmit('save', 'Add User')
 			->getControlPrototype()->class[] = 'ok-button';
 
@@ -182,7 +184,9 @@ class Users_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 					$id = $this->model->insert($values);
 					
 					$this->flashMessage('User created.', self::FLASH_MESSAGE_SUCCESS);
-	      			$this->sendRegBasicEmail($values);
+					if ($values['send_email']) {
+		      			$this->sendRegBasicEmail($values);
+					}
 				}
 			}
 	 	} catch (InvalidStateException $e) {
@@ -228,7 +232,7 @@ class Users_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
   	
 	public function handleDelete($id)
 	{
-		if ($this->user->isAllowed('user', 'delete')) {
+		if ($this->user->isAllowed(Acl::RESOURCE_USER, Acl::PRIVILEGE_DELETE)) {
 			$this->model->delete($id);
 			$this->flashMessage('User deleted', self::FLASH_MESSAGE_SUCCESS);
 		} else {

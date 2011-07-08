@@ -217,6 +217,7 @@ class ImageMagick extends Image
 		}
 
 		$lines = array();
+		$status;
 		exec(self::$path . $command, $lines, $status); // $status: 0 - ok, 1 - error, 127 - command not found?
 
 		if ($output) {

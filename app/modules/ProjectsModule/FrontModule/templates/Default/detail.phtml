@@ -39,11 +39,17 @@
 		<div id="topfile_{$file->id}" class="topfile" n:foreach="$project->topFiles as $file">
 			<div class="topfile-head">
 				<span class="toggler toggler-right active"><span>Hide</span></span>
-				<span class="filename">{$file->filename}</span>
+				<span>
+					<span class="filetype">{$file->suffix}</span>
+					<span class="filename">{=FileModel::removeSuffix($file->filename)}</span>
+				</span>
+				<div class="clear"></div>
 			</div>
 			<div class="topfile-content">
 				<div class="left">
 					<img src="{$basePath}/{$control->filesModel->getPreviewPath($project->id, FilesModel::SIZE_SITEWIDE, $file->filename, true)}">
+					<a href="{link downloadFile! $file->id, false}" title="Download" class="download-link show-on-hover download-link-textual">ORIG</a>
+					<a href="{link downloadFile! $file->id, true}" title="Download as bitmap" class="download-link show-on-hover download-link-textual">PNG</a>
 				</div>
 				<div class="right">
 					<div class="tags-container">
@@ -70,6 +76,6 @@
 	@{$filesControl->renderList()}
 
 	<div class="clear"></div>
-	<a href="{link downloadAll! $project->id}">Download all files (zip)</a>
+	{*<a href="{link downloadAll! $project->id}">Download all files (zip)</a>*}
 
 {*/snippet*}

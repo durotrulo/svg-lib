@@ -149,7 +149,7 @@ form ul.error li {
 	
 		.options-pannel span.toggler {
 			display: inline-block;
-		    width: 77px;
+		    /*width: 80px;*/
 		    padding-left: 15px;
 		}
 		
@@ -194,7 +194,7 @@ form ul.error li {
 			}
 			
 			.options-pannel .options .orderby {
-				margin:0 40px;
+				margin:0 25px;
 			}
 			
 			.options-pannel .options .completed {
@@ -208,7 +208,7 @@ form ul.error li {
 
 	.thumbsizeControl,
 	.renderMode {
-		 margin-left: 37px;
+		 margin-left: 35px;
 	 }
 	 
 		.thumbsizeControl a {
@@ -390,6 +390,7 @@ form ul.error li {
 .fileUploadArea {
 	display:none;
 	color:#5d7d58;
+	overflow:hidden; /* to correct margin for child elements */
 	/*margin: 15px 0;*/
 	
 	/*background: #b5d0b0;
@@ -627,11 +628,13 @@ form ul.error li {
 					position: static !important;
 				}
 			
-		.item .show-on-hover {
+		.item .show-on-hover,
+		.topfile .show-on-hover {
 			display:none;
 		}
 			
-			.item:hover .show-on-hover {
+			.item:hover .show-on-hover,
+			.topfile:hover .show-on-hover {
 				display:inline-block;
 			}
 			
@@ -650,9 +653,24 @@ form ul.error li {
 			position: absolute;
 			    left: 10px;
 				bottom: 10px;
+				
+		}
+		
+		/* download icon with text under it */
+		.download-link.download-link-textual {
+		    height: 38px;
+    		line-height: 53px;
+    		width:auto;
+    		text-decoration:none;
+    		font-size:12px;
+    		font-weight:bold;
+    		background-position: -273px -4px;
 		}
 			/*.item*/ .download-link:hover {
-				background-position:-270px -44px
+				background-position:-270px -44px;
+			}
+			.download-link.download-link-textual:hover {
+    			background-position: -273px -44px;
 			}
 			
 			.bottom-left .download-link {
@@ -994,6 +1012,11 @@ a.active {
 	    line-height: 35px;
 	    margin-right: 20px;
 	}
+
+		/* copy project to CP form */
+		.top-heading .right-link form {
+			float:left;
+		}
 	
 	.top-heading h1, 
 	.top-heading h2 {
@@ -1110,6 +1133,14 @@ a.active {
 	width:756px;
 }
 
+	.bulk-action-container {
+		padding: 10px;
+	}
+		.bulk-action-container select,
+		.bulk-action-container label {
+			margin-right:30px;
+		}
+
 	.topfile {
 		background-color:#f2f2f2;
 		border-bottom:1px solid #979797;
@@ -1122,21 +1153,30 @@ a.active {
 			display:inline-block;
 			
 		}
-		.topfile-head .toggler {
-			float:right;
+		
+		.topfile-head {
+			cursor: move;
 		}
+	
+			.topfile-head .toggler {
+				float:right;
+			}
 	
 		.topfile .left {
 			width:465px;
 		}
 			.topfile .filename {
 				color:#000;
-				display:block;
-				cursor: move;
 				font-size: 14px;
 			}
 			.topfile .left img {
 				margin:15px 45px;
+			}
+			
+			.topfile .left .download-link {
+				/*todo: comment out if shoult be visible only on hover*/
+				display:inline-block;
+				position:static;
 			}
 
 		.topfile .right {

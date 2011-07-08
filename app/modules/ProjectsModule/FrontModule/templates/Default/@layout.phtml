@@ -87,7 +87,9 @@
 	<div class="top-heading blue">
 		<h1>{include #title}</h1>
 		<span class="right-link" n:if="!empty($isProjectDetail)">
+			{control copyProject2ClientPackageForm}
 			<a class="ajax ok-button" href="{link list}">Back to projects display</a>
+			<div class="clear"></div>
 		</span>
 	</div>
 	{/snippet}

@@ -19,6 +19,8 @@
 					<span class="top-left show-on-hover">
 						<span class="filetype">{$item->suffix}</span>
 						<span class="downloads">{$item->downloads} downloads</span>
+						<a href="{link delete! $item->id}" class="ajax remove-link" data-nette-confirm="Are you sure?" n:if="$control->isRemovalAllowed and $user->isAllowed(Acl::RESOURCE_FILE, Acl::PRIVILEGE_DELETE)">Remove</a>
+						
 					</span>
 					<span class="invisible itemId">{$item->id}</span>
 					<a href="{$basePath}/{$control->model->getPreviewPath($item->projects_id, 'large', $item->filename, true)}" rel="images">
@@ -28,7 +30,8 @@
 						{if $control->isBulkActionAllowed}
 							<input type="checkbox" name="cb_file-{$item->id}">
 						{/if}
-						<a href="{link download! $item->id}" title="Download" class="download-link show-on-hover" n:if="$control->isDownloadAllowed"></a>
+						<a href="{link download! $item->id, false}" title="Download" class="download-link show-on-hover" n:if="$control->isDownloadAllowed"></a>
+						<a href="{link download! $item->id, true}" title="Download as bitmap" class="download-link show-on-hover" n:if="$control->isDownloadAllowed"></a>
 					</span>
 						
 					<span class="bottom-right">
@@ -42,23 +45,28 @@
 				</div>
 				<div class="clear"></div>
 			</div>
-			{control itemPaginator false, step2}
 			<div class="clear"></div>
 			
 		{if $control->isBulkActionAllowed}
 			</form>
-			<input type="checkbox" id="select-all"> <label for="select-all">Select All</label>
-			 
-			<select class="bulk-action" name="bulk-action" id="bulk-action">
-				<option value="0">Action</option>
-				<option value="{link bulkAction! $control::BULK_ACTION_REMOVE_FROM_LB, __FILE_IDS__, $lightbox->id}" data-nette-confirm="Are you sure?" data-nette-use-ajax="true">Remove selected</option>
-				<option value="{link bulkAction! $control::BULK_ACTION_DOWNLOAD, __FILE_IDS__, $lightbox->id}">Download selected</option>
-			</select>
-	
-			<select class="bulk-action" name="" id="">
-				<option value="{link bulkAction! $control::BULK_ACTION_ADD_2_CP, __FILE_IDS__, $k}" data-nette-confirm="Are you sure?" data-nette-use-ajax="true" n:foreach="$packages AS $k => $package">{$package}</option>
-			</select>
+			<div class="bulk-action-container">
+				<input type="checkbox" id="select-all"> <label for="select-all">Select All</label>
+				 
+				<select class="bulk-action" name="bulk-action" id="bulk-action">
+					<option value="0">Action</option>
+					<option value="{link bulkAction! $control::BULK_ACTION_REMOVE_FROM_LB, __FILE_IDS__, $lightbox->id}" data-nette-confirm="Are you sure?" data-nette-use-ajax="true">Remove selected</option>
+					<option value="{link bulkAction! $control::BULK_ACTION_DOWNLOAD, __FILE_IDS__, $lightbox->id}">Download selected</option>
+				</select>
+		
+				<select class="bulk-action" name="" id="">
+					<option value="{link bulkAction! $control::BULK_ACTION_ADD_2_CP, __FILE_IDS__, $k}" data-nette-confirm="Are you sure?" data-nette-use-ajax="true" n:foreach="$packages AS $k => $package">{$package}</option>
+				</select>
+				
+				<a class="ok-button" href="{plink download! $lightbox->id}" n:if="$control->isDownloadAllAllowed">Download all files (zip)</a>
+			</div>
 		{/if}
+
+		{control itemPaginator false, step2}
 		
 		
 		{* FILE DETAIL *}
@@ -88,7 +96,7 @@
 						Description:<span id="descSpinner" class="spinner"></span>
 						<span class="trigger-editable pointer">Edit</span>
 					</div>
-					<p class="editable" data-editable-type="textarea" data-editable-submit="OK" data-editable-name="desc" data-editable-process-url=""></p>
+					<p class="editable" data-editable-type="textarea" data-editable-onblur="ignore" data-editable-submit="OK" data-editable-name="desc" data-editable-process-url=""></p>
 				</div>
 			</div>
 		</div>

@@ -10,6 +10,8 @@ $(function() {
 	        style		: 'inherit',
 	        type    	: $this.data('editableType') || 'text',
 	        submit    	: $this.data('editableSubmit') || '',
+	        onblur    	: $this.data('editableOnblur') || '',
+//	        onblur		: 'ignore',
 	        data: function(value, settings) {
 		      	/* Convert <br> to newline. */
 //		      	return value;

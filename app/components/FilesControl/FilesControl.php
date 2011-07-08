@@ -31,6 +31,9 @@ class FilesControl extends BaseControl
 	/** @var string render mode */
 	const MODE_LIGHTBOX = 'lightbox_mode';
 
+	/** @var string render mode */
+	const MODE_PROJECT = 'project_mode';
+
 	/** 
 	 * @var string - one of _allowedOrderby
 	 * @persistent 
@@ -55,11 +58,17 @@ class FilesControl extends BaseControl
 	/** @var bool is download of files allowed? */
 	public $isDownloadAllowed = true;
 	
+	/** @var bool is download of all container (project, lightbox, ...) allowed? */
+	public $isDownloadAllAllowed = false;
+	
 	/** @var bool is bulk action allowed? */
 	public $isBulkActionAllowed = false;
 	
 	/** @var bool is removing files from lightbox allowed? */
 	public $isRemoveFromLbAllowed = false;
+	
+	/** @var bool is complete deletion of files allowed? - used in Projects */
+	public $isRemovalAllowed = false;
 
 	/**
 	 * allowed values of $this->orderby
@@ -229,8 +238,14 @@ class FilesControl extends BaseControl
 				$this->isAddToLbAllowed = false;
 				$this->isBulkActionAllowed = true;
 				$this->isDownloadAllowed = true;
+				$this->isDownloadAllAllowed = true;
 				$this->isRemoveFromLbAllowed = true;
+				$this->isRemovalAllowed = false;
 				$this->template->thumbSize = FilesModel::SIZE_MEDIUM;
+//				break; // intentionally no break
+				
+			case self::MODE_PROJECT:
+				$this->isRemovalAllowed = true;
 				break;
 				
 			case self::MODE_STANDARD: // @intentionally no break
@@ -238,7 +253,9 @@ class FilesControl extends BaseControl
 				$this->isAddToLbAllowed = true;
 				$this->isBulkActionAllowed = false;
 				$this->isDownloadAllowed = true;
+				$this->isDownloadAllAllowed = false;
 				$this->isRemoveFromLbAllowed = false;
+				$this->isRemovalAllowed = false;
 				break;
 		}
 	}
@@ -291,10 +308,11 @@ class FilesControl extends BaseControl
 	 * download file
 	 *
 	 * @param int fileId
+	 * @param bool use bitmap alternative to svg files?
 	 */
-	public function handleDownload($id)
+	public function handleDownload($id, $useBitmap = false)
 	{
-		$file = $this->model->download($id);
+		$this->model->download($id, $useBitmap);
 	}
 	
 	

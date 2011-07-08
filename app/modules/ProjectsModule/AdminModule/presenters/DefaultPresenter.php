@@ -202,7 +202,7 @@ class Projects_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 		if ($id === ProjectsModel::GENERAL_PROJECT_ID) {
 			$this->flashMessage('Project GENERAL can not be deleted', self::FLASH_MESSAGE_WARNING);
 		} else {
-			if ($this->user->isAllowed('project', 'delete')) {
+			if ($this->user->isAllowed(Acl::RESOURCE_PROJECT, Acl::PRIVILEGE_DELETE)) {
 				$this->model->delete($id);
 				$this->flashMessage('Project deleted', self::FLASH_MESSAGE_SUCCESS);
 			} else {

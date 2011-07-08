@@ -16,7 +16,7 @@ class LightboxesModel extends BaseModel
 	/**
 	 * finds user by id
 	 *
-	 * @param int $id
+	 * @param int
 	 * @return DibiRow
 	 */
 	public function find($id)
@@ -29,6 +29,40 @@ class LightboxesModel extends BaseModel
 					->on('l.owner_id = u.id')
 				->where('l.id = %i', $id)
 				->fetch();
+	}
+	
+	
+	/**
+	 * fetch latest lb of logged user
+	 *
+	 * @return DibiRow
+	public function findUserLatest()
+	{
+		return dibi::select('l.*, u.firstname AS owner')
+				->from(self::TABLE)
+					->as('l')
+				->leftJoin(self::USERS_TABLE)
+					->as('u')
+					->on('l.owner_id = u.id')
+				->where('l.owner_id = %i', $this->getUserId())
+				->orderBy('created DESC')
+				->fetch();
+	}
+	 */
+	
+	
+	/**
+	 * fetch latest lb of logged user
+	 *
+	 * @return DibiRow
+	 */
+	public function findUserLatestId()
+	{
+		return dibi::select('id')
+				->from(self::TABLE)
+				->where('owner_id = %i', $this->getUserId())
+				->orderBy('created DESC')
+				->fetchSingle();
 	}
 	
 	
@@ -116,7 +150,7 @@ class LightboxesModel extends BaseModel
 	/**
 	 * insert
 	 *
-	 * @param array $data
+	 * @param array
 	 * @return int insertedId()
 	 */
 	public function insert(array $data)

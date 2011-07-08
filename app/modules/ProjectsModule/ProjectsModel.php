@@ -12,7 +12,8 @@ class ProjectsModel extends BaseModel
 	const PATH = PROJECTS_PATH;
 
 	const IMAGE_W = 390;
-	const IMAGE_H = 260;
+//	const IMAGE_H = 260;
+	const IMAGE_H = null;
 	
 	const FILTER_COMPLETED = 'completed';
 	const FILTER_IN_PROGRESS = 'in-progress';
@@ -45,6 +46,7 @@ class ProjectsModel extends BaseModel
 						->as('u')
 						->on('p.manager_id = u.id')
 					->groupBy('p.id')
+					->orderBy('name ASC')
 					->orderBy('completed DESC');
 //					->fetchAll();
 	}
@@ -64,10 +66,9 @@ class ProjectsModel extends BaseModel
 	}
 	
 	
-	
 	public function getTopFiles($projectId)
 	{
-		return dibi::select('id, filename, description')
+		return dibi::select('id, filename, suffix, description')
 					->from(self::FILES_TABLE)
 					->where('projects_id = %i', $projectId)
 					->where('is_top_file = 1')
@@ -362,7 +363,7 @@ class ProjectsModel extends BaseModel
 
 	private function saveImage($file, $id)
 	{
-		return ImageUploadModel::savePreview(self::PATH . '/' . $id, $file, self::IMAGE_W, self::IMAGE_H, true, 'main.jpg');
+		return ImageUploadModel::savePreview(self::PATH . '/' . $id, $file, self::IMAGE_W, self::IMAGE_H, false, 'main.jpg');
 	}
 	
 	

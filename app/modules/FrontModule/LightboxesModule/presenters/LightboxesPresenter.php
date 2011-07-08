@@ -103,6 +103,12 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 		parent::beforeRender();
 //		$this->template->lightboxes = $this->model->findAll();
 		$this->template->lightboxOwners = $this->model->findOwners();
+		
+
+		$this->setRenderSections(array(
+			self::RENDER_SECTION_OPTIONS => false,
+		));
+
 
 	}
 	
@@ -140,11 +146,16 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 	{
 		$this->setTemplateLightboxes();
 		
-		if ($id) {
+		// show latest lb of logged user by default
+		if (!$id) {
+			$id = $this->model->findUserLatestId();
+			$this->redirect('list', array($id));
+		} else {
 			$this->template->lightbox = $lb = $this->model->find($id);
-			if ($lb === false) {
-				throw new BadRequestException('Lightbox does NOT exist!');
-			}
+		}
+		
+		if ($lb === false) {
+			throw new BadRequestException('Lightbox does NOT exist!');
 		}
 	}
 	
@@ -210,7 +221,7 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 	 */
 	public function handleEditName($id, $name)
 	{
-		if ($this->user->isAllowed(new LightboxResource($id), 'edit')) {
+		if ($this->user->isAllowed(new LightboxResource($id), Acl::PRIVILEGE_EDIT)) {
 			try {
 				$this->model->updateName($id, $name);
 				echo $name;
@@ -227,7 +238,7 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 	public function handleDelete($id)
 	{
 		try {
-			if ($this->user->isAllowed(new LightboxResource($id), 'delete')) {
+			if ($this->user->isAllowed(new LightboxResource($id), Acl::PRIVILEGE_DELETE)) {
 				$this->model->delete($id);
 				$this->flashMessage('Lightbox deleted.', self::FLASH_MESSAGE_SUCCESS);
 			} else {

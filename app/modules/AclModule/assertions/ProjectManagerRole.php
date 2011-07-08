@@ -5,5 +5,5 @@
  */
 class ProjectManagerRole extends BaseRole
 {
-	const ID = 'projectManager';
+	const ID = Acl::ROLE_PROJECT_MANAGER;
 }

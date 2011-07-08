@@ -93,6 +93,22 @@
  		/******					****
  		 ***** COLORBOX FILE DETAIL***
  		 *****  				****/
+
+ 		// resize colorbox while editing description
+ 		// enable autogrowing textarea
+ 		$('.description-container textarea').livequery(function() {
+ 			var $this = $(this);
+ 			
+ 			$.colorbox.resize();
+ 			$this.focus();
+ 			
+ 			$this.autoGrow();
+ 			$this.bind('resize', function() {
+	 			$.colorbox.resize();
+	 			$this.focus();
+ 			});
+ 		});
+ 		
 		$("a[rel='images']").livequery( function () {
 		 	var fileDetailModal = $('#file-detail-modal');
 //		 	var linkReloadItemList = {link reloadItemList!};

@@ -6,7 +6,7 @@
  */
 class LightboxResource extends OwnedResource
 {
-	const ID = 'lightbox';
+	const ID = Acl::RESOURCE_LIGHTBOX;
     
 	
 	/**

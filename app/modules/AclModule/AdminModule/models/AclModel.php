@@ -107,6 +107,31 @@ class AclModel extends BaseModel
  */
 class Acl extends Permission
 {
+	const ROLE_ACL_ADMIN = 'acl_admin';
+	const ROLE_ADMIN = 'admin';
+	const ROLE_SUPERADMIN = 'superadmin';
+	const ROLE_DESIGNER = 'designer';
+	const ROLE_CLIENT = 'client';
+	const ROLE_PROJECT_MANAGER = 'projectManager';
+	
+	const RESOURCE_FILE = 'file';
+	const RESOURCE_PROJECT = 'project';
+	const RESOURCE_LIGHTBOX = 'lightbox';
+	const RESOURCE_USER = 'user';
+	const RESOURCE_ADMINISTRATION = 'administration';
+	const RESOURCE_ACL_PERMISSION = 'acl_permission';
+	
+	const PRIVILEGE_ACL_ACCESS = 'acl_access';
+	const PRIVILEGE_ADMIN = 'admin';
+	const PRIVILEGE_ADD = 'add';
+	const PRIVILEGE_EDIT = 'edit';
+	const PRIVILEGE_DELETE = 'delete';
+	const PRIVILEGE_VIEW = 'view';
+	const PRIVILEGE_BIND_TAG = 'bind_tag';
+	const PRIVILEGE_UNBIND_TAG = 'unbind_tag';
+	const PRIVILEGE_EDIT_DESCRIPTION = 'edit_description';
+	
+	
 	public function __construct()
 	{
         $model = new AclModel();

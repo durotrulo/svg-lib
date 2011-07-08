@@ -6,7 +6,7 @@
  */
 class FileResource extends OwnedResource
 {
-	const ID = 'file';
+	const ID = Acl::RESOURCE_FILE;
     
 	
 	/**

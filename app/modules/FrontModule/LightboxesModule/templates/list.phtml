@@ -52,7 +52,6 @@
 
 
 {block #options}
-	options
 {/block}
 
 
@@ -107,11 +106,11 @@
 		{if $presenter->getParam('id')}
 			{$filesControl->renderList($filesControl::MODE_LIGHTBOX, array('lightbox'=>$lightbox))}
 		{else}
+			{* should not occur as last created lb is shown by default *}
 			<p class="infoMsg">Choose lightbox in left pannel</p>
 		{/if}
 		
 		<div class="clear"></div>
-		<a class="ok-button" href="{link download! $lightbox->id}">Download all files (zip)</a>
 		
 	{/snippet}
 	

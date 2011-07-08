@@ -122,8 +122,6 @@ abstract class BaseModel extends Object
 	}
 	
 	
-//	const RECORD_NOT_FOUND = 'Pozadovany zaznam sa nenasiel'; // todo:remove?
-
 	/** @var DibiConnection */
 /*	protected $conn;
 
@@ -147,9 +145,9 @@ abstract class BaseModel extends Object
 */	
 
 	/**
-	 * validate sorting and set default if not valid
+	 * validate $sorting and set $default if not valid
 	 *
-	 * @param string
+	 * @param string [dibi::DESC | dibi::ASC]
 	 * @param string
 	 */
 	public static function validateSorting(&$sorting, $default = dibi::DESC)
@@ -162,7 +160,7 @@ abstract class BaseModel extends Object
 	
 	
 	/**
-	 * formats array for processing in sql [IN %sql, $arr]
+	 * formats array of strings for processing in sql [IN %sql, $arr]
 	 *
 	 * @param array
 	 * @return string
@@ -188,7 +186,6 @@ abstract class BaseModel extends Object
 	public static function prepareSelect($options, $firstValue = '', $usePhrase = false)
 	{
 		$item = $usePhrase ? $firstValue : "Select $firstValue";
-//		return array($item) + $options;
 		return array('-1' => $item) + $options;
 	}
 	
@@ -317,6 +314,7 @@ abstract class BaseModel extends Object
 		return $relativePath;
 	}
 	
+	
 	/**
 	 * spoji viacero $multipleVar pre 1 zaznam do vysledneho 1 zaznamu
 	 * 
@@ -374,6 +372,13 @@ abstract class BaseModel extends Object
 	}
 	
 	
+	/**
+	 * output file to download
+	 *
+	 * @param string path to file to download
+	 * @param string
+	 * @param bool
+	 */
 	protected function downloadFile($srcFile, $publicFilename = null, $deleteAfterDownload = false)
 	{
 		if (empty($publicFilename)) {

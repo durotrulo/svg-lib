@@ -205,7 +205,8 @@ $(function() {
 	
 	$('.sortable').livequery(function() {
 		$(this).sortable({
-			handle: '.filename',
+//			handle: '.filename',
+			handle: '.topfile-head',
 			update: function (event, ui) {
 		   		var hash = $(this).sortable("serialize");
 		   		$.get(linkSortTopFiles, hash);

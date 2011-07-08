@@ -95,7 +95,10 @@ FormMacros::register();
 														/***** ***** **
 														 *	Debug Bar *
 														****** ***** **/
-Debug::addPanel(new TodoPanel());
+$todoPanel = new TodoPanel();
+$todoPanel->todoMask = array('TODO', 'FIXME', 'FIX ME', 'FIX', 'TO DO', 'PENDING', 'XXX');
+						
+Debug::addPanel($todoPanel);
 
 //PresenterTreePanel::register();
 

@@ -17,27 +17,6 @@
 	{control js 'jquery.livequery.js', 'jquery.nette.js', 'netteForms.js', 'jquery.placeholder.min.js', 'common.js', 'js.js'}
 	{control css 'reset.css', 'general.css', 'screen.css', 'login.css'}
 
-	{*
-	 * Google Analytics
-	 * todo: define GA id
-	 * Debug::$productionMode je true na production, ak nie som z dev IP
-	 *}
-	{if Environment::isProduction() && Debug::$productionMode}
-	<script type="text/javascript">
-		var id = '';
-		if (id) {
-		  	var _gaq = _gaq || [];
-		  	_gaq.push(['_setAccount', id]);
-		  	_gaq.push(['_trackPageview']);
-		
-		  	(function() {
-		    	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		    	ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		    	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		  	})();
-		}
-	</script>
-	{/if}
 	
 	{* js a css from views *}
 	{ifset $head}{!$head}{/if}

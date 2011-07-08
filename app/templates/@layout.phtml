@@ -39,7 +39,7 @@
 	<!--	History.js END-->
 
 	
-	{control js 'jquery.livequery.js', 'jquery.nette.js', 'netteForms.js', 'jquery.placeholder.min.js', 'jquery.cookie.js', '../modules/jToggler/jToggler.js', 'internal.js', 'common.js', 'js.js'}
+	{control js 'jquery.livequery.js', 'jquery.nette.js', 'netteForms.js', 'jquery.placeholder.min.js', 'jquery.cookie.js', '../modules/jToggler/jToggler.js', 'jquery.ba-resize.js', 'jquery.autogrowtextarea.js', 'internal.js', 'common.js', 'js.js'}
 	{control css 'reset.css', 'general.css', 'screen.css'}
 
 	
@@ -56,29 +56,6 @@
 	
 	{else}
 	
-		{*
-		 * Google Analytics
-		 * todo: define GA id
-		 * Debug::$productionMode je true na production, ak nie som z dev IP
-		 *}
-		{if Environment::isProduction() && Debug::$productionMode}
-		<script type="text/javascript">
-			var id = '';
-			if (id) {
-			  	var _gaq = _gaq || [];
-			  	_gaq.push(['_setAccount', id]);
-			  	_gaq.push(['_trackPageview']);
-			
-			  	(function() {
-			    	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-			    	ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-			    	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-			  	})();
-			}
-		</script>
-		{/if}
-		
-		
 		<!--FILE UPLOAD-->
 		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/themes/base/jquery-ui.css" id="theme">
 		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js"></script>
@@ -138,7 +115,7 @@
 	
 			<a href="{link :Front:Files:list, filter=>null}" title="Home" class="menu-icon home-icon{ifCurrent} active{/if}"></a>
 			<a href="{link :Front:Lightboxes:list ownerId=>$userId, ownerIds=>null}" title="Lightboxes" class="menu-icon lightbox-icon{ifCurrent} active{/if}"></a>
-			<a n:if="$user->isAllowed('user', 'admin')" href="{link :Users:Admin:Default:add}" title="Users admin" class="menu-icon users-icon{ifCurrent} active{/if}"></a>
+			<a n:if="$user->isAllowed(Acl::RESOURCE_USER, Acl::PRIVILEGE_ADMIN)" href="{link :Users:Admin:Default:add}" title="Users admin" class="menu-icon users-icon{ifCurrent} active{/if}"></a>
 			<a href="{link :Projects:Admin:Default:add}" title="Projects admin" class="menu-icon projects-icon{ifCurrent} active{/if}"></a>
 			<a href="#" title="Client Packages" class="menu-icon client-package-icon{ifCurrent} active{/if}"></a>
 			<a href="{link :Users:Front:Default:edit}" title="Settings" class="menu-icon settings-icon{ifCurrent} active{/if}"></a>

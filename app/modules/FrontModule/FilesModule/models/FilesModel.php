@@ -52,6 +52,15 @@ class FilesModel extends BaseModel
 	/** @var int height of site-wide image (top level) */
 	const SITEWIDE_H = null;
 	
+	/** @var int width of .png alternative to .svg for use in older SW */
+	const BITMAP_ALTERNATIVE_W = 380;
+
+	/** @var int height of .png alternative to .svg for use in older SW */
+	const BITMAP_ALTERNATIVE_H = null;
+	
+	/** @var format type of bitmap alternative to .svg files */
+	const BITMAP_ALTERNATIVE_FORMAT = 'png';
+	
 	const FILTER_BY_VECTOR = 'vector';
 	const FILTER_BY_BITMAP = 'bitmap';
 	const FILTER_BY_INSPIRATION = 'inspiration';
@@ -348,11 +357,29 @@ class FilesModel extends BaseModel
 	
 	
 	/**
+	 * get file path to bitmap alternative to .svg
+	 * if not SVG file return original path
+	 *
+	 * @param string
+	 * @return string
+	 */
+	protected function getBitmapAlternative($filepath)
+	{
+		if (strtolower(FileModel::getSuffix($filepath)) === 'svg') {
+			$baseFilePath = FileModel::removeSuffix($filepath);
+			$filepath = $baseFilePath . '.' . self::BITMAP_ALTERNATIVE_FORMAT;
+		}
+		return $filepath;
+	}
+	
+	
+	/**
 	 * output file for download
 	 *
 	 * @param array|int #files.id
+	 * @param bool download bitmap alternative to svg files?
 	 */
-	public function download($ids)
+	public function download($ids, $useBitmap = false)
 	{
 		// output as .zip
 		if (is_array($ids)) {
@@ -370,6 +397,9 @@ class FilesModel extends BaseModel
 				
 				foreach ($ids as $id) {
 					$path = $this->prepare4download($id);
+					if ($useBitmap) {
+						$path = $this->getBitmapAlternative($path);
+					}
 					$zipper->addFile($path, basename($path));
 				}
 	
@@ -380,7 +410,10 @@ class FilesModel extends BaseModel
 
 		// output single file
 		} else {
-			$path = $this->prepare4download($id);	
+			$path = $this->prepare4download($ids);
+			if ($useBitmap) {
+				$path = $this->getBitmapAlternative($path);
+			}
 			parent::downloadFile($path);
 		}
 	}
@@ -748,6 +781,12 @@ class FilesModel extends BaseModel
 					copy($orig_dirname . '/' . $data['filename'], $filepath[3] . $data['filename']);
 				}
 				
+				// todo: store png alternative
+//				$im = new imagick($file->getTemporaryFile() .'[0]');
+//				$suffix = 'png';
+//				$this->saveImagickPreview($im, $orig_dirname . FileModel::removeSuffix($data['filename']) . ".$suffix", $suffix, self::BITMAP_ALTERNATIVE_W, self::BITMAP_ALTERNATIVE_H);
+//die();				
+
 				break;
 				
 			default:
@@ -780,5 +819,98 @@ class FilesModel extends BaseModel
 		$im->writeImage($filepath);
 		$im->clear();
 		$im->destroy();
+	}
+	
+	
+	public static function imagickTest()
+	{
+		// works
+//		convert -density 10440 test/reload2.svg test/1.png
+		
+		// resize
+		$filepath = DATA_DIR . '/files/0/file-download.svg';
+//		$filepath = DATA_DIR . '/files/0/reload.svg';
+		$filepathDest = DATA_DIR . '/files/0/file-download2.svg';
+//		$filepathDest = DATA_DIR . '/files/0/file-download2.png';
+//		$filepathDest = $filepath;
+//		$im = new ImageMagick2($filepath);
+
+		$width_in_pixels = 500;
+		$height_in_pixels = 200;
+
+//		exec("convert -density 10440 $filepath $filepathDest");
+//		die();
+
+
+// this SHOULD work, but does NOT
+		$dpi = 1440;
+//		$x_ratio = 4.5;
+//		$y_ratio = 4.5;
+		$im = new Imagick();
+		$im->setResolution($dpi, $dpi);
+		$im->readImage($filepath);
+//		$im->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+//		$im->setImageResolution($dpi, $dpi);
+//		$im->resampleImage  (2*$dpi, 2*$dpi, imagick::FILTER_UNDEFINED, 1);
+//		$im->resampleImage  ($x_ratio * $dpi, $y_ratio * $dpi, imagick::FILTER_UNDEFINED, 1);
+//		$im->setImageUnits(2);
+
+		$im->setImageFormat("png");
+		header("Content-Type: image/png");
+		echo $im;
+		die();
+		
+		
+		$dpi = 72;
+		$x_ratio = 4.5;
+		$y_ratio = 4.5;
+		$im = new Imagick();
+//		$im->setResolution($dpi, $dpi);
+		$im->readImage($filepath);
+//		$im->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+		$im->setImageResolution($dpi, $dpi);
+//		$im->resampleImage  (2*$dpi, 2*$dpi, imagick::FILTER_UNDEFINED, 1);
+		$im->resampleImage  ($x_ratio * $dpi, $y_ratio * $dpi, imagick::FILTER_UNDEFINED, 1);
+//		$im->setImageUnits(2);
+		$im->setImageFormat("png");
+		header("Content-Type: image/png");
+		echo $im;
+		die();
+		
+		$im = new Imagick();
+		$im->readImage($filepath);
+		$im->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+		$res = $im->getImageResolution();
+		$x_ratio = $res['x'] / $im->getImageWidth();
+		$y_ratio = $res['y'] / $im->getImageHeight();
+//		dump($x_ratio);
+		$im->removeImage();
+		$im->setResolution($width_in_pixels * $x_ratio, $height_in_pixels * $y_ratio);
+		$im->readImage($filepath);
+//		dump($im);
+//		die();
+		// Now you can do anything with the image, such as convert to a raster image and output it to the browser:
+		$im->setImageFormat("png");
+		header("Content-Type: image/png");
+		echo $im;
+		die();
+
+
+		$im = new Imagick($filepath);
+//		$im->resizeImage(100, null, Imagick::FILTER_LANCZOS, 1);
+		$im->scaleImage(100, 0, false);
+		$im->writeImage($filepathDest);
+		$im->clear();
+		$im->destroy();
+		die();
+//		$im = Image::fromFile($filepath);
+		$im->resize(800, null, Image::ENLARGE);
+		$im->save($filepathDest);
+		die();
+		
+		$im = new imagick($filepath .'[0]');
+		$suffix = 'png';
+		$this->saveImagickPreview($im, $orig_dirname . FileModel::removeSuffix($data['filename']) . ".$suffix", $suffix, self::BITMAP_ALTERNATIVE_W, self::BITMAP_ALTERNATIVE_H);
+		
 	}
 }
