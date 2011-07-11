@@ -8,7 +8,8 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 	public $filter = null;
 	
 	/** @persistent */
-	public $orderby = FilesModel::ORDER_BY_NAME;
+	public $orderby = null;
+//	public $orderby = FilesModel::ORDER_BY_NAME;
 	
 	/** @persistent */
 	public $sorting = dibi::DESC;
@@ -32,6 +33,10 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 	
 	/** DibiRow array of [files|projects|lightboxes] */
 	protected $items;
+	
+	protected $defaults = array(
+		'orderby' => FilesModel::ORDER_BY_NAME,
+	);
 	
 	/** @var ProjectsModel */
 	private $projectsModel;
@@ -146,8 +151,13 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 			throw new InvalidStateException('Parameter filter must be one of ' . join(',', $this->_allowedFilters) . ".'$this->filter' given.");
 		}
 		
-		if (!is_null($this->orderby) and !in_array($this->orderby, $this->_allowedOrderby)) {
-			throw new InvalidStateException('Parameter orderby must be one of ' . join(',', $this->_allowedOrderby) . ".'$this->orderby' given.");
+//		if (!is_null($this->orderby) and !in_array($this->orderby, $this->_allowedOrderby)) {
+		if (!in_array($this->orderby, $this->_allowedOrderby, true)) {
+			if (empty($this->orderby)) {
+				$this->orderby = $this->defaults['orderby'];
+			} else {
+				throw new InvalidStateException('Parameter orderby must be one of ' . join(',', $this->_allowedOrderby) . ".'$this->orderby' given.");
+			}
 		}
 		
 		BaseModel::validateSorting($this->sorting, dibi::DESC);
@@ -482,5 +492,36 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 	public function handleDownloadFile($fileId, $useBitmap = false)
 	{
 		$this->filesModel->download($id, $useBitmap);
+	}
+	
+	
+	
+								/**
+								 * PROJECTS + PACKAGES COMMON METHODS
+								 */
+	
+	/**
+	 * save order after sorting topfiles
+	 */
+	public function handleSortTopFiles($topfile)
+	{
+		$sortedItems = $topfile;
+		$sortableModel = new SortableModel(BaseModel::FILES_TABLE, 'id', 'top_file_order');
+		$sortableModel->saveOrder($sortedItems);
+		$this->flashMessage('Items order saved', self::FLASH_MESSAGE_SUCCESS);
+		$this->refresh('none');
+	}
+	
+	
+	/**
+	 * delete file permanently from system (for topfiles - non-topfiles handled in FilesControl)
+	 *
+	 * @param int
+	 */
+	public function handleDeleteFile($fileId)
+	{
+		$this->filesModel->delete($fileId);
+		$this->flashMessage('File deleted', self::FLASH_MESSAGE_SUCCESS);
+		$this->refresh('this');
 	}
 }
