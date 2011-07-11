@@ -61,6 +61,9 @@ class FilesModel extends BaseModel
 	/** @var format type of bitmap alternative to .svg files */
 	const BITMAP_ALTERNATIVE_FORMAT = 'png';
 	
+	/** @var string dirname where bitmap alternatives are stored - relative to original .svg files */
+	const BITMAP_ALTERNATIVE_DIRNAME = 'bitmapAlternative';
+	
 	const FILTER_BY_VECTOR = 'vector';
 	const FILTER_BY_BITMAP = 'bitmap';
 	const FILTER_BY_INSPIRATION = 'inspiration';
@@ -363,11 +366,14 @@ class FilesModel extends BaseModel
 	 * @param string
 	 * @return string
 	 */
-	protected function getBitmapAlternative($filepath)
+	protected function getBitmapAlternativePath($filepath)
 	{
 		if (strtolower(FileModel::getSuffix($filepath)) === 'svg') {
-			$baseFilePath = FileModel::removeSuffix($filepath);
-			$filepath = $baseFilePath . '.' . self::BITMAP_ALTERNATIVE_FORMAT;
+
+			$filepath = dirname($filepath) . DIRECTORY_SEPARATOR . self::BITMAP_ALTERNATIVE_DIRNAME . DIRECTORY_SEPARATOR . FileModel::removeSuffix(basename($filepath)) . '.' . self::BITMAP_ALTERNATIVE_FORMAT;
+
+//			$baseFilePath = FileModel::removeSuffix($filepath);
+//			$filepath = $baseFilePath . '.' . self::BITMAP_ALTERNATIVE_FORMAT;
 		}
 		return $filepath;
 	}
@@ -398,7 +404,7 @@ class FilesModel extends BaseModel
 				foreach ($ids as $id) {
 					$path = $this->prepare4download($id);
 					if ($useBitmap) {
-						$path = $this->getBitmapAlternative($path);
+						$path = $this->getBitmapAlternativePath($path);
 					}
 					$zipper->addFile($path, basename($path));
 				}
@@ -412,7 +418,7 @@ class FilesModel extends BaseModel
 		} else {
 			$path = $this->prepare4download($ids);
 			if ($useBitmap) {
-				$path = $this->getBitmapAlternative($path);
+				$path = $this->getBitmapAlternativePath($path);
 			}
 			parent::downloadFile($path);
 		}
@@ -701,7 +707,7 @@ class FilesModel extends BaseModel
 		foreach ($filepath as $fp) {
 			FileModel::unlink($fp);
 		}
-		$bitmapAlternativePath = $this->getBitmapAlternative(array_pop($filepath));
+		$bitmapAlternativePath = $this->getBitmapAlternativePath(array_pop($filepath));
 		FileModel::unlink($bitmapAlternativePath);
 
 		
@@ -838,18 +844,17 @@ class FilesModel extends BaseModel
 			case 'svg':
 				// upload original file
 				$data['filename'] = FileUploadModel::saveFile($orig_dirname, $file);
-				copy($orig_dirname . '/' . $data['filename'], $filepath[0] . $data['filename']);
-				copy($orig_dirname . '/' . $data['filename'], $filepath[1] . $data['filename']);
-				copy($orig_dirname . '/' . $data['filename'], $filepath[2] . $data['filename']);
+				$origFilePath = $orig_dirname . '/' . $data['filename'];
+				copy($origFilePath, $filepath[0] . $data['filename']);
+				copy($origFilePath, $filepath[1] . $data['filename']);
+				copy($origFilePath, $filepath[2] . $data['filename']);
 		
 				if ($data['is_top_file']) {
-					copy($orig_dirname . '/' . $data['filename'], $filepath[3] . $data['filename']);
+					copy($origFilePath, $filepath[3] . $data['filename']);
 				}
 				
 				// todo: store png alternative
-//				$im = new imagick($file->getTemporaryFile() .'[0]');
-//				$suffix = 'png';
-//				$this->saveImagickPreview($im, $orig_dirname . FileModel::removeSuffix($data['filename']) . ".$suffix", $suffix, self::BITMAP_ALTERNATIVE_W, self::BITMAP_ALTERNATIVE_H);
+				$this->saveBitmapAlternative($origFilePath);
 //die();				
 
 				break;
@@ -898,60 +903,24 @@ class FilesModel extends BaseModel
 	}
 	
 	
-	public static function imagickTest()
+	/**
+	 * save bitmap alternative of original .svg file
+	 * desc: 
+	 * 	find out resolution ratios
+	 * 	set new resolution - provides actual resizing
+	 * 	save bitmap alternative
+	 *
+	 * @param string path to .svg file
+	 * @param bool overwrite existing bitmap alternative file?
+	 * @return void
+	 * @see http://sk.php.net/manual/en/function.imagick-setresolution.php#85284
+	 */
+	public function saveBitmapAlternative($filepath, $overwrite = false)
 	{
-		// works
-//		convert -density 10440 test/reload2.svg test/1.png
-		
-		// resize
-		$filepath = DATA_DIR . '/files/0/file-download.svg';
-//		$filepath = DATA_DIR . '/files/0/reload.svg';
-		$filepathDest = DATA_DIR . '/files/0/file-download2.svg';
-//		$filepathDest = DATA_DIR . '/files/0/file-download2.png';
-//		$filepathDest = $filepath;
-//		$im = new ImageMagick2($filepath);
-
-		$width_in_pixels = 500;
-		$height_in_pixels = 200;
-
-//		exec("convert -density 10440 $filepath $filepathDest");
-//		die();
-
-
-// this SHOULD work, but does NOT
-		$dpi = 1440;
-//		$x_ratio = 4.5;
-//		$y_ratio = 4.5;
-		$im = new Imagick();
-		$im->setResolution($dpi, $dpi);
-		$im->readImage($filepath);
-//		$im->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
-//		$im->setImageResolution($dpi, $dpi);
-//		$im->resampleImage  (2*$dpi, 2*$dpi, imagick::FILTER_UNDEFINED, 1);
-//		$im->resampleImage  ($x_ratio * $dpi, $y_ratio * $dpi, imagick::FILTER_UNDEFINED, 1);
-//		$im->setImageUnits(2);
-
-		$im->setImageFormat("png");
-		header("Content-Type: image/png");
-		echo $im;
-		die();
-		
-		
-		$dpi = 72;
-		$x_ratio = 4.5;
-		$y_ratio = 4.5;
-		$im = new Imagick();
-//		$im->setResolution($dpi, $dpi);
-		$im->readImage($filepath);
-//		$im->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
-		$im->setImageResolution($dpi, $dpi);
-//		$im->resampleImage  (2*$dpi, 2*$dpi, imagick::FILTER_UNDEFINED, 1);
-		$im->resampleImage  ($x_ratio * $dpi, $y_ratio * $dpi, imagick::FILTER_UNDEFINED, 1);
-//		$im->setImageUnits(2);
-		$im->setImageFormat("png");
-		header("Content-Type: image/png");
-		echo $im;
-		die();
+		$dest = $this->getBitmapAlternativePath($filepath);
+		if (file_exists($dest) and !$overwrite) {
+			return;
+		}
 		
 		$im = new Imagick();
 		$im->readImage($filepath);
@@ -959,34 +928,38 @@ class FilesModel extends BaseModel
 		$res = $im->getImageResolution();
 		$x_ratio = $res['x'] / $im->getImageWidth();
 		$y_ratio = $res['y'] / $im->getImageHeight();
-//		dump($x_ratio);
+
+		// scale image appropriately 
+		$h = 0;
+		// if null or 0
+		if (!self::BITMAP_ALTERNATIVE_H) {
+			$scaleRatio = self::BITMAP_ALTERNATIVE_W / $im->getImageWidth();
+			$h = $im->getImageHeight() * $scaleRatio;
+		} else {
+			$h = self::BITMAP_ALTERNATIVE_H;
+		}
+		
 		$im->removeImage();
-		$im->setResolution($width_in_pixels * $x_ratio, $height_in_pixels * $y_ratio);
+		$im->setResolution(self::BITMAP_ALTERNATIVE_W * $x_ratio, $h * $y_ratio);
 		$im->readImage($filepath);
-//		dump($im);
-//		die();
-		// Now you can do anything with the image, such as convert to a raster image and output it to the browser:
-		$im->setImageFormat("png");
-		header("Content-Type: image/png");
-		echo $im;
-		die();
 
-
-		$im = new Imagick($filepath);
-//		$im->resizeImage(100, null, Imagick::FILTER_LANCZOS, 1);
-		$im->scaleImage(100, 0, false);
-		$im->writeImage($filepathDest);
-		$im->clear();
-		$im->destroy();
-		die();
-//		$im = Image::fromFile($filepath);
-		$im->resize(800, null, Image::ENLARGE);
-		$im->save($filepathDest);
-		die();
-		
-		$im = new imagick($filepath .'[0]');
-		$suffix = 'png';
-		$this->saveImagickPreview($im, $orig_dirname . FileModel::removeSuffix($data['filename']) . ".$suffix", $suffix, self::BITMAP_ALTERNATIVE_W, self::BITMAP_ALTERNATIVE_H);
-		
+		Basic::mkdir(dirname($dest));
+		$this->saveImagickPreview($im, $dest, self::BITMAP_ALTERNATIVE_FORMAT, self::BITMAP_ALTERNATIVE_W, self::BITMAP_ALTERNATIVE_H);
 	}
+	
+	
+	/**
+	 * create bitmap alternative to all .svg files stored in self::ORIG_PATH
+	 * should NOT be called anymore - used only for migration - now bitmap alternatives are created instantly in $this->insert()
+	 * @param bool overwrite existing bitmap alternative files?
+	 */
+	public function createBitmapAlternative($overwrite = false)
+	{
+		// recursive search for .svg files
+		foreach (Finder::findFiles('*.svg')->from(self::ORIG_PATH) as $file) {
+			$this->saveBitmapAlternative($file->getPathName(), $overwrite);
+		}
+	}
+	
+	
 }

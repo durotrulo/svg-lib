@@ -30,9 +30,6 @@ class Front_FilesPresenter extends Front_InternalPresenter
 
 //		$this->model = new FilesModel();
 		$this->model = $this->filesModel;
-		
-		// todo: solve imagick svg conversion on png
-//		FilesModel::imagickTest();
 	}
 	
 	
