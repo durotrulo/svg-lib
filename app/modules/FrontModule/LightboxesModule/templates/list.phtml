@@ -77,19 +77,21 @@
 		<div class="margin-all">
 		
 			@{ifset $lightboxes}
-				{* lightboxes of logged user *}
-				@{include '@lb-owners.phtml' lightboxes => $lightboxes, ownerId => $userId, ownerName => 'My Lightboxes', user => $user}
-				
-				{* other lightboxes *}
-				{*<a class="ajax toggler" rel="forceHistory" data-nette-toggle-target="#snippet--lb_{$owner->id}" href="{link loadOwners! 'ownerId' => $owner->id}">User Lightboxes</a>*}
-				<span class="simple-toggler toggler toggler-left active" data-nette-toggle-target=".user-lbs">User Lightboxes</span>
-				{*<div class="user-lbs" style="display:none;">*}
-				<div class="user-lbs">
-					@{foreach $lightboxOwners as $owner}
-						@{include '@lb-owners.phtml' lightboxes => $lightboxes, ownerId => $owner->id, ownerName => $owner->name, user => $user}
-					@{/foreach}
-				</div>
-				
+				{snippet ownersList}
+					{* lightboxes of logged user *}
+					{var $tplPath TPL_INC_DIR . '/item-owners.phtml'}
+					{include $tplPath items => $lightboxes, ownerId => $userId, ownerName => 'My Lightboxes', user => $user, resource => new LightboxResource(null), itemType => 'lb'}
+					
+					{* other lightboxes *}
+					{*<a class="ajax toggler" rel="forceHistory" data-nette-toggle-target="#snippet--lb_{$owner->id}" href="{link loadOwners! 'ownerId' => $owner->id}">User Lightboxes</a>*}
+					<span class="simple-toggler toggler toggler-left active" data-nette-toggle-target=".user-lbs">User Lightboxes</span>
+					{*<div class="user-lbs" style="display:none;">*}
+					<div class="user-lbs">
+						{foreach $lightboxOwners as $owner}
+							{include $tplPath items => $lightboxes, ownerId => $owner->id, ownerName => $owner->name, user => $user, resource => new LightboxResource(null), itemType => 'lb'}
+						{/foreach}
+					</div>
+				{/snippet}
 				<br>
 				<br>
 				

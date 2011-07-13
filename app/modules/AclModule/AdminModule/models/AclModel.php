@@ -117,9 +117,13 @@ class Acl extends Permission
 	const RESOURCE_FILE = 'file';
 	const RESOURCE_PROJECT = 'project';
 	const RESOURCE_LIGHTBOX = 'lightbox';
+	const RESOURCE_CLIENT_PACKAGE = 'client_package';
 	const RESOURCE_USER = 'user';
-	const RESOURCE_ADMINISTRATION = 'administration';
 	const RESOURCE_ACL_PERMISSION = 'acl_permission';
+	const RESOURCE_ADMINISTRATION = 'administration';
+	const RESOURCE_USERS_ADMINISTRATION = 'users_administration';
+	const RESOURCE_PROJECTS_ADMINISTRATION = 'projects_administration';
+	const RESOURCE_PACKAGES_ADMINISTRATION = 'packages_administration';
 	
 	const PRIVILEGE_ACL_ACCESS = 'acl_access';
 	const PRIVILEGE_ADMIN = 'admin';

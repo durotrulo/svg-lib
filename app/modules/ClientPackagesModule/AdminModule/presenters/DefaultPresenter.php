@@ -1,26 +1,26 @@
 <?php
 
-class Projects_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
+class ClientPackages_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 {
-	const ACL_RESOURCE = Acl::RESOURCE_PROJECTS_ADMINISTRATION;
+	const ACL_RESOURCE = Acl::RESOURCE_PACKAGES_ADMINISTRATION;
 
 	/** @var int */
-	private $projectId;
+	private $itemId;
 	
 	
 	protected function startup()
 	{
 		parent::startup();
-		$this->model = new ProjectsModel();
-		$this->config = Environment::getConfig('projects');
+		$this->model = new ClientPackagesModel();
+		$this->config = Environment::getConfig('clientPackages');
 	}
 
 	protected function beforeRender()
 	{
 		parent::beforeRender();
-		$this->template->title = $this->translate('Projects Admin'); // optional, shown as heading and title of html page
+		$this->template->title = $this->translate('Packages Admin'); // optional, shown as heading and title of html page
 		$this->template->description = $this->translate('Little piece of description for module Projects'); // optional, describes functionality of module
-		$this->template->topHeading = ucfirst($this->getAction()) . ' Project';
+		$this->template->topHeading = ucfirst($this->getAction()) . ' Package';
 
 		if ($this->getAction() === 'add' or $this->getAction() === 'edit') {
 			$items = $this->model->findAll();
@@ -33,7 +33,7 @@ class Projects_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 	 		$vp->setDefaultItemsPerPage($this->config->defaultItemsPerPage);
 	        $vp->paginator->itemCount = $items->count();
 	        $vp->itemString = 'per page';
-			$this->template->projects = $items
+			$this->template->items = $items
 									->toDataSource()
 									->applyLimit($vp->paginator->itemsPerPage, $vp->paginator->offset)
 									->fetchAll();
@@ -46,37 +46,22 @@ class Projects_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 			$this->invalidateControl('topHeading');
 		}
 	}
-	
-	
-  	private function getManagersSelect()
-  	{
-  		return BaseModel::prepareSelect(UsersModel::findByRole(UsersModel::UL_PROJECT_MANAGER_ID), 'Manager');
-  	}
-  	
-  	
-  	private function getRelatedProjectsSelect()
-  	{
-  		// remove edited project
-  		$projects = array_diff_key($this->model->fetchPairs(), array($this->projectId => 0));
-  		
-  		return $projects;
-  	}
 
+	
   	
 	/********************* views add & edit *********************/
 
 
 	public function actionEdit($id)
 	{
-		$this->projectId = $id;
+		$this->itemId = $id;
 		$form = $this['itemForm'];
-		$form['save']->caption = 'Edit Project';
+		$form['save']->caption = 'Edit Package';
 		if (!$form->isSubmitted()) {
 			$row = $this->model->find($id);
 			if (!$row) {
 				throw new BadRequestException(RECORD_NOT_FOUND);
 			}
-			$row['related_projects'] = $this->model->getRelatedProjects($id);
 			$form->setDefaults($row);
 			$this->invalidateControl('itemForm');
 		}
@@ -88,70 +73,45 @@ class Projects_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 	/********************* component factories *********************/
 
 
+	/**
+	 * factory for creating client package
+	 *
+	 * @return MyAppForm
+	 */
 	protected function createComponentItemForm()
 	{
 		$form = new MyAppForm;
 		$form->enableAjax();
-		$form->enableAjaxFileUpload();
 		
-		$form->addClass('fileUploadForm');
-
 		if (!is_null($this->getTranslator())) {
 			$form->setTranslator($this->getTranslator());
 		}
-		
+
 		$form->getRenderer()->wrappers['label']['requiredsuffix'] = " *";
 
-		$form->addText('name', 'Project Name')
+		$form->addText('name', 'Package Name')
             ->addRule(Form::FILLED)
             ->addRule(Form::MIN_LENGTH, NULL, 2)
             ->addRule(Form::MAX_LENGTH, NULL, 70)
 			->getControlPrototype()
-				->data('nette-check-url', $this->link('checkAvailability!', array('__NAME__', 'project')))
+				->data('nette-check-url', $this->link('checkAvailability!', array('__NAME__', 'package')))
 				->class[] = 'checkAvailability';
 				
         $form->addText('subtitle', 'Subtitle')
             ->addCondition(Form::FILLED)
 	            ->addRule(Form::MIN_LENGTH, NULL, 2)
 	            ->addRule(Form::MAX_LENGTH, NULL, 70);
-
-		$form->addDatePicker('completed', 'Completed')
-			->getControlPrototype()->autocomplete('off');
-//		    ->addCondition(Form::FILLED)
-//			    ->addRule(Form::VALID, 'Entered date is not valid!');
-//
-	
-		/*
-	    $form->addSelect('manager_id', 'Manager', $this->getManagersSelect())
-	    		->skipFirst()
-	            ->addRule(Form::FILLED);
-		*/
-		
-	    $form->addMultiSelect('related_projects', 'Related Projects', $this->getRelatedProjectsSelect(), 8);
-
-	    //	photo is optional when editing
-		if ($this->getParam('action') == 'edit') {
-			$form->addFile('main_img', 'Thumbnail')
-				->setOption('description', 'Choose photo only if you want to change current one')
-				->addCondition(Form::FILLED)
-					->addRule(MyAppForm::SUFFIX, 'File attachment must be image (jpg, gif, png)', 'jpg, gif, png')
-					->addRule(Form::MAX_FILE_SIZE, 
-						'File attachment exceeds maximum file size ' . Environment::getConfig("upload")->max_file_size . 'B',
-						Environment::getConfig("upload")->max_file_size);
-		} else {
-			$form->addFile('main_img', 'Thumbnail')
-				->addRule(Form::FILLED, 'Choose %label!')
-				->addRule(MyAppForm::SUFFIX, 'File attachment must be image (jpg, gif, png)', 'jpg, gif, png')
-				->addRule(Form::MAX_FILE_SIZE, 
-					'File attachment exceeds maximum file size ' . Environment::getConfig("upload")->max_file_size . 'B',
-					Environment::getConfig("upload")->max_file_size);
-		}
-	    
-		$form->addSubmit('save', 'Add Project')
+            
+	    $form->addSelect('owner_id', 'Package Owner', BaseModel::prepareSelect(UsersModel::findByRole(UsersModel::UL_CLIENT_ID), 'Client'))
+             ->addRule(Form::FILLED);
+             
+        $form->addSubmit('save', 'Add')
 			->getControlPrototype()->class[] = 'ok-button';
+
 		$form->addSubmit('cancel', 'Cancel')
 			->setValidationScope(NULL)
 			->getControlPrototype()->class[] = 'cancel-button';
+
 		$_this = $this;
 		$form['cancel']
 			->onClick[] = function() use($_this) {
@@ -172,15 +132,13 @@ class Projects_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 
 				// insert
 				if (is_null($this->getParam('id'))) {
-					$values['created'] = dibi::datetime();
 					$id = $this->model->insert($values);
-					$this->flashMessage('Project created.', self::FLASH_MESSAGE_SUCCESS);
+					$this->flashMessage('Client Package created.', self::FLASH_MESSAGE_SUCCESS);
 				// update
 				} else {
-					// 0 = GENERAL
 					$id = intval($this->getParam('id'));
 					$this->model->update($id, $values);
-					$this->flashMessage('Project updated.', self::FLASH_MESSAGE_SUCCESS);
+					$this->flashMessage('Client Package updated.', self::FLASH_MESSAGE_SUCCESS);
 				}
 			}
 		} catch (DibiDriverException $e) {
@@ -188,7 +146,7 @@ class Projects_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 			if ($e->getCode() === 1062) {
 				$this->flashMessage("ERROR: " . $e->getMessage(), self::FLASH_MESSAGE_ERROR);
 			} else {
-				throw $e;
+				Debug::log($e);
 				$this->flashMessage("ERROR: cannot save data!", self::FLASH_MESSAGE_ERROR);
 			}
 		} catch (OperationNotAllowedException $e) {
@@ -203,15 +161,11 @@ class Projects_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 	
 	public function handleDelete($id)
 	{
-		if ($id === ProjectsModel::GENERAL_PROJECT_ID) {
-			$this->flashMessage('Project GENERAL can not be deleted', self::FLASH_MESSAGE_WARNING);
-		} else {
-			if ($this->user->isAllowed(Acl::RESOURCE_PROJECT, Acl::PRIVILEGE_DELETE)) {
-				$this->model->delete($id);
-				$this->flashMessage('Project deleted', self::FLASH_MESSAGE_SUCCESS);
-			} else {
-				$this->flashMessage(NOT_ALLOWED, self::FLASH_MESSAGE_ERROR);
-			}
+		try {
+			$this->model->delete($id);
+			$this->flashMessage('Client Package deleted', self::FLASH_MESSAGE_SUCCESS);
+		} catch (OperationNotAllowedException $e) {
+			$this->flashMessage(NOT_ALLOWED, self::FLASH_MESSAGE_ERROR);
 		}
 
 		$this->refresh('itemList', 'add');

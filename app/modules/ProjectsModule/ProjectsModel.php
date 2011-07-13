@@ -10,6 +10,7 @@ class ProjectsModel extends BaseModel
 {
 	const TABLE = self::PROJECTS_TABLE;
 	const PATH = PROJECTS_PATH;
+	const DEFAULT_IMAGE_PATH = 'images/default-project.jpg';
 
 	const IMAGE_W = 390;
 //	const IMAGE_H = 260;
@@ -68,7 +69,7 @@ class ProjectsModel extends BaseModel
 	
 	public function getTopFiles($projectId)
 	{
-		return dibi::select('id, filename, suffix, description')
+		return dibi::select('id, filename, suffix, description, projects_id')
 					->from(self::FILES_TABLE)
 					->where('projects_id = %i', $projectId)
 					->where('is_top_file = 1')
@@ -76,21 +77,6 @@ class ProjectsModel extends BaseModel
 					->fetchAll();
 	}
 	
-	
-	
-	/**
-	 * check if projectname is available
-	 *
-	 * @param string
-	 * @return bool
-	 */
-	public function isAvailable($name)
-	{
-		return !(bool) dibi::select('COUNT(*)')
-							->from(self::TABLE)
-							->where('name = %s', $name)
-							->fetchSingle();
-	}
 	
 	
 	/**
@@ -169,9 +155,14 @@ class ProjectsModel extends BaseModel
 	 * @param int project id
 	 * @return string
 	 */
-	public function getPreviewPath($id)
+	public function getPreviewPath($id, $useAbsolutePath = false)
 	{
-		return file_exists(self::PATH . "/$id/main.jpg") ? $this->getRelativePath() . "/$id/main.jpg" : 'images/default-project.jpg';
+		$path = self::PATH . "/$id/main.jpg";
+//		return file_exists(self::PATH . "/$id/main.jpg") ? $this->getRelativePath() . "/$id/main.jpg" : 'images/default-project.jpg';
+		return file_exists($path) ? 
+			($useAbsolutePath ? $path : $this->getRelativePath() . "/$id/main.jpg") 
+			: 
+			($useAbsolutePath ? (WWW_DIR . self::DEFAULT_IMAGE_PATH) : self::DEFAULT_IMAGE_PATH);
 	}
 	
 	
@@ -269,6 +260,11 @@ class ProjectsModel extends BaseModel
 			throw new ArgumentOutOfRangeException('Project GENERAL cannot be deleted');
 		}
 		
+		// check rights
+		if (!$this->user->isAllowed(Acl::RESOURCE_PROJECT, Acl::PRIVILEGE_DELETE)) {
+			throw new OperationNotAllowedException();
+		}
+		
 		
 		/**
 		 * todo: vymazat subory s duplicitnym nazvom v projekte GENERAL? alebo hodit warning? alebo?
@@ -326,6 +322,11 @@ class ProjectsModel extends BaseModel
 	 */
 	public function update($id, array $data)
 	{
+		// check rights
+		if (!$this->user->isAllowed(Acl::RESOURCE_PROJECT, Acl::PRIVILEGE_EDIT)) {
+			throw new OperationNotAllowedException();
+		}
+		
 		$this->deleteRelatedProjects($id);
 		$this->insertRelatedProjects($id, $data['related_projects']);
 		unset($data['related_projects']);
@@ -346,6 +347,11 @@ class ProjectsModel extends BaseModel
 	 */
 	public function insert(array $data)
 	{
+		// check rights
+		if (!$this->user->isAllowed(Acl::RESOURCE_PROJECT, Acl::PRIVILEGE_ADD)) {
+			throw new OperationNotAllowedException();
+		}
+		
 		$relatedProjects = $data['related_projects'];
 		unset($data['related_projects']);
 		

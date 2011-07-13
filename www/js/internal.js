@@ -335,3 +335,42 @@ function setThumbSize($size)
 	$('.itemList img').replaceAttr('src', /(small|medium|large)/, $size);
 	
 }
+
+
+/**
+ * initialize tagging of top files
+ **/
+function initTopfilesTagging() {
+	$('.topfile').livequery(function() {
+		var $this = $(this),
+			taglist = $this.find('.file-detail-taglist'),
+			tagSpinner = taglist.prevAll('.tags-heading').find('.spinner').show(),
+			itemId = $this.attr('id').substr(8);
+			
+
+		initTagInput();
+		toggleBindTagContainer($this.find('.bindTagContainer'), false);
+
+		$.getJSON(linkGetTags.replace('__ID__', itemId), function(data) {
+	 		// set file id for tag binding
+	 		$this.find('#frmbindTagForm-fileId').val(itemId);
+	 		
+	 		// render bound tags
+			var items = buildTagList(data['tags'], itemId);
+		  	taglist.html(
+			  	$('<ul/>', {
+				    html: items.join('')
+			  	})
+		  	);
+		  	tagSpinner.hide();
+		});
+		
+		// submit form after each tag selected
+		$this.find('span.tag-value span').livequery(function() {
+			$this.find('.bindTagForm').submit();
+			// empty chosen tags
+			$this.find('.tag-value').empty();
+//				fileDetailModal.find('.tag-control-helper').focus();
+		});
+	});
+}

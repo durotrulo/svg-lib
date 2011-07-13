@@ -30,16 +30,16 @@ abstract class ProjectsUsers_Admin_BasePresenter extends Admin_BasePresenter
 	}
 	
 	
+	/**
+	 * check if requested name is available for given $type
+	 * and send response in json
+	 *
+	 * @param string to test if available
+	 * @param string type of item [project, user, package]
+	 */
 	public function handleCheckAvailability($name, $type)
 	{
-		if ($this->model->isAvailable($name)) {
-			$msg = '<div class="available">' . ucfirst($type) . ' name <b>' . $name . '</b> is available.</div>';
-		} else {
-			$msg = '<div class="not-available">' . ucfirst($type) . ' name <b>' . $name . '</b> is NOT available.</div>';
-		}
-		
-		$this->payload->availability = $msg;
-		$this->terminate();
+		Common::handleCheckAvailability($this, $name, $type);
 	}
 
 	

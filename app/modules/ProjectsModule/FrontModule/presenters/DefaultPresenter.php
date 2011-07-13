@@ -21,9 +21,6 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 	/** @var DibiRow */
 	private $project;
 	
-	/** @var DibiRow array, project files */
-	private $files;
-	
 	
 	protected function startup()
 	{
@@ -51,15 +48,6 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 		
 		
 		// list projects to panel (and content if on project display)
-//		$this->items = $this->model->findAll();
-////		try {
-//			$this->model->filter($this->items, $this->filter)
-//						->filter($this->items, ProjectsModel::FILTER_FIRST_LETTER, $this->firstLetter)
-//						->filterByNameOrSubtitle($this->items, $this->q)
-////						->filterByComplexity($this->items, $this->complexity)
-//						->order($this->items, $this->orderby, $this->sorting);
-//		
-		
 		$projectList = $this->model->findAll();
 //		try {
 			$this->model->filter($projectList, $this->filter)
@@ -154,9 +142,6 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 
 		$this->template->project = $this->project;
 		$this->template->project['topFiles'] = $this->model->getTopFiles($id);
-//		$this->template->project['files'] = $this->template->items;
-//		$this->template->project->files = $this->template->items;
-		$this->template->isProjectDetail = true;
 	}
 	
 	
@@ -168,19 +153,6 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 	}
 	*/
 	
-	
-	/**
-	 * save order after sorting topfiles
-	 *
-	 */
-	public function handleSortTopFiles($topfile)
-	{
-		$sortedItems = $topfile;
-		$sortableModel = new SortableModel(BaseModel::FILES_TABLE, 'id', 'top_file_order');
-		$sortableModel->saveOrder($sortedItems);
-		$this->flashMessage('Items order saved', self::FLASH_MESSAGE_SUCCESS);
-		$this->refresh('none');
-	}
 	
 	
 	public function handleSetFirstLetter($fl)
@@ -225,7 +197,7 @@ class Projects_Front_DefaultPresenter extends Front_InternalPresenter
 //					dump($values);die();
 					
 					$projectId = $presenter->getParam('id');
-					if (empty($projectId)) {
+					if (empty($projectId) and intval($projectId) !== ProjectsModel::GENERAL_PROJECT_ID) {
 						$form->addError('Error: Project id unknown!');
 						return;
 					}

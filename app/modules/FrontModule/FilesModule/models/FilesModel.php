@@ -69,6 +69,7 @@ class FilesModel extends BaseModel
 	const FILTER_BY_INSPIRATION = 'inspiration';
 
 	const FILTER_BY_PROJECT = 'project';
+	const FILTER_BY_CLIENT_PACKAGE = 'client-package';
 	const FILTER_BY_LIGHTBOX = 'lightbox';
 	
 	const ORDER_BY_NAME = 'name';
@@ -151,6 +152,10 @@ class FilesModel extends BaseModel
 			case self::FILTER_BY_PROJECT:
 				$this->filterByProject($items, $filterVal);
 				break;
+			
+			case self::FILTER_BY_CLIENT_PACKAGE:
+				$this->filterByClientPackage($items, $filterVal);
+				break;
 				
 			case self::FILTER_BY_LIGHTBOX:
 				$this->filterByLightbox($items, $filterVal);
@@ -192,6 +197,26 @@ class FilesModel extends BaseModel
 	public function filterByProject(&$items, $projectId)
 	{
 		$items->where('projects_id = %i', $projectId);
+		
+		return $this;
+	}
+	
+
+	/**
+	 * filter items with given client package
+	 *
+	 * @param DibiFluent
+	 * @param int
+	 * @return $this
+	 */
+	public function filterByClientPackage(&$items, $cpId)
+	{
+		$items->where('id IN (%sql)', 
+			dibi::select('files_id')
+				->from(self::FILES_2_CLIENT_PACKAGES_TABLE)
+				->where('client_packages_id = %i', $cpId)
+				->__toString()
+		);
 		
 		return $this;
 	}

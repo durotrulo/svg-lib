@@ -1,0 +1,8 @@
+<div>
+	<div class="letter-filter" n:inner-foreach="array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z') AS $letter">
+	{*<a href="{link this 'firstLetter'=>$letter}" class="ajax{ifCurrent} active{/if}">{$letter}</a>*}
+		<a href="{link setFirstLetter! $letter}" class="ajax{ifCurrent this 'firstLetter'=>$letter} active{/if}" rel="forceHistory">{$letter}</a>
+		{if $letter === 'm'}<br>{/if}
+	</div>
+	<a class="ajax" href="{link this firstLetter=>null}">Show all</a>
+</div>

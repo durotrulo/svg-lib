@@ -2,9 +2,8 @@
 
 class Users_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 {
-	const ACL_RESOURCE = 'user';
-	const ACL_PRIVILEGE = 'admin';
-	
+	const ACL_RESOURCE = Acl::RESOURCE_USERS_ADMINISTRATION;
+
 	protected function startup()
 	{
 		parent::startup();
@@ -199,6 +198,9 @@ class Users_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 				throw $e;
 				$this->flashMessage("ERROR: cannot save data!", self::FLASH_MESSAGE_ERROR);
 			}
+		} catch (OperationNotAllowedException $e) {
+			$this->flashMessage(NOT_ALLOWED, self::FLASH_MESSAGE_ERROR);
+			$this->redirect('this');
 		}
 
 		$form->resetValues();

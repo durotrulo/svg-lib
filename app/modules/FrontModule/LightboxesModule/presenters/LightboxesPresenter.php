@@ -1,141 +1,41 @@
 <?php
 
-class Front_LightboxesPresenter extends Front_InternalPresenter
+//class Front_LightboxesPresenter extends Front_InternalPresenter
+class Front_LightboxesPresenter extends Front_OwnerBasedPresenter
 {
-	const OWNER_IDS_SEP = '-';
-	
-	/** 
-	 * @var int
-	 * @persistent 
-	 */
-	public $ownerId;
-	
-	/**
-	 * @var string comma separated user ids (owners of lbs)
-	 * @persistent
-	 */
-    public $ownerIds = '';
-    
-    /** @var array $this->ownerIds cast to array */
-    public $ownerIds_a;
-	
-    protected $_allowedFilters = array(
-		FilesModel::FILTER_BY_VECTOR, 
-		FilesModel::FILTER_BY_BITMAP, 
-		FilesModel::FILTER_BY_INSPIRATION
-	);
-	
 	protected $_allowedOrderby = array(
-		FilesModel::ORDER_BY_NAME,
-		FilesModel::ORDER_BY_DATE,
-		FilesModel::ORDER_BY_SIZE,
+		null,
 	);
 	
+	protected $defaults = array(
+		'orderby' => null,
+	);
 	
-	/**
-	 * initialize $this->ownerIds_a based on $this->ownerIds
-	 * called from startup()
-	 */
-    private function initOwnerIdsA()
-	{
-		//	aby mi to nevracalo pole s prazdnym retazcom
-		if (!empty($this->ownerIds)) {
-			$this->ownerIds_a = explode(self::OWNER_IDS_SEP, $this->ownerIds);
-		} else {
-			$this->ownerIds_a = array();
-		}
-	}
-	
-	
-	
-    /**
-     * nastavi id tagov, podla kt. sa sortuje
-     *
-     */
-	private function processOwnerId()
-	{
-		if (!empty($this->ownerId)) {
-			//	pridam tag, iba ak sa tam este nenachadza taky tag
-//			if (!in_array($this->ownerId, $this->ownerIds_a) && $this->ownerId !== 0) {
-			if (!in_array($this->ownerId, $this->ownerIds_a)) {
-				$this->ownerIds_a[] = $this->ownerId;
-			//	inak ho vyhodim .. testovacia tmp?
-			} else {
-				MyArrayTools::unsetByValue($this->ownerIds_a, $this->ownerId);
-			}
-
-			// vynulujem tag, aby som sa vyhol smycke, kedze zmena persistentneho parametra sposobuje redirect/reload
-//			$this->ownerId = 0;
-			$this->ownerIds = join(self::OWNER_IDS_SEP, $this->ownerIds_a);
-		
-//			if ($this->isAjax()) {
-//				$this->invalidateControl();
-//			}
-		} else {
-			// if no ids set, set logged user's id at least
-			if (empty($this->ownerIds_a)) {
-				$this->ownerId = $this->userId;
-			}
-		}
-	}
 	
 	protected function startup()
 	{
 		parent::startup();
 
-		$this->initOwnerIdsA();
-		$this->processOwnerId();
-		
 		$this->config = Environment::getConfig('files');
 
-		// if filtering by inspiration complexity -> show it in select box complexity
-//		if ($this->filter === FilesModel::COMPLEXITY_INSPIRATION_ID) {
-//			$this->complexity = $this->filter;
-//		}
+		$this->defaults['orderby'] = null;
+		$this->orderby = null;
 		
 		$this->model = new LightboxesModel();
-//		$this->model = $this->filesModel;
 	}
 	
 	
 	protected function beforeRender()
 	{
 		parent::beforeRender();
-//		$this->template->lightboxes = $this->model->findAll();
+		$this->template->lightboxes = $this->template->ownerItems;
 		$this->template->lightboxOwners = $this->model->findOwners();
 		
-
 		$this->setRenderSections(array(
 			self::RENDER_SECTION_OPTIONS => false,
 		));
-
-
 	}
 	
-	
-	public function handleLoadLightboxesByOwner()
-	{
-		$this->refresh("lb_$this->ownerId");
-	}
-	
-	
-	/**
-	 * load lightboxes by owner
-	 * @internal 
-	 */
-	protected function setTemplateLightboxes()
-	{
-		if (!empty($this->ownerIds_a)) {
-			$lightboxes = array();
-			// @todo: possible performance bottleneck
-			foreach ($this->ownerIds_a as $ownerId) {
-				$lightboxes[$ownerId] = $this->model->findByOwner($ownerId);
-			}
-			
-			$this->template->lightboxes = $lightboxes;
-		}
-	}
-
 	
 	/**
 	 * list lightbox's files
@@ -144,7 +44,7 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 	 */
 	public function actionList($id)
 	{
-		$this->setTemplateLightboxes();
+		$this->setTemplateOwnerItems();
 		
 		// show latest lb of logged user by default
 		if (!$id) {
@@ -221,36 +121,18 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 	 */
 	public function handleEditName($id, $name)
 	{
-		if ($this->user->isAllowed(new LightboxResource($id), Acl::PRIVILEGE_EDIT)) {
-			try {
-				$this->model->updateName($id, $name);
-				echo $name;
-			} catch (DibiDriverException $e) {
-				echo OPERATION_FAILED;
-			}
-		} else {
-			echo NOT_ALLOWED;
-		}
-		$this->terminate();
+		parent::editName(new LightboxResource($id), $id, $name);
 	}
 	
 	
-	public function handleDelete($id)
+	/**
+	 * delete lightbox
+	 *
+	 * @param int
+	 */
+	public function handleDelete($delId)
 	{
-		try {
-			if ($this->user->isAllowed(new LightboxResource($id), Acl::PRIVILEGE_DELETE)) {
-				$this->model->delete($id);
-				$this->flashMessage('Lightbox deleted.', self::FLASH_MESSAGE_SUCCESS);
-			} else {
-				$this->flashMessage(NOT_ALLOWED, self::FLASH_MESSAGE_ERROR);
-			}
-		} catch (DibiDriverException $e) {
-			$this->flashMessage('Lightbox could NOT be deleted.', self::FLASH_MESSAGE_ERROR);
-		}
-
-		// reload owner's lightboxes
-		$this->setTemplateLightboxes();
-		$this->refresh(null, 'list');
+		parent::delete(new LightboxResource($delId), $delId, 'Lightbox');
 	}
 	
 	
@@ -293,10 +175,8 @@ class Front_LightboxesPresenter extends Front_InternalPresenter
 				}
 			}
 	
-			// reload owner's lightboxes
-			$_this->setTemplateLightboxes();
 //			$_this->refresh(null, 'this');
-			$_this->refresh('lb_' . $_this->userId, 'this');
+			$_this->refresh('lb-' . $_this->userId, 'this');
 		};
 		
 		return $form;

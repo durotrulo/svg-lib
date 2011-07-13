@@ -522,6 +522,6 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 	{
 		$this->filesModel->delete($fileId);
 		$this->flashMessage('File deleted', self::FLASH_MESSAGE_SUCCESS);
-		$this->refresh('this');
+		$this->refresh('itemList', 'this');
 	}
 }

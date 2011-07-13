@@ -34,6 +34,15 @@ class UsersModel extends BaseModel implements IAuthenticator
 	protected $rolesForTags = array(self::UL_PROJECT_MANAGER, self::UL_DESIGNER, self::UL_CLIENT);
 	
 	protected $rolesModel;
+
+	/** @var array */
+	private $_internalUserRoles = array(
+		self::UL_ADMIN,
+		self::UL_SUPERADMIN,
+		self::UL_DESIGNER,
+		self::UL_PROJECT_MANAGER,
+	);
+	
 	
 	public function getRolesModel()
 	{
@@ -120,10 +129,18 @@ class UsersModel extends BaseModel implements IAuthenticator
 		} else {
 			$roles = $row->role;
 		}
+		
+		$row['isInternal'] = $this->isInternal($roles);
 
 
 		unset($row->password);
 		return new Identity($row->username, $roles, $row);
+	}
+	
+	
+	public function isInternal($userRoles)
+	{
+		return count(array_intersect($userRoles, $this->_internalUserRoles)) > 0;
 	}
 	
 	
@@ -219,6 +236,13 @@ class UsersModel extends BaseModel implements IAuthenticator
 	
 	public function insert(array $data)
 	{
+		if ($this->config['useAcl']) {
+			// check rights
+			if (!$this->user->isAllowed(Acl::RESOURCE_USER, Acl::PRIVILEGE_ADD)) {
+				throw new OperationNotAllowedException();
+			}
+		}
+
 		$data['token'] = md5($data['email'] . $data['username']);
 		$data['password'] = self::getHash($data['username'], $data['password']);
 		$data['registered'] = dibi::datetime();
@@ -259,6 +283,13 @@ class UsersModel extends BaseModel implements IAuthenticator
 	 */
 	public function update($id, array $data, $updateIdentity = false)
 	{
+		if ($this->config['useAcl']) {
+			// check rights
+			if (!$this->user->isAllowed(Acl::RESOURCE_USER, Acl::PRIVILEGE_DELETE)) {
+				throw new OperationNotAllowedException();
+			}
+		}
+		
 		//	if we come from userEdit form
     	if (isset($data['password'])) {
     		// user did not enter new password
@@ -376,6 +407,12 @@ class UsersModel extends BaseModel implements IAuthenticator
 	}
 	
 	
+//	public function findClients()
+//	{
+//		return self::findByRole(self::UL_CLIENT_ID);
+//	}
+	
+	
 	/**
 	 * find user roles that admin can set
 	 *
@@ -397,12 +434,13 @@ class UsersModel extends BaseModel implements IAuthenticator
 	 * @param string
 	 * @return bool
 	 */
-	public function isAvailable($name)
+	public function isAvailable($val, $col = 'username')
 	{
-		return !(bool) dibi::select('COUNT(*)')
-							->from(self::TABLE)
-							->where('username = %s', $name)
-							->fetchSingle();
+		parent::isAvailable($val, $col);
+//		return !(bool) dibi::select('COUNT(*)')
+//							->from(self::TABLE)
+//							->where('username = %s', $name)
+//							->fetchSingle();
 	}
 	
 		

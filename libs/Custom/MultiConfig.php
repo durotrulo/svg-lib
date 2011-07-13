@@ -12,6 +12,7 @@ class MultiConfig extends Object
 	/**
 	 * merges config files of each module imported via config.ini[modules] to one file and loads it
 	 * considering current environment [dev, production, ...] - separate config file for each
+	 * uses Nette/Cache for invalidation when one (or more) of config files changed
 	 *
 	 * @param string|null  filepath
 	 * @return Config

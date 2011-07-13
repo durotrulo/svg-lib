@@ -1,7 +1,7 @@
 {**
  * @param DibiRow array $items
  * @param int $itemsCount
- * @param ProjectsModel $projectsModel
+ * @param ProjectsModel $packagesModel
  *
  *
  *
@@ -14,12 +14,8 @@
 	{include $filesControl->getHeadFilesTplPath()}
 
 	<script>
-		var linkSortTopFiles = {link sortTopFiles!};
-
 		var linkGetTags = {link getTags! __ID__};
-
 		initTopfilesTagging();
-
 	</script>
 {/capture}
 
@@ -36,11 +32,6 @@
 		<a href="{link this sorting=>dibi::DESC}" {attr class('ajax', true) class('active', $presenter->sorting === dibi::DESC)}>desc</a>
 	</span>
 	
-	<span class="completed">
-		<a href="{link this filter=>null}" {attr class('ajax', true) class('active', $presenter->filter === null)}>All</a> |
-		<a href="{link this filter=>ProjectsModel::FILTER_COMPLETED}" {attr class('ajax', true) class('active', $presenter->filter === ProjectsModel::FILTER_COMPLETED)}>Completed</a> |
-		<a href="{link this filter=>ProjectsModel::FILTER_IN_PROGRESS}" {attr class('ajax', true) class('active', $presenter->filter === ProjectsModel::FILTER_IN_PROGRESS)}>In Progress</a>
-	</span>
 {/block}
 
 
@@ -51,8 +42,7 @@
 	<div class="top-heading blue">
 		<h1>{include #title}</h1>
 		<span class="right-link" n:if="$presenter->getAction() !== 'list'">
-			{control copyProject2ClientPackageForm}
-			<a class="ajax ok-button" href="{link list}">Back to projects display</a>
+			<a class="ajax ok-button" href="{link list}">Back to packages display</a>
 			<div class="clear"></div>
 		</span>
 	</div>
@@ -60,20 +50,35 @@
 	
 	<div class="left-box">
 		<div class="margin-all">
-		{snippet projectList}
-			{var $tplPath TPL_INC_DIR . '/firstletter-filter.phtml'}
-			{include $tplPath}
-			
-			{if count($projectList) > 0}
-			<div class="projects">
-				<div class="projectList">
-					<a href="{link detail $project->id}" class="ajax{ifCurrent} active{/if}" n:foreach="$projectList as $project">{$project->name}</a>
-				</div>
-			</div>		
-			{else}
-				<div class="infoMsg">No projects found</div>
+		{snippet firstletter}
+			{if $userIdentity->isInternal}
+				{var $tplPath TPL_INC_DIR . '/firstletter-filter.phtml'}
+				{include $tplPath}
 			{/if}
 		{/snippet}
+		
+		@{ifset $packages}
+			{snippet ownersList}
+				{var $tplPath TPL_INC_DIR . '/item-owners.phtml'}
+	
+				{* packages of logged user only for client *}
+				{if !$userIdentity->isInternal}
+					{include $tplPath items => $packages, ownerId => $userId, ownerName => 'My Packages', user => $user, resource => new ClientPackageResource(null), itemType => 'cp'}
+				{else}
+					{* other packages *}
+					{*
+					<span class="simple-toggler toggler toggler-left active" data-nette-toggle-target=".user-lbs">User Packages</span>
+					<div class="user-cps">
+					*}
+					
+					<div>
+						{foreach $packageOwners as $owner}
+							{include $tplPath items => $packages, ownerId => $owner->id, ownerName => $owner->name, user => $user, resource => new ClientPackageResource(null), itemType => 'cp'}
+						{/foreach}
+					</div>
+				{/if}
+			{/snippet}
+		@{/if}
 		</div>
 	</div>
 	

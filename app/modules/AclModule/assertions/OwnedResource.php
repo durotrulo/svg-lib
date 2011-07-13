@@ -18,6 +18,12 @@ abstract class OwnedResource extends BaseResource
      */
     public function __construct($id)
     {
+    	$this->setOwnerId($id);
+    }
+    
+    
+    public function setOwnerId($id)
+    {
     	if (defined('ACL_CACHING') and ACL_CACHING) {
             $this->cache = Environment::getCache();
 			$key = static::ID . '-' . $id;

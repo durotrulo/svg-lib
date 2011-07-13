@@ -1,16 +1,16 @@
 {**
  * @param DibiRow array $items
  * @param int $itemsCount
- * @param ProjectsModel $projectsModel
+ * @param ProjectsModel $packagesModel
  *
  *
  *
  **}
- 
-@{block #title}Project {$project->name}{/block}
+
+@{block #title}Packages{/block}
+
 
 {block #options}
-{*
 	<span class="bold resultsCount">{$itemsCount} results found</span>
 	<span class="orderby">
 		<span class="bold">Display</span>
@@ -23,24 +23,34 @@
 		<a href="{link this sorting=>dibi::DESC}" {attr class('ajax', true) class('active', $presenter->sorting === dibi::DESC)}>desc</a>
 	</span>
 	
-	<span class="completed">
-		<a href="{link this filter=>null}" {attr class('ajax', true) class('active', $presenter->filter === null)}>All</a> |
-		<a href="{link this filter=>ProjectsModel::FILTER_COMPLETED}" {attr class('ajax', true) class('active', $presenter->filter === ProjectsModel::FILTER_COMPLETED)}>Completed</a> |
-		<a href="{link this filter=>ProjectsModel::FILTER_IN_PROGRESS}" {attr class('ajax', true) class('active', $presenter->filter === ProjectsModel::FILTER_IN_PROGRESS)}>In Progress</a>
-	</span>
-	
-*}
 {/block}
+
 
 @{block #itemList}
 
 {*snippet itemList*}
-	{var $tplPath TPL_INC_DIR . '/topfiles.phtml'}
-	{include $tplPath}
-	
-	@{$filesControl->renderList(FilesControl::MODE_PROJECT)}
-
+	{if $itemsCount > 0}
+	<div class="projectList">
+		<div class="itemList">
+			<div class="item" n:foreach="$items as $package">
+				<a class="img-link ajax" href="{link detail $package->id}">
+					<img src="{$basePath}/{$packagesModel->getPreviewPath($package->id)}">
+				</a>
+				<div class="project-info">
+					<div class="project-name">{$package->name}</div>
+					<div class="project-subtitle">{$package->subtitle}</div>
+					<div class="project-files-count">
+						<span class="vectorCount">{$package->vectorFilesCount} Vector Files</span>
+						<span class="bitmapCount">{$package->bitmapFilesCount} Bitmap Files</span>
+					</div>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+	</div>		
+	{control itemPaginator false, step}
 	<div class="clear"></div>
-	{*<a href="{link downloadAll! $project->id}">Download all files (zip)</a>*}
-
+	{else}
+	<div class="infoMsg">No results found</div>
+	{/if}
 {*/snippet*}

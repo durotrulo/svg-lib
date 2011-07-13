@@ -1,0 +1,54 @@
+@{block #content}
+<div class="projects-admin">
+	<div class="top-heading green" n:snippet="topHeading"><h1>{$topHeading}</h1></div>
+	
+	<div class="bg_lightgreen">
+	{snippet itemForm 'div class="add-projectUser-form add-project-form th-align_r form-el-padding"'}
+		{control itemForm}
+		<!--<br>
+		<hr>
+		<p class="align_c">* = required fields</p>-->
+	{/snippet}
+	</div>
+
+	<div class="top-heading blue"><h1>Recent Packages</h1></div>
+	<div class="recent-projectUser">
+	{snippet searchForm}
+		{control searchForm}
+		<a id="searchFormClearer" href="{link clearSearchForm!}" class="ajax" title="clear search"></a>
+	{/snippet}
+	
+	{snippet itemList}
+	{if isset($items) and count($items) > 0}
+		<br>
+		<table class="blue-colored width_100 projectUser-list">
+			<thead>
+				<tr>
+					<th class="align_l">Package Name</th>
+					<th>Subtitle</th>
+					<th>Owner</th>
+					<th>Content</th>
+					<th>Edit</th>
+					<th>Delete</th>
+				</tr>
+			</thead>
+		
+			<tbody>
+				<tr n:foreach="$items AS $item">
+					<td class="project-name align_l">{$item->name}</td>
+					<td>{$item->subtitle}</td>
+					<td>{$item->owner}</td>
+					<td>{=$item->vectorFilesCount + $item->bitmapFilesCount} files</td>
+					<td><a class="ajax edit-icon" href="{link edit $item->id}"></a></td>
+					<td><a class="ajax del-icon" data-nette-confirm="%delete%" data-nette-confirm2="Are you sure?" href="{link delete! $item->id}"></a></td>
+				</tr>
+			</tbody>
+		</table>
+		{control itemPaginator false, step2}
+	{else}
+		<div class="infoMsg">No client packages in system yet.</div>
+	{/if}
+	{/snippet}
+	</div>
+
+</div>

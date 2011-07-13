@@ -1,0 +1,35 @@
+{**
+ * snippet of toggling items (lightbox or client packages) structured by their owners
+ *
+ * @param DibiRow array $items
+ * @param int $ownerId
+ * @param string $ownerName
+ * @param Nette/Web/User $user
+ * @param string $itemType [lb | cp] - to differ lightbox and client package
+ * @param OwnedResource $resource - for ACL
+ *
+ **}
+
+<div class="{$itemType}-owner item-owner">
+	<a class="ajax toggler-left toggler{if in_array($ownerId, $presenter->ownerIds_a)} active{/if}" rel="forceHistory" data-nette-toggle-target="#snippet--{$itemType}-{$ownerId}" href="{link loadItemsByOwner! 'ownerId' => $ownerId, 'itemType' => $itemType}">{$ownerName}</a>
+	{snippet "$itemType-$ownerId" 'ul'}
+		{if isset($items[$ownerId])}
+			{foreach $items[$ownerId] as $item}
+			{?$resource->setOwnerId($item->id)}
+			{?
+				if ($itemType === 'cp')
+					$action = 'detail';
+				else
+					$action = 'list';
+			}
+				<li>
+					<a href="{link $action $item->id}" class="ajax editable{ifCurrent} active{/if}" data-editable-name="name" data-editable-process-url="{link editName! $item->id}">{$item->name}</a>
+					<span class="action-links">
+						<span class="trigger-editable pointer" n:if="$user->isAllowed($resource, Acl::PRIVILEGE_EDIT)">e</span>
+						<a class="ajax delete" data-nette-confirm="%delete%" href="{link delete! $item->id}" n:if="$user->isAllowed($resource, Acl::PRIVILEGE_DELETE)">x</a>
+					</span>
+				</li>
+			{/foreach}
+		{/if}
+	{/snippet}
+</div>

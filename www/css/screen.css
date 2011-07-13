@@ -628,14 +628,20 @@ form ul.error li {
 					position: static !important;
 				}
 			
-		.item .show-on-hover,
-		.topfile .show-on-hover {
+		.item .show-on-hover/*,
+		.topfile .show-on-hover*/ {
 			display:none;
 		}
+		.topfile .show-on-hover {
+			visibility:hidden;
+		}
 			
-			.item:hover .show-on-hover,
-			.topfile:hover .show-on-hover {
+			.item:hover .show-on-hover/*,
+			.topfile:hover .show-on-hover*/ {
 				display:inline-block;
+			}
+			.topfile:hover .show-on-hover {
+				visibility:visible;
 			}
 			
 			/* small thumbnails show only image */
@@ -1068,41 +1074,42 @@ a.active {
 				color:#333;
 			}
 		
-	.left-box .lb-owner {
+	.left-box .item-owner {
 		width: 92%;
 	}
 
-		.left-box .lb-owner .action-links {
+		.left-box .item-owner .action-links {
 			float:right;
 		}
 		
-		.left-box .lb-owner a, 
-		.left-box .lb-owner a * {
+		.left-box .item-owner a, 
+		.left-box .item-owner a * {
 			text-decoration:none;
 			font-size:12px;
 		}
 		
-			.left-box .lb-owner a:hover {
+			.left-box .item-owner a:hover {
 				text-decoration:none;
 			}
 
-			.left-box .lb-owner a.toggler { 
+			.left-box .item-owner a.toggler { 
 				color: #999999;
 			}
 
 		.lightboxes .left-box .user-lbs,
-		.left-box .lb-owner ul {
+		.left-box .item-owner ul,
+		.left-box .user-cps {
 			margin-left:20px;
 		}
 	
-		.lb-owner .editable {
+		.item-owner .editable {
 			/*border-bottom:1px dashed #ccc;*/
 			color: #0070bb;
 		}
-		.lb-owner .editable.active {
+		.item-owner .editable.active {
 			color: #000;
 		}
-		.lb-owner .editable:hover {
+		.item-owner .editable:hover {
 			color: #333;
 		}
 

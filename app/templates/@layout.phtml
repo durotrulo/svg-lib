@@ -114,10 +114,11 @@
 		<div id="header">
 	
 			<a href="{link :Front:Files:list, filter=>null}" title="Home" class="menu-icon home-icon{ifCurrent} active{/if}"></a>
-			<a href="{link :Front:Lightboxes:list ownerId=>$userId, ownerIds=>null}" title="Lightboxes" class="menu-icon lightbox-icon{ifCurrent} active{/if}"></a>
-			<a n:if="$user->isAllowed(Acl::RESOURCE_USER, Acl::PRIVILEGE_ADMIN)" href="{link :Users:Admin:Default:add}" title="Users admin" class="menu-icon users-icon{ifCurrent} active{/if}"></a>
+			<a href="{link :Front:Lightboxes:list ownerId=>$userId, ownerIds=>null, orderby=>null}" title="Lightboxes" class="menu-icon lightbox-icon{ifCurrent} active{/if}"></a>
+			<a n:if="$user->isAllowed(Acl::RESOURCE_USERS_ADMINISTRATION, Acl::PRIVILEGE_ADMIN)" href="{link :Users:Admin:Default:add}" title="Users admin" class="menu-icon users-icon{ifCurrent} active{/if}"></a>
+			<a n:if="$user->isAllowed(Acl::RESOURCE_PACKAGES_ADMINISTRATION, Acl::PRIVILEGE_ADMIN)" href="{link :ClientPackages:Admin:Default:add}" title="Client Packages admin" class="menu-icon client-package-icon{ifCurrent} active{/if}"></a>
 			<a href="{link :Projects:Admin:Default:add}" title="Projects admin" class="menu-icon projects-icon{ifCurrent} active{/if}"></a>
-			<a href="#" title="Client Packages" class="menu-icon client-package-icon{ifCurrent} active{/if}"></a>
+			<a href="{link :ClientPackages:Front:Default:list}" title="Client Packages" class="menu-icon client-package-icon{ifCurrent} active{/if}"></a>
 			<a href="{link :Users:Front:Default:edit}" title="Settings" class="menu-icon settings-icon{ifCurrent} active{/if}"></a>
 			<a href="{link :Front:Login:logout}" title="Logout" class="menu-icon logout-icon{ifCurrent} active{/if}"></a>
 			<a href="{link :RichText:Front:Default:detail 1}" title="Help" class="menu-icon help-icon{ifCurrent} active{/if}"></a>

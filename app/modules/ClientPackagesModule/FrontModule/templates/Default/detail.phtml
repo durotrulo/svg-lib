@@ -6,24 +6,11 @@
  *
  *
  **}
-
-@{extends ../../../../../templates/@layout.phtml}
  
-{* HEAD FILES FOR DETAIL VIEW PLACED HERE DUE TO INABILITY TO LOAD IT DIRECTLY IN DETAIL VIA AJAX *}
-{capture $head}
-	{include $filesControl->getHeadFilesTplPath()}
-
-	<script>
-		var linkSortTopFiles = {link sortTopFiles!};
-
-		var linkGetTags = {link getTags! __ID__};
-
-		initTopfilesTagging();
-
-	</script>
-{/capture}
+@{block #title}Package {$package->name}{/block}
 
 {block #options}
+{*
 	<span class="bold resultsCount">{$itemsCount} results found</span>
 	<span class="orderby">
 		<span class="bold">Display</span>
@@ -41,46 +28,18 @@
 		<a href="{link this filter=>ProjectsModel::FILTER_COMPLETED}" {attr class('ajax', true) class('active', $presenter->filter === ProjectsModel::FILTER_COMPLETED)}>Completed</a> |
 		<a href="{link this filter=>ProjectsModel::FILTER_IN_PROGRESS}" {attr class('ajax', true) class('active', $presenter->filter === ProjectsModel::FILTER_IN_PROGRESS)}>In Progress</a>
 	</span>
+	
+*}
 {/block}
 
-
-@{block #content}
-
-<div class="cols-2-layout">
-	{snippet top-heading}
-	<div class="top-heading blue">
-		<h1>{include #title}</h1>
-		<span class="right-link" n:if="$presenter->getAction() !== 'list'">
-			{control copyProject2ClientPackageForm}
-			<a class="ajax ok-button" href="{link list}">Back to projects display</a>
-			<div class="clear"></div>
-		</span>
-	</div>
-	{/snippet}
+@{block #itemList}
+{*snippet itemList*}
+	{var $tplPath TPL_INC_DIR . '/topfiles.phtml'}
+	{include $tplPath, project => $package}
 	
-	<div class="left-box">
-		<div class="margin-all">
-		{snippet projectList}
-			{var $tplPath TPL_INC_DIR . '/firstletter-filter.phtml'}
-			{include $tplPath}
-			
-			{if count($projectList) > 0}
-			<div class="projects">
-				<div class="projectList">
-					<a href="{link detail $project->id}" class="ajax{ifCurrent} active{/if}" n:foreach="$projectList as $project">{$project->name}</a>
-				</div>
-			</div>		
-			{else}
-				<div class="infoMsg">No projects found</div>
-			{/if}
-		{/snippet}
-		</div>
-	</div>
-	
-	{snippet itemList 'div class="right-box"'}
-		<div class="projects">
-		@{include #itemList}
-		</div>
-	{/snippet}
+	@{$filesControl->renderList(FilesControl::MODE_PROJECT)}
+
 	<div class="clear"></div>
-</div>
+	{*<a href="{link downloadAll! $project->id}">Download all files (zip)</a>*}
+
+{*/snippet*}

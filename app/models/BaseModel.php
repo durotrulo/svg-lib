@@ -316,6 +316,22 @@ abstract class BaseModel extends Object
 	
 	
 	/**
+	 * check if $col $val is available
+	 *
+	 * @param string value to search for
+	 * @param string db column name to search in
+	 * @return bool
+	 */
+	public function isAvailable($val, $col = 'name')
+	{
+		return !(bool) dibi::select('COUNT(*)')
+							->from(static::TABLE)
+							->where('%n = %s', $col, $val)
+							->fetchSingle();
+	}
+	
+	
+	/**
 	 * spoji viacero $multipleVar pre 1 zaznam do vysledneho 1 zaznamu
 	 * 
 	 * cize, ak mam:

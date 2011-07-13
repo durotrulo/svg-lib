@@ -5,7 +5,7 @@
  *
  * @author	Matus Matula
  */
-class LightboxesModel extends BaseModel
+class LightboxesModel extends OwnedItemsModel
 {
 	const TABLE = self::LIGHTBOXES_TABLE;
 	
@@ -82,16 +82,6 @@ class LightboxesModel extends BaseModel
 	}
 	
 	
-	public function updateName($id, $name)
-	{
-		return dibi::update(self::TABLE, array(
-					'name' => $name,
-				))
-					->where('id = %i', $id)
-					->where('owner_id = %i', $this->userId)
-					->execute();
-	}
-	
 	public function getOwnPairs()
 	{
 		if ($this->ownPairs === null) {
@@ -104,30 +94,6 @@ class LightboxesModel extends BaseModel
 		return $this->ownPairs;
 	}
 	
-	
-	public function findOwners()
-	{
-		return dibi::select('DISTINCT u.id, CONCAT(u.firstname, " ", u.lastname) AS name')
-					->from(self::USERS_TABLE)
-						->as('u')
-					->innerJoin(self::TABLE)
-						->as('l')
-						->on('l.owner_id = u.id')
-//					->orderBy('u.id - %i ASC', $this->userId) // first should be logged user's lightboxes
-					->where('u.id != %i', $this->userId) // except logged user
-					->fetchAll();
-	}
-	
-	
-	public function findByOwner($owner_id)
-	{
-		return dibi::select('id, name')
-					->from(self::TABLE)
-					->where('owner_id = %i', $owner_id)
-					->fetchAll();
-//					->fetchPairs('id', 'name');
-	}
-
 	
 	/**
 	 * get user's own lightboxes for given fileId (=>LB in which file is not yet)
