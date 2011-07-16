@@ -45,6 +45,7 @@
 	
 	{if $isAdminModule}
 
+		{*
 		<link rel="stylesheet" href="{$basePath}/css/admin.css">
 		<script src="{$basePath}/js/admin.js"></script>
 	
@@ -53,6 +54,10 @@
 		<script src="{$basePath}/modules/tipsy/jquery.tipsy.js"></script>
 		<script src="{$basePath}/modules/tipsy/init.js"></script>
 		<!--tipsy END-->
+		*}
+		
+		{control js 'admin.js', '../modules/tipsy/jquery.tipsy.js', '../modules/tipsy/init.js'}
+		{control css 'admin.css', '../modules/tipsy/jquery.tipsy.css'}
 	
 	{else}
 	
