@@ -139,13 +139,7 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 		// checks user is logged in
 		parent::startup();
 		
-		// user must be one of allowed roles
-		if (count(array_intersect($this->user->getRoles(), $this->_allowedUserRoles)) === 0) {
-			$this->flashMessage('You are not allowed to enter this section', self::FLASH_MESSAGE_ERROR);
-			// todo: ked klikne napr. client na link, do kt. nema pristup, tak vznikne slucka pri presmerovani - lebo je sice prihlaseny, ale nie v potrebnej roli -> treba to tu oifovat, kam podla role presmerovat
-			$this->redirect(':Front:Login:login');
-//			$this->redirect(':Front:Login:login', $this->getApplication()->storeRequest());
-		}
+		$this->checkAccessRights();
 				
 		if (!is_null($this->filter) and !in_array($this->filter, $this->_allowedFilters)) {
 			throw new InvalidStateException('Parameter filter must be one of ' . join(',', $this->_allowedFilters) . ".'$this->filter' given.");
@@ -169,14 +163,32 @@ abstract class Front_InternalPresenter extends Front_BasePresenter
 		
 		MyTagInput::register();
 		
+     	// save current uri to provide 'start where you ended' after logout and login
 		$this->setLastRequest();
 		
 
+		// initialize models
 		$this->getFilesModel();
 		$this->getProjectsModel();
 		$this->getComplexityModel();
 		$this->getTagsModel();
 
+	}
+	
+	
+	/**
+	 * check if user is allowed to enter this section or perform given operation
+	 * descendant presenters should override this method
+	 */
+	protected function checkAccessRights()
+	{
+		// user must be one of allowed roles
+		if (count(array_intersect($this->user->getRoles(), $this->_allowedUserRoles)) === 0) {
+			$this->flashMessage('You are not allowed to enter this section', self::FLASH_MESSAGE_ERROR);
+			// todo: ked klikne napr. client na link, do kt. nema pristup, tak vznikne slucka pri presmerovani - lebo je sice prihlaseny, ale nie v potrebnej roli -> treba to tu oifovat, kam podla role presmerovat
+			$this->redirect(':Front:Login:login');
+//			$this->redirect(':Front:Login:login', $this->getApplication()->storeRequest());
+		}
 	}
 	
 	
