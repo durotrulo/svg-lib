@@ -175,6 +175,9 @@ class Users_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 				$values = $form->getValues();
 				unset($values['password2']);
 				
+				$sendNotifyingEmail = $values['send_email'];
+				unset($values['send_email']);
+				
 				if ($id > 0) {
 					$this->model->update($id, $values);
 					$this->flashMessage('User updated.', self::FLASH_MESSAGE_SUCCESS);
@@ -183,7 +186,7 @@ class Users_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 					$id = $this->model->insert($values);
 					
 					$this->flashMessage('User created.', self::FLASH_MESSAGE_SUCCESS);
-					if ($values['send_email']) {
+					if ($sendNotifyingEmail) {
 		      			$this->sendRegBasicEmail($values);
 					}
 				}

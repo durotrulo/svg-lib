@@ -106,6 +106,13 @@ abstract class BasePresenter extends Presenter
 		$this->registerUser();
 		
 		Environment::setVariable('basePath', substr(Environment::getVariable('baseUri'), 0, -1));
+		
+		UserPanel::register()
+			->addCredentials('admin', 'adminHeslo')
+			->addCredentials('designer', 'designerHeslo')
+			->addCredentials('manager', 'managerHeslo')
+			->addCredentials('client', 'clientHeslo')
+			->setNameColumn('username');
 	}
 	
 	protected function registerUser(&$tpl = null)

@@ -106,7 +106,7 @@ class UsersModel extends BaseModel implements IAuthenticator
 		$row->realname = $row->firstname . ' ' . $row->lastname;
 		
 		//	user sa uspesne prihlasil => update last login
-		self::update($row->id, array('last_login' => dibi::datetime()), false);
+		self::update($row->id, array('last_login' => dibi::datetime()), false, true);
 //		dibi::update(self::TABLE, array('last_login' => dibi::datetime()))->where('id = %i', $row->id)->execute();
 
 		
@@ -280,12 +280,13 @@ class UsersModel extends BaseModel implements IAuthenticator
 	 * @param int user id
 	 * @param array
 	 * @param bool update identity of logged user?
+	 * @param bool skip checking ACL? - used internally while logging in
 	 */
-	public function update($id, array $data, $updateIdentity = false)
+	public function update($id, array $data, $updateIdentity = false, $skipCheckingAcl = false)
 	{
-		if ($this->config['useAcl']) {
+		if ($this->config['useAcl'] and !$skipCheckingAcl) {
 			// check rights
-			if (!$this->user->isAllowed(Acl::RESOURCE_USER, Acl::PRIVILEGE_DELETE)) {
+			if (!$this->user->isAllowed(Acl::RESOURCE_USER, Acl::PRIVILEGE_EDIT)) {
 				throw new OperationNotAllowedException();
 			}
 		}
@@ -301,7 +302,8 @@ class UsersModel extends BaseModel implements IAuthenticator
 					$dbData = $this->find($this->userId);
 	    			// check if it's correct
 		    		if (self::getHash($dbData->username, $data['currentPassword']) !== $dbData->password) {
-		    			throw new InvalidPasswordException('Zadali ste nesprávne stávajúce heslo.');
+//		    			throw new InvalidPasswordException('Zadali ste nesprávne stávajúce heslo.');
+		    			throw new InvalidPasswordException('You entered invalid current password. Try again please!');
 		    		}
 	    		}
 				$data['password'] = self::getHash($data['username'], $data['password']);
