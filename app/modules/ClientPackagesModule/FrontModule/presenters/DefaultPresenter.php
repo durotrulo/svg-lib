@@ -35,32 +35,30 @@ class ClientPackages_Front_DefaultPresenter extends Front_OwnerBasedPresenter
 		
 		$this->model = $this->getClientPackagesModel();
 	}
-
+	
 	
 	protected function beforeRender()
 	{
 		parent::beforeRender();
 
-		$this->template->packages = $this->template->ownerItems;
-		$this->template->packageOwners = $this->model->findOwners($this->firstLetter);
-//		$this->template->packageOwners = $this->template->itemOwners; // clients
+		// client users' view
+		if ($this->isClientMode) {
+			// only his own packages
+			$this->template->packages = array(
+				$this->ownerId => $this->model->findByOwner($this->ownerId),
+			);
+			$this->template->packageOwners = null;
+		// internal users' view - all packages, all owners
+		} else {
+			$this->template->packages = $this->getOwnerItems();
+			$this->template->packageOwners = $this->model->findOwners($this->firstLetter);
+		}
+		
 		
 		$this->setRenderSections(array(
 			self::RENDER_SECTION_FILTERS => true,
 		));
 		
-//		$this->template->project = $this->template->package;
-		
-		/*
-*/
-		// list projects to panel (and content if on project display)
-		$packagesList = $this->model->findAll();
-		$this->model->filter($packagesList, ProjectsModel::FILTER_FIRST_LETTER, $this->firstLetter)
-					->filterByNameOrSubtitle($packagesList, $this->q)
-					->order($packagesList, $this->orderby, $this->sorting);
-		$this->template->packagesList = $packagesList;
-
-		$this->template->packagesModel = $this->getClientPackagesModel();
 		
 		if (!$this->isControlInvalid()) {
 			$this->invalidateControl();
@@ -71,11 +69,11 @@ class ClientPackages_Front_DefaultPresenter extends Front_OwnerBasedPresenter
 	public function actionList()
 	{
 //		parent::actionList($id);
-		$this->items = $this->model->findAll();
-		$this->model->filter($this->items, ProjectsModel::FILTER_FIRST_LETTER, $this->firstLetter)
+		$this->items = $this->model->findAll($this->isClientMode);
+		$this->model->filter($this->items, ClientPackagesModel::FILTER_FIRST_LETTER, $this->firstLetter)
 					->filterByNameOrSubtitle($this->items, $this->q)
 					->order($this->items, $this->orderby, $this->sorting);
-
+	
 		$this->template->filesControl = $this['filesControl'];
 	}
 	
@@ -95,6 +93,8 @@ class ClientPackages_Front_DefaultPresenter extends Front_OwnerBasedPresenter
 										->applyLimit($vp->paginator->itemsPerPage, $vp->paginator->offset)
 										->fetchAll();
 										
+		$this->template->packagesModel = $this->getClientPackagesModel();
+
 		// when paging refresh only items
 		if ($vp->paginated && !$vp->itemsPerPageChanged) {
 			$this->invalidateControl('itemList');
@@ -103,7 +103,6 @@ class ClientPackages_Front_DefaultPresenter extends Front_OwnerBasedPresenter
 		}
 	}
 	
-
 	
 	public function actionDetail($id)
 	{
@@ -111,7 +110,11 @@ class ClientPackages_Front_DefaultPresenter extends Front_OwnerBasedPresenter
 		if (!$this->package) {
 			throw new BadRequestException('Package does not exist');
 		}
-
+		
+		if (!$this->user->isAllowed(new ClientPackageResource($id), Acl::PRIVILEGE_VIEW)) {
+			throw new OperationNotAllowedException('You do NOT have rights to view this package!');
+		}
+		
 		// init filesControl
 		$fileControl = $this['filesControl'];
 		$fileControl->applyFilters(
@@ -144,10 +147,13 @@ class ClientPackages_Front_DefaultPresenter extends Front_OwnerBasedPresenter
 	public function handleSetFirstLetter($fl)
 	{
 		$this->firstLetter = $fl;
+		
+		// cancel active filters
 		$this->ownerId = null;
 		$this->ownerIds = null;
+		
 		if ($this->getAction() === 'detail') {
-			$this->refresh('firstletter');
+			$this->refresh(array('firstletter', 'ownersList'));
 		} else {
 			$this->refresh(array('firstletter', 'itemList'), 'this', array(), true);
 		}

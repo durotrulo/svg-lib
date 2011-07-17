@@ -17,9 +17,14 @@ class ClientPackagesModel extends OwnedItemsModel
 	const ORDER_BY_DATE = 'date';
 	
 	
-	public function findAll()
+	/**
+	 * find all client packages
+	 *
+	 * @param bool return only packages that logged user can view?
+	 */
+	public function findAll($restrict2UserRole = false)
 	{
-		return dibi::select('cp.*, 
+		$ret = dibi::select('cp.*, 
 			COUNT(f.id) AS vectorFilesCount,
 			COUNT(f2.id) AS bitmapFilesCount,
 			CONCAT(u.firstname, " ", u.lastname) AS owner
@@ -41,7 +46,37 @@ class ClientPackagesModel extends OwnedItemsModel
 				->where('is_visible = 1')
 				->groupBy('cp.id')
 				->orderBy('name ASC');
+				
+		if ($restrict2UserRole) {
+			//todo: ak logged user bol vytvoreny clientom, najdi client ID, kt. ho vytvoril
+			if (!$this->userIdentity->isInternal and $this->userId !== UsersModel::UL_CLIENT_ID) {
+				$clientId = $this->getClientIdOfLoggedUser();
+				$ret->where('owner_id = %i', $clientId);
+			}
+		}
+		
+		return $ret;
 //					->fetchAll();
+	}
+	
+	
+	public function getClientIdOfLoggedUser()
+	{
+		if ($this->userIdentity->isInternal) {
+			throw new InvalidStateException('Method can be called only if logged user is client or user created by client');
+		}
+		
+		// if it's client return his id
+		if (in_array(UsersModel::UL_CLIENT, $this->user->getRoles())) {
+			return $this->userId;
+		}
+		
+		// otherwise select supervisor id
+		return 23;
+		return dibi::select('supervisor_id')
+					->from(self::USERS_TABLE)
+					->where('id = %i', $this->userId)
+					->fetchSingle();
 	}
 	
 //	public function findAll()
@@ -84,6 +119,12 @@ class ClientPackagesModel extends OwnedItemsModel
 	}
 	
 	
+	/**
+	 * get top files of given package
+	 *
+	 * @param int clientPackageId
+	 * @return DibiRow array
+	 */
 	public function getTopFiles($cpId)
 	{
 		return dibi::select('id, filename, suffix, description, projects_id')

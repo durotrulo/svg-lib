@@ -131,6 +131,8 @@ class Acl extends Permission
 	const PRIVILEGE_EDIT = 'edit';
 	const PRIVILEGE_DELETE = 'delete';
 	const PRIVILEGE_VIEW = 'view';
+	const PRIVILEGE_DOWNLOAD = 'download';
+	const PRIVILEGE_SHARE = 'share';
 	const PRIVILEGE_BIND_TAG = 'bind_tag';
 	const PRIVILEGE_UNBIND_TAG = 'unbind_tag';
 	const PRIVILEGE_EDIT_DESCRIPTION = 'edit_description';

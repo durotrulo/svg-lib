@@ -67,6 +67,12 @@ class ProjectsModel extends BaseModel
 	}
 	
 	
+	/**
+	 * get top files of given project
+	 *
+	 * @param int
+	 * @return DibiRow array
+	 */
 	public function getTopFiles($projectId)
 	{
 		return dibi::select('id, filename, suffix, description, projects_id')

@@ -1,9 +1,6 @@
 {**
  * @param DibiRow array $items
  * @param int $itemsCount
- * @param ProjectsModel $packagesModel
- *
- *
  *
  **}
 
@@ -14,6 +11,7 @@
 	{include $filesControl->getHeadFilesTplPath()}
 
 	<script>
+		var linkSortTopFiles = {link sortTopFiles!};
 		var linkGetTags = {link getTags! __ID__};
 		initTopfilesTagging();
 	</script>
@@ -23,8 +21,8 @@
 	<span class="bold resultsCount">{$itemsCount} results found</span>
 	<span class="orderby">
 		<span class="bold">Display</span>
-		<a href="{link this orderby=>ProjectsModel::ORDER_BY_NAME}" {attr class('ajax', true) class('active', $presenter->orderby === ProjectsModel::ORDER_BY_NAME)}>Alphabetically</a>
-		<a href="{link this orderby=>ProjectsModel::ORDER_BY_DATE}" {attr class('ajax', true) class('active', $presenter->orderby === ProjectsModel::ORDER_BY_DATE)}>By Date</a>
+		<a href="{link this orderby=>ClientPackagesModel::ORDER_BY_NAME}" {attr class('ajax', true) class('active', $presenter->orderby === ClientPackagesModel::ORDER_BY_NAME)}>Alphabetically</a>
+		<a href="{link this orderby=>ClientPackagesModel::ORDER_BY_DATE}" {attr class('ajax', true) class('active', $presenter->orderby === ClientPackagesModel::ORDER_BY_DATE)}>By Date</a>
 	</span>
 	
 	<span class="sorting">

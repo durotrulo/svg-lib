@@ -1,9 +1,6 @@
 {**
  * @param DibiRow array $items
  * @param int $itemsCount
- * @param ProjectsModel $projectsModel
- *
- *
  *
  **}
  
@@ -14,8 +11,8 @@
 	<span class="bold resultsCount">{$itemsCount} results found</span>
 	<span class="orderby">
 		<span class="bold">Display</span>
-		<a href="{link this orderby=>ProjectsModel::ORDER_BY_NAME}" {attr class('ajax', true) class('active', $presenter->orderby === ProjectsModel::ORDER_BY_NAME)}>Alphabetically</a>
-		<a href="{link this orderby=>ProjectsModel::ORDER_BY_DATE}" {attr class('ajax', true) class('active', $presenter->orderby === ProjectsModel::ORDER_BY_DATE)}>By Date</a>
+		<a href="{link this orderby=>ClientPackagesModel::ORDER_BY_NAME}" {attr class('ajax', true) class('active', $presenter->orderby === ClientPackagesModel::ORDER_BY_NAME)}>Alphabetically</a>
+		<a href="{link this orderby=>ClientPackagesModel::ORDER_BY_DATE}" {attr class('ajax', true) class('active', $presenter->orderby === ClientPackagesModel::ORDER_BY_DATE)}>By Date</a>
 	</span>
 	
 	<span class="sorting">
@@ -25,8 +22,8 @@
 	
 	<span class="completed">
 		<a href="{link this filter=>null}" {attr class('ajax', true) class('active', $presenter->filter === null)}>All</a> |
-		<a href="{link this filter=>ProjectsModel::FILTER_COMPLETED}" {attr class('ajax', true) class('active', $presenter->filter === ProjectsModel::FILTER_COMPLETED)}>Completed</a> |
-		<a href="{link this filter=>ProjectsModel::FILTER_IN_PROGRESS}" {attr class('ajax', true) class('active', $presenter->filter === ProjectsModel::FILTER_IN_PROGRESS)}>In Progress</a>
+		<a href="{link this filter=>ClientPackagesModel::FILTER_COMPLETED}" {attr class('ajax', true) class('active', $presenter->filter === ClientPackagesModel::FILTER_COMPLETED)}>Completed</a> |
+		<a href="{link this filter=>ClientPackagesModel::FILTER_IN_PROGRESS}" {attr class('ajax', true) class('active', $presenter->filter === ClientPackagesModel::FILTER_IN_PROGRESS)}>In Progress</a>
 	</span>
 	
 *}
