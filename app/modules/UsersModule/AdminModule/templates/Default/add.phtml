@@ -29,6 +29,7 @@
 					<th>First Name</th>
 					<th>Last Name</th>
 					<th>User Level</th>
+					<th n:if="!$isClientMode">Created by</th>
 					<th>Edit</th>
 					<th>Delete</th>
 				</tr>
@@ -40,6 +41,7 @@
 					<td>{$user->firstname}</td>
 					<td>{$user->lastname}</td>
 					<td>{= join(', ', $user->roles)}</td>
+					<td n:if="!$isClientMode">{if !empty($user->supervisor_id)}{$users[$user->supervisor_id]->firstname} {$users[$user->supervisor_id]->lastname} {else}-{/if}</td>
 					<td><a class="ajax edit-icon" href="{link edit $user->id}"></a></td>
 					<td><a class="ajax del-icon" data-nette-confirm="%delete%" data-nette-confirm2="Are you sure?" href="{link delete! $user->id}"></a></td>
 				</tr>

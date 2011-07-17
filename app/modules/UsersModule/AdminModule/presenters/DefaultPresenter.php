@@ -4,11 +4,14 @@ class Users_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 {
 	const ACL_RESOURCE = Acl::RESOURCE_USERS_ADMINISTRATION;
 
+	private $isClientMode;
+	
 	protected function startup()
 	{
 		parent::startup();
 		$this->model = new UsersModel();
 		$this->config = Environment::getConfig('users');
+		$this->isClientMode = $this->userIdentity->isClient;
 	}
 
 	protected function beforeRender()
@@ -17,10 +20,16 @@ class Users_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 		$this->template->title = $this->translate('Users'); // optional, shown as heading and title of html page
 		$this->template->description = $this->translate('Little piece of description for module Users'); // optional, describes functionality of module
 		$this->template->topHeading = ucfirst($this->getAction()) . ' User';
+		$this->template->isClientMode = $this->isClientMode;
 		
 		if ($this->getAction() === 'add' or $this->getAction() === 'edit') {
 			
-			$items = $this->model->findAll(false);
+	  		if ($this->isClientMode) {
+				$items = $this->model->findClientUsers($this->userId);
+	  		} else {
+				$items = $this->model->findAll(false);
+	  		}
+			
 			$this->model->filterByUsername($items, $this->q);
 			
 			$vp = $this['itemPaginator'];
@@ -33,7 +42,8 @@ class Users_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 			$this->template->users = $items
 									->toDataSource()
 									->applyLimit($vp->paginator->itemsPerPage, $vp->paginator->offset)
-									->fetchAll();
+//									->fetchAll();
+									->fetchAssoc('id');
 									
 			$this->model->bindRoles($this->template->users, true);
 											
@@ -51,7 +61,7 @@ class Users_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 	
   	private function prepareRoles()
   	{
-  		return $this->model->findRoles();
+  		return $this->model->findRoles($this->isClientMode);
 //  		return BaseModel::prepareSelect($this->model->findRoles(), 'User Role');
   	}
 
@@ -72,7 +82,14 @@ class Users_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 //			if ($row->user_levels_id <= $this->userIdentity->user_levels_id) {
 //				throw new OperationNotAllowedException('You don\'t have rights to edit this user. Contact superadmin for granting higher permissions.');
 //			}
+
+			// simple select box accepts key directly (not array)
+			if ($this->isClientMode) {
+				$row['roles'] = $row['roles'][0];
+			}
+
 			$form->setDefaults($row);
+
 			$this->invalidateControl('itemForm');
 		}
 		
@@ -141,11 +158,17 @@ class Users_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 	            ->addRule($form::EMAIL)
 	            ->addRule($form::MAX_LENGTH, NULL, 60);
 	
-//	    $form->addSelect('user_levels_id', 'Role', $this->prepareRoles())->skipFirst()
-	    $form->addMultiSelect('roles', 'Role', $this->prepareRoles(), 6)
-//    		->skipFirst()
-            ->addRule($form::FILLED);
 
+    	if ($this->isClientMode) {
+//		    $form->addSelect('roles', 'Role', $this->prepareRoles())
+		    $form->addSelect('roles', 'Role', BaseModel::prepareSelect($this->prepareRoles()))
+		    	->skipFirst()
+            	->addRule($form::FILLED);
+        } else {
+		    $form->addMultiSelect('roles', 'Role', $this->prepareRoles(), 7)
+//    			->skipFirst()
+    	        ->addRule($form::FILLED);
+        }
         $form->addCheckbox('send_email', 'Send notification email');
         
 		$form->addSubmit('save', 'Add User')
@@ -182,6 +205,10 @@ class Users_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
 					$this->model->update($id, $values);
 					$this->flashMessage('User updated.', self::FLASH_MESSAGE_SUCCESS);
 				} else {
+					if ($this->isClientMode) {
+						$values['supervisor_id'] = $this->userId;
+					}
+					
 					$values['approved'] = true;
 					$id = $this->model->insert($values);
 					
@@ -237,10 +264,10 @@ class Users_Admin_DefaultPresenter extends ProjectsUsers_Admin_BasePresenter
   	
 	public function handleDelete($id)
 	{
-		if ($this->user->isAllowed(Acl::RESOURCE_USER, Acl::PRIVILEGE_DELETE)) {
+		try {
 			$this->model->delete($id);
 			$this->flashMessage('User deleted', self::FLASH_MESSAGE_SUCCESS);
-		} else {
+		} catch (OperationNotAllowedException $e) {
 			$this->flashMessage(NOT_ALLOWED, self::FLASH_MESSAGE_ERROR);
 		}
 

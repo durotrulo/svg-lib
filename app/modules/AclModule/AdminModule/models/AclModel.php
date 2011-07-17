@@ -112,6 +112,8 @@ class Acl extends Permission
 	const ROLE_SUPERADMIN = 'superadmin';
 	const ROLE_DESIGNER = 'designer';
 	const ROLE_CLIENT = 'client';
+	const ROLE_CLIENT_BASIC_USER = 'client_basic_user';
+	const ROLE_CLIENT_ADMIN_USER = 'client_admin_user';
 	const ROLE_PROJECT_MANAGER = 'projectManager';
 	
 	const RESOURCE_FILE = 'file';

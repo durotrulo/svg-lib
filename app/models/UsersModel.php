@@ -29,6 +29,8 @@ class UsersModel extends BaseModel implements IAuthenticator
 	const UL_PROJECT_MANAGER_ID = 5;
 	const UL_DESIGNER_ID = 6;
 	const UL_CLIENT_ID = 7;
+	const UL_CLIENT_BASIC_USER_ID = 8;
+	const UL_CLIENT_ADMIN_USER_ID = 9;
 
 	/** @var array of roles suitable for tags' userlevel */
 	protected $rolesForTags = array(self::UL_PROJECT_MANAGER, self::UL_DESIGNER, self::UL_CLIENT);
@@ -131,6 +133,7 @@ class UsersModel extends BaseModel implements IAuthenticator
 		}
 		
 		$row['isInternal'] = $this->isInternal($roles);
+		$row['isClient'] = !$row['isInternal'];
 
 
 		unset($row->password);
@@ -232,6 +235,19 @@ class UsersModel extends BaseModel implements IAuthenticator
 
 		return $users;
 	}
+	
+	
+	/**
+	 * find users created by client with $clientId
+	 *
+	 * @param int
+	 * @return DibiFluent
+	 */
+	public function findClientUsers($clientId)
+	{
+		return $this->findAll(false)
+					->where('supervisor_id = %i', $clientId);
+	}
 
 	
 	public function insert(array $data)
@@ -255,12 +271,27 @@ class UsersModel extends BaseModel implements IAuthenticator
 		$userId = parent::insert($data);
 		
 		if (isset($roles)) {
-			$this->getRolesModel()->updateUserRoles($userId, $roles);
+			$this->getRolesModel()->updateUserRoles($userId, (array) $roles);
 		}
 		
 		return $userId;
 	}
 
+	
+	/**
+	 * delete user
+	 *
+	 * @param int
+	 */
+	public function delete($id)
+	{
+		// check rights - client can delete only users who he created
+		if (!$this->user->isAllowed(new UserResource($id), Acl::PRIVILEGE_DELETE)) {
+			throw new OperationNotAllowedException();
+		}
+		parent::delete($id);
+	}
+	
 
 	/**
 	 * update logged in user's data
@@ -285,8 +316,8 @@ class UsersModel extends BaseModel implements IAuthenticator
 	public function update($id, array $data, $updateIdentity = false, $skipCheckingAcl = false)
 	{
 		if ($this->config['useAcl'] and !$skipCheckingAcl) {
-			// check rights
-			if (!$this->user->isAllowed(Acl::RESOURCE_USER, Acl::PRIVILEGE_EDIT)) {
+			// check rights - client can update only users who he created
+			if (!$this->user->isAllowed(new UserResource($id), Acl::PRIVILEGE_EDIT)) {
 				throw new OperationNotAllowedException();
 			}
 		}
@@ -418,14 +449,23 @@ class UsersModel extends BaseModel implements IAuthenticator
 	/**
 	 * find user roles that admin can set
 	 *
+	 * @param int [optional]
 	 * @return array
 	 */
-	public function findRoles()
+	public function findRoles($onlyClientRoles = false)
 	{
-		return dibi::select('id, name')
+		$ret = dibi::select('id, name')
 					->from(self::ACL_ROLES_TABLE)
-					->where('is_public = 1')
-					->fetchPairs();
+					->where('is_public = 1');
+					
+		if ($onlyClientRoles) {
+			$ret->where('id IN (%iN)', array(
+				self::UL_CLIENT_BASIC_USER_ID, 
+				self::UL_CLIENT_ADMIN_USER_ID
+			));
+		}
+		
+		return $ret->fetchPairs();
 	}
 	
 	
@@ -438,7 +478,7 @@ class UsersModel extends BaseModel implements IAuthenticator
 	 */
 	public function isAvailable($val, $col = 'username')
 	{
-		parent::isAvailable($val, $col);
+		return parent::isAvailable($val, $col);
 //		return !(bool) dibi::select('COUNT(*)')
 //							->from(self::TABLE)
 //							->where('username = %s', $name)

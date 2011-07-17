@@ -135,6 +135,8 @@ abstract class BasePresenter extends Presenter
 			->addCredentials('designer', 'designerHeslo')
 			->addCredentials('manager', 'managerHeslo')
 			->addCredentials('client', 'clientHeslo')
+			->addCredentials('client_basic_user', 'clientbasicuserHeslo')
+			->addCredentials('client_admin_user', 'clientadminuserHeslo')
 			->setNameColumn('username');
 	}
 	
