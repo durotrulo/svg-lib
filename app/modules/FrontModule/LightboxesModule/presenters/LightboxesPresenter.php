@@ -28,8 +28,19 @@ class Front_LightboxesPresenter extends Front_OwnerBasedPresenter
 	protected function beforeRender()
 	{
 		parent::beforeRender();
-		$this->template->lightboxes = $this->template->ownerItems;
-		$this->template->lightboxOwners = $this->model->findOwners();
+		
+		// client users' view
+		if ($this->isClientMode) {
+			// only his own packages
+			$this->template->lightboxes = array(
+				$this->ownerId => $this->model->findByOwner($this->ownerId),
+			);
+			$this->template->lightboxOwners = null;
+		// internal users' view - all packages, all owners
+		} else {
+			$this->template->lightboxes = $this->getOwnerItems();
+			$this->template->lightboxOwners = $this->model->findOwners();
+		}
 		
 		$this->setRenderSections(array(
 			self::RENDER_SECTION_OPTIONS => false,
@@ -44,18 +55,22 @@ class Front_LightboxesPresenter extends Front_OwnerBasedPresenter
 	 */
 	public function actionList($id)
 	{
-		$this->setTemplateOwnerItems();
-		
-		// show latest lb of logged user by default
+		// show latest lb of logged user by default (if there is one)
 		if (!$id) {
-			$id = $this->model->findUserLatestId();
-			$this->redirect('list', array($id));
+			$id = $this->model->findUserLatestId($this->ownerId);
+			if (!empty($id)) {
+				$this->redirect('list', array($id));
+			}
 		} else {
 			$this->template->lightbox = $lb = $this->model->find($id);
-		}
-		
-		if ($lb === false) {
-			throw new BadRequestException('Lightbox does NOT exist!');
+
+			if ($lb === false) {
+				throw new BadRequestException('Lightbox does NOT exist!');
+			}
+			
+			if (!$this->user->isAllowed(new LightboxResource($id), Acl::PRIVILEGE_VIEW)) {
+				throw new OperationNotAllowedException('You do NOT have rights to view this lightbox!');
+			}
 		}
 	}
 	
@@ -88,6 +103,10 @@ class Front_LightboxesPresenter extends Front_OwnerBasedPresenter
 	 */
 	public function handleDownload($id)
 	{
+		if (!$this->user->isAllowed(new LightboxResource($id), Acl::PRIVILEGE_DOWNLOAD)) {
+			throw new OperationNotAllowedException('You do NOT have rights to download this lightbox!');
+		}
+		
 		$fileControl = $this['filesControl'];
 		$fileControl->applyFilters(
 			array(
@@ -102,8 +121,17 @@ class Front_LightboxesPresenter extends Front_OwnerBasedPresenter
 	}
 	
 	
+	/**
+	 * generate share link for lightbox
+	 *
+	 * @param int lightboxId
+	 */
 	public function handleShare($id)
 	{
+		if (!$this->user->isAllowed(new LightboxResource($id), Acl::PRIVILEGE_SHARE)) {
+			throw new OperationNotAllowedException('You do NOT have rights to share this lightbox!');
+		}
+		
 		$link = $this->model->generateShareLink($id);
 		$this->payload->snippets['snippet--sharelink'] = $link;
 		$this->refresh('sharelink');
@@ -170,13 +198,16 @@ class Front_LightboxesPresenter extends Front_OwnerBasedPresenter
 				if ($e->getCode() === 1062) {
 					$_this->flashMessage("ERROR: " . $e->getMessage(), $_this::FLASH_MESSAGE_ERROR);
 				} else {
-					throw $e;
 					$_this->flashMessage("ERROR: cannot save data!", $_this::FLASH_MESSAGE_ERROR);
 				}
 			}
 	
 //			$_this->refresh(null, 'this');
-			$_this->refresh('lb-' . $_this->userId, 'this');
+			$_this->refresh(array(
+//				'lb-' . $_this->userId, // todo: da sa to teda aj na vnoreny snippet?
+				'ownersList',
+				'addLightboxForm',
+			), 'this');
 		};
 		
 		return $form;

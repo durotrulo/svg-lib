@@ -54,10 +54,14 @@ class LightboxesModel extends OwnedItemsModel
 	/**
 	 * fetch latest lb of logged user
 	 *
+	 * @param int - should be ID of logged user, only for users created by clients exception is applied
 	 * @return DibiRow
 	 */
-	public function findUserLatestId()
+	public function findUserLatestId($userId = null)
 	{
+		if ($userId === null) {
+		 	$userId = $this->getUserId();
+		}
 		return dibi::select('id')
 				->from(self::TABLE)
 				->where('owner_id = %i', $this->getUserId())

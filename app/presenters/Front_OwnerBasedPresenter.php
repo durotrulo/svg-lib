@@ -19,6 +19,19 @@ abstract class Front_OwnerBasedPresenter extends Front_InternalPresenter
     /** @var array $this->ownerIds cast to array */
     public $ownerIds_a;
 	
+	/** @var bool is in client mode view? */
+	protected $isClientMode = false;
+	
+	
+	/**
+	 * check if user is allowed to enter this section or perform given operation
+	 * descendant presenters should override this method
+	 */
+	protected function checkAccessRights()
+	{
+		// Client can enter this section (despite it's under 'Internal'), allowed actions handled via $this->isClientMode a ACL
+	}
+	
 	
 	/**
 	 * initialize $this->ownerIds_a based on $this->ownerIds
@@ -69,29 +82,45 @@ abstract class Front_OwnerBasedPresenter extends Front_InternalPresenter
 
 		$this->initOwnerIdsA();
 		$this->processOwnerId();
+		
+		$this->isClientMode = !$this->userIdentity->isInternal;
+		$this->normalizeView4Clients();
 	}
+	
+	
+	protected function normalizeView4Clients()
+	{
+		if ($this->isClientMode) {
+			$this->ownerId = $this->getClientPackagesModel()->getClientIdOfLoggedUser();
+		}
+	}
+	
 	
 	protected function beforeRender()
 	{
 		parent::beforeRender();
-		$this->setTemplateOwnerItems();
+//		$this->setTemplateOwnerItems();
 	}
 	
 	protected function setTemplateOwnerItems()
 	{
+		throw new Exception('odstranit/upravit podla CP. volat priamo getOwnerItems()');
+		$this->template->ownerItems = $this->getOwnerItems();
+	}
+
+	
+	public function getOwnerItems()
+	{
+		$ownerItems = array();
 		if (!empty($this->ownerIds_a)) {
-			$ownerItems = array();
 			// @todo: possible performance bottleneck
 			foreach ($this->ownerIds_a as $ownerId) {
 				$ownerItems[$ownerId] = $this->model->findByOwner($ownerId);
 			}
-			
-			$this->template->ownerItems = $ownerItems;
-		} else {
-			$this->template->ownerItems = array();
 		}
+		
+		return $ownerItems;
 	}
-
 	
 //	/**
 //	 * list lightbox's files
@@ -156,7 +185,7 @@ abstract class Front_OwnerBasedPresenter extends Front_InternalPresenter
 		$this->refresh("$itemType-$this->ownerId");
 		$this->refresh(array(
 			'ownersList',
-			"$itemType-$this->ownerId",
+//			"$itemType-$this->ownerId",// todo: da sa to teda aj na vnoreny snippet?
 		));
 	}
 }
