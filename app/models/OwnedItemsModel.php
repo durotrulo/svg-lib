@@ -8,7 +8,7 @@ class OwnedItemsModel extends BaseModel
 {
 	
 	/**
-	 * find owners of all existing items (lb or cp)
+	 * find owners (except logged user) of all existing items (lb or cp)
 	 *
 	 * @param string|null first letter of client for filtering
 	 * @param bool consider only publicly visible items?

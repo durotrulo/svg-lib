@@ -10,6 +10,12 @@ abstract class BaseRole implements IRole
     public $id;
 
     
+    public function __construct($userId)
+    {
+    	$this->id = $userId;
+    }
+    
+    
     /**
      * get role ID
      */

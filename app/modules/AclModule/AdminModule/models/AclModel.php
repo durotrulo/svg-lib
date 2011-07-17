@@ -172,8 +172,8 @@ class Acl extends Permission
 		// set roleId to currently logged user's id for later assertions
 		$roleClassName = ucfirst($role) . "Role";
 		if (class_exists($roleClassName)) {
-			$role = new $roleClassName;
-			$role->id = intval(Environment::getUser()->getIdentity()->data['id']);
+			$userId = intval(Environment::getUser()->getIdentity()->data['id']);
+			$role = new $roleClassName($userId);
 		}
 		
 		return parent::isAllowed($role, $resource, $privilege);
