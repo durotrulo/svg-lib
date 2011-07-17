@@ -46,15 +46,38 @@ abstract class BasePresenter extends Presenter
     public $cache;
 
 
+    /** separator for last request of logged user */
+    const LAST_REQUEST_SEP = '#-#';
+    
     /**
-     * save current uri to provide 'start where you ended' after logout and login
+     * save current uri for logged user to provide 'start where you ended' after logout and login
      * called from startup() methods of presenters to be tracked
      */
     public function setLastRequest()
     {
 		$uri = $this->getHttpRequest()->getUri()->getAbsoluteUri();
-		$this->getHttpResponse()->setCookie('lastRequest', $uri, Tools::YEAR);
+		$this->getHttpResponse()->setCookie('lastRequest', $this->userId . self::LAST_REQUEST_SEP . $uri, Tools::YEAR);
     }
+
+    
+    /**
+     * get last successful request for logged user
+     * provide 'start where you ended' after logout and login
+     *
+     * @return string|null
+     */
+    public function getLastRequest()
+    {
+        $lastRequest = $this->getHttpRequest()->getCookie('lastRequest');
+        if (!empty($lastRequest)) {
+        	list($userId, $uri) = explode('#-#', $lastRequest);
+        	if ($userId === $this->userId) {
+        		return $uri;
+        	} else {
+        		return null;
+        	}
+        }
+	}
 	
     
 	public function getModel()

@@ -15,6 +15,7 @@ class Front_LoginPresenter extends BasePresenter
 //		'user' => ':Front:Homepage:',
 //		'guest' => ':Front:Homepage:', // default
 		'guest' => 'this', // default
+		'client' => ':ClientPackages:Front:Default:list',
 	);
 
 	
@@ -43,20 +44,20 @@ class Front_LoginPresenter extends BasePresenter
             }
             
 			// provide 'start where you ended' after logout and login
-            $lastRequest = $this->getHttpRequest()->getCookie('lastRequest');
+            $lastRequest = $this->getLastRequest();
             if (!empty($lastRequest)) {
             	$this->redirectUri($lastRequest);
             }
             
             // pre pripad, ze zhnila session a $key uz nie je platny
             //todo: docasne riesenie
-			if (count(array_intersect($this->user->getRoles(), array('admin', 'superadmin', 'designer', 'projectManager'))) > 0) {
+			if (count(array_intersect($this->user->getRoles(), array(UsersModel::UL_ADMIN, UsersModel::UL_SUPERADMIN, UsersModel::UL_DESIGNER, UsersModel::UL_DESIGNER, UsersModel::UL_PROJECT_MANAGER))) > 0) {
 	            $this->redirect(':Front:Files:list');
             } else {
-	            $this->redirect('logout');
+	            $this->redirect($this->getRedirectToByRole(':Front:Homepage:'));
+//	            $this->redirect('logout');
             }
             
-            $this->getRedirectToByRole(':Front:Homepage:');
         }
 	}
 	
@@ -73,10 +74,6 @@ class Front_LoginPresenter extends BasePresenter
 //		$c->useAjax = true;
 
 		$c->redirectTo = $this->getRedirectToByRole('this');
-		
-		/*
-		
-		*/
 		
 		return $c;
 	}
