@@ -3,6 +3,7 @@ var/
 libs/Custom/HtmPurifier/standalone/HTMLPurifier/DefinitionCache/
 www/data/
 data/
+sql/
 staging.ini
 deploy.ini
 git-deploy
