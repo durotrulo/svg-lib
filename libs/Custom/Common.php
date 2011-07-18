@@ -2,7 +2,7 @@
 
 /**
  * container class for common tasks
- *
+ * @todo je to potrebne? - mohlo by to byt zrejme priamo v ProjectsUsersAdminBasePresenter
  */
 abstract class Common extends Object 
 {

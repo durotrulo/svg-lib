@@ -5,7 +5,7 @@ $(function() {
 	});
 
 	
-	/* Check availability of item [project, user] via AJAX */
+	/* Check availability of item [project, user, package] via AJAX */
 	var	timeoutHandle, 	// to be able to cancel timeout
 		request;		// to be able to cancel XHR
 	$('.checkAvailability').livequery('keyup change', function() {

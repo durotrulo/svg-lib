@@ -1,6 +1,5 @@
 <?php
 
-//class Front_LightboxesPresenter extends Front_InternalPresenter
 class Front_LightboxesPresenter extends Front_OwnerBasedPresenter
 {
 	protected $_allowedOrderby = array(
@@ -21,7 +20,7 @@ class Front_LightboxesPresenter extends Front_OwnerBasedPresenter
 		$this->defaults['orderby'] = null;
 		$this->orderby = null;
 		
-		$this->model = new LightboxesModel();
+		$this->model = $this->getLightboxModel();
 	}
 	
 	
@@ -62,14 +61,14 @@ class Front_LightboxesPresenter extends Front_OwnerBasedPresenter
 				$this->redirect('list', array($id));
 			}
 		} else {
+			if (!$this->user->isAllowed(new LightboxResource($id), Acl::PRIVILEGE_VIEW)) {
+				throw new OperationNotAllowedException('You do NOT have rights to view this lightbox!');
+			}
+			
 			$this->template->lightbox = $lb = $this->model->find($id);
 
 			if ($lb === false) {
 				throw new BadRequestException('Lightbox does NOT exist!');
-			}
-			
-			if (!$this->user->isAllowed(new LightboxResource($id), Acl::PRIVILEGE_VIEW)) {
-				throw new OperationNotAllowedException('You do NOT have rights to view this lightbox!');
 			}
 		}
 	}
